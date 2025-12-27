@@ -1,0 +1,67 @@
+/* Small, hand-authored overrides for a “liquid glass” feel */
+
+.glass-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.22);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.glass-caption {
+  display: inline-flex;
+  padding: 0.4rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.26);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.glass-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.28);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease, background 150ms ease, border-color 150ms ease;
+}
+
+.glass-button:hover {
+  transform: scale(1.03);
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(0, 0, 0, 0.34);
+}
+
+.glass-button:active {
+  transform: scale(0.98);
+}
+
+@keyframes modal-pop {
+  0% {
+    transform: translateY(8px) scale(0.98);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-pop {
+  animation: modal-pop 220ms ease-out;
+}

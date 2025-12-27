@@ -1,0 +1,16 @@
+PORTFOLIO HOMEPAGE — QUICK START (Vite)
+
+Project folder:
+~/portfolio_hjemmeside/portfolio_homepage_optimized
+
+START
+cd ~/portfolio_hjemmeside/portfolio_homepage_optimized
+npm install
+npm run dev
+
+STOP
+Ctrl + C
+
+BUILD + PREVIEW (optional)
+npm run build
+npm run preview
