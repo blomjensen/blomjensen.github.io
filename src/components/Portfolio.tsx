@@ -13,7 +13,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { projects } from "../data/projects";
+import { projects } from '../data/projects';
 
 type ViewMode = 'projects' | 'skills';
 
@@ -86,12 +86,10 @@ export function Portfolio() {
     [selectedProjectId]
   );
 
-  // Reset carousel index when switching project
   useEffect(() => {
     setCurrentImageIndex(0);
   }, [selectedProjectId]);
 
-  // Close modal on ESC
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setSelectedProjectId(null);
@@ -104,7 +102,6 @@ export function Portfolio() {
 
   const handleShowMore = () => {
     setShowMore(true);
-    // Gentle scroll to keep the expanded grid in view
     window.setTimeout(() => {
       const el = gridRef.current;
       if (!el) return;
@@ -115,7 +112,6 @@ export function Portfolio() {
 
   const handleShowLess = () => {
     setShowMore(false);
-    // After collapse, scroll so the “More” button sits nicely near the top
     window.setTimeout(() => {
       const el = moreButtonRef.current;
       if (!el) return;
@@ -137,19 +133,21 @@ export function Portfolio() {
   return (
     <div className={`relative py-20 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-[#313131]' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto">
+        {/* Toggle */}
         <div className="flex justify-center mb-10">
           <div
-            className={`inline-flex rounded-full p-1 ${
-              theme === 'dark' ? 'bg-white/10' : 'bg-gray-200/70'
-            } backdrop-blur-md border ${theme === 'dark' ? 'border-white/10' : 'border-gray-200'}`}
+            className={`inline-flex items-center gap-1 rounded-full p-1 ${
+              theme === 'dark' ? 'bg-white/10 border-white/10' : 'bg-gray-200/70 border-gray-200'
+            } backdrop-blur-md border`}
           >
             <button
+              type="button"
               onClick={() => setViewMode('projects')}
-              className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+              className={`whitespace-nowrap px-5 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
                 viewMode === 'projects'
                   ? theme === 'dark'
-                    ? 'bg-white text-black'
-                    : 'bg-gray-900 text-white'
+                    ? 'bg-white text-black shadow'
+                    : 'bg-gray-900 text-white shadow'
                   : theme === 'dark'
                     ? 'text-white/70 hover:text-white'
                     : 'text-gray-700 hover:text-gray-900'
@@ -157,13 +155,15 @@ export function Portfolio() {
             >
               {c.portfolio.modeProjects}
             </button>
+
             <button
+              type="button"
               onClick={() => setViewMode('skills')}
-              className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+              className={`whitespace-nowrap px-5 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
                 viewMode === 'skills'
                   ? theme === 'dark'
-                    ? 'bg-white text-black'
-                    : 'bg-gray-900 text-white'
+                    ? 'bg-white text-black shadow'
+                    : 'bg-gray-900 text-white shadow'
                   : theme === 'dark'
                     ? 'text-white/70 hover:text-white'
                     : 'text-gray-700 hover:text-gray-900'
@@ -174,21 +174,30 @@ export function Portfolio() {
           </div>
         </div>
 
+        {/* Intro */}
         <div className="text-center mb-12">
           <p className={`max-w-3xl mx-auto ${theme === 'dark' ? 'text-neutral-300' : 'text-gray-700'}`}>
             {viewMode === 'projects' ? c.portfolio.projectsIntro : c.portfolio.skillsIntro}
           </p>
         </div>
 
+        {/* Projects */}
         {viewMode === 'projects' && (
           <>
-            <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div
+              ref={gridRef}
+              className={`grid grid-cols-1 gap-8 ${
+                displayedProjects.length > 1 ? 'md:grid-cols-2' : 'md:grid-cols-1 justify-items-center'
+              }`}
+            >
               {displayedProjects.map((project) => (
                 <button
                   key={project.id}
                   type="button"
                   onClick={() => setSelectedProjectId(project.id)}
-                  className="relative text-left group rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+                  className={`relative text-left group rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ${
+                    displayedProjects.length === 1 ? 'w-full max-w-4xl' : 'w-full'
+                  }`}
                 >
                   <div className="relative h-80 overflow-hidden">
                     <img
@@ -199,14 +208,14 @@ export function Portfolio() {
                       decoding="async"
                     />
                     <div className="absolute inset-0 bg-black/20"></div>
+
                     <div className="absolute bottom-4 left-4 right-4">
                       <h3 className="text-white text-xl font-bold mb-2">{project.title[language]}</h3>
                       <p className="text-white/90 text-sm line-clamp-2">{project.description[language]}</p>
                     </div>
+
                     <div className="absolute top-4 left-4">
-                      <span className="glass-pill">
-                        {project.category[language]}
-                      </span>
+                      <span className="glass-pill">{project.category[language]}</span>
                     </div>
                   </div>
                 </button>
@@ -220,6 +229,7 @@ export function Portfolio() {
                   onClick={handleShowMore}
                   className="w-full flex justify-center group"
                   aria-label="Load more projects"
+                  type="button"
                 >
                   <div
                     className={`flex flex-col items-center gap-2 transition-colors ${
@@ -241,6 +251,7 @@ export function Portfolio() {
                   onClick={handleShowLess}
                   className="w-full flex justify-center group"
                   aria-label="Show less projects"
+                  type="button"
                 >
                   <div
                     className={`flex flex-col items-center gap-2 transition-colors ${
@@ -261,6 +272,7 @@ export function Portfolio() {
           </>
         )}
 
+        {/* Skills */}
         {viewMode === 'skills' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {skills.map((skill) => (
@@ -278,9 +290,7 @@ export function Portfolio() {
                     <skill.icon size={40} className="text-gray-900" />
                   </div>
                   <div className="absolute top-4 left-4">
-                    <span className="glass-pill">
-                      {skill.title[language]}
-                    </span>
+                    <span className="glass-pill">{skill.title[language]}</span>
                   </div>
                 </div>
                 <div className="p-4">
@@ -294,6 +304,7 @@ export function Portfolio() {
         )}
       </div>
 
+      {/* Modal */}
       {selectedProject && (
         <div
           className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
@@ -308,7 +319,6 @@ export function Portfolio() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative">
-              {/* Click-to-close overlay (so you can exit by clicking the image) */}
               <button
                 type="button"
                 className="absolute inset-0 z-10"
@@ -338,6 +348,7 @@ export function Portfolio() {
                   >
                     <ChevronLeft size={24} className="text-white" />
                   </button>
+
                   <button
                     type="button"
                     onMouseDown={(e) => e.stopPropagation()}
@@ -376,9 +387,7 @@ export function Portfolio() {
 
               {selectedProject.images[currentImageIndex].caption && (
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-                  <span className="glass-caption">
-                    {selectedProject.images[currentImageIndex].caption}
-                  </span>
+                  <span className="glass-caption">{selectedProject.images[currentImageIndex].caption}</span>
                 </div>
               )}
             </div>
@@ -387,6 +396,7 @@ export function Portfolio() {
               <h2 className={`mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {selectedProject.title[language]}
               </h2>
+
               <p className={`mb-6 ${theme === 'dark' ? 'text-neutral-300' : 'text-gray-700'}`}>
                 {selectedProject.fullDescription[language]}
               </p>
@@ -404,9 +414,7 @@ export function Portfolio() {
                           decoding="async"
                         />
                         {img.caption && (
-                          <figcaption
-                            className={`text-xs mt-2 ${theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}`}
-                          >
+                          <figcaption className={`text-xs mt-2 ${theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}`}>
                             {img.caption}
                           </figcaption>
                         )}
