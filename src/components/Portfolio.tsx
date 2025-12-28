@@ -17,7 +17,6 @@ import { projects } from "../data/projects";
 
 type ViewMode = 'projects' | 'skills';
 
-
 const skills = [
   {
     icon: GraduationCap,
