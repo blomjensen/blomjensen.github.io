@@ -85,10 +85,10 @@ export function Portfolio() {
     [selectedProjectId]
   );
 
+  const isDark = theme === 'dark';
+
   // Reset carousel index when switching project
-  useEffect(() => {
-    setCurrentImageIndex(0);
-  }, [selectedProjectId]);
+  useEffect(() => setCurrentImageIndex(0), [selectedProjectId]);
 
   // Lock background scroll when modal is open
   useEffect(() => {
@@ -100,7 +100,7 @@ export function Portfolio() {
     };
   }, [selectedProject]);
 
-  // Keyboard controls (ESC + arrows) when modal open
+  // Keyboard controls when modal open
   useEffect(() => {
     if (!selectedProject) return;
 
@@ -150,124 +150,99 @@ export function Portfolio() {
     setCurrentImageIndex((prev) => (prev - 1 + selectedProject.images.length) % selectedProject.images.length);
   };
 
-  const isDark = theme === 'dark';
+  // ===== Style constants =====
+  const cardRadius = 'rounded-2xl';
+  const cardShadow = 'shadow-md hover:shadow-xl';
+  const cardMediaHeight = 'h-64 sm:h-72 lg:h-80';
+  const cardMaxWidth = 'w-full max-w-[620px]';
+  const modalRadius = 'rounded-2xl';
+  const modalImageHeight = 'h-[42vh] sm:h-[52vh]';
 
   return (
     <div className={`relative py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-black' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto">
-      {/* Toggle */}
-<div className="flex justify-center mb-12">
-  {(() => {
-    const isProjects = viewMode === 'projects';
+        {/* Toggle (Projects/Skills) */}
+        <div className="flex justify-center mb-12">
+          {(() => {
+            const isProjects = viewMode === 'projects';
+            const gapPx = 12;
+            const insetPx = 6;
 
-    // Juster disse to hvis du vil ha mer/mindre luft:
-    const gapPx = 12;     // avstand mellom de to indre pillene
-    const insetPx = 6;    // “margin” inne i hoved-pillen
+            const outer = isDark ? 'bg-white/10 border-white/10' : 'bg-gray-200/70 border-gray-200';
+            const activePill = isDark ? 'bg-white' : 'bg-gray-900';
+            const inactiveText = isDark ? 'text-white/70 hover:text-white' : 'text-gray-700 hover:text-gray-900';
+            const activeText = isDark ? 'text-black' : 'text-white';
 
-    const outer =
-      theme === 'dark'
-        ? 'bg-white/10 border-white/10'
-        : 'bg-gray-200/70 border-gray-200';
-
-    const activePill =
-      theme === 'dark'
-        ? 'bg-white'
-        : 'bg-gray-900';
-
-    const inactiveText =
-      theme === 'dark'
-        ? 'text-white/70 hover:text-white'
-        : 'text-gray-700 hover:text-gray-900';
-
-    const activeText =
-      theme === 'dark'
-        ? 'text-black'
-        : 'text-white';
-
-    return (
-      <div
-        className={`relative inline-flex rounded-full border backdrop-blur-md ${outer}`}
-        style={{ padding: insetPx }}
-      >
-        {/* Highlight pill that slides */}
-        <span
-          aria-hidden
-          className={`absolute rounded-full transition-transform duration-200 ease-out shadow-sm ${activePill}`}
-          style={{
-            top: insetPx,
-            bottom: insetPx,
-            left: insetPx,
-            width: `calc(50% - ${gapPx / 2}px)`,
-            transform: isProjects
-              ? 'translateX(0)'
-              : `translateX(calc(100% + ${gapPx}px))`,
-          }}
-        />
-
-        {/* Buttons */}
-        <div className="relative z-10 inline-flex" style={{ gap: gapPx }}>
-          <button
-            type="button"
-            onClick={() => setViewMode('projects')}
-            className={`whitespace-nowrap rounded-full px-6 py-2 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
-              isProjects ? activeText : inactiveText
-            }`}
-            style={{ minWidth: 140, textAlign: 'center' }}
-          >
-            {c.portfolio.modeProjects}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setViewMode('skills')}
-            className={`whitespace-nowrap rounded-full px-6 py-2 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
-              !isProjects ? activeText : inactiveText
-            }`}
-            style={{ minWidth: 140, textAlign: 'center' }}
-          >
-            {c.portfolio.modeSkills}
-          </button>
+            return (
+              <div
+                className={`relative inline-flex rounded-full border backdrop-blur-md ${outer}`}
+                style={{ padding: insetPx }}
+              >
+                <span
+                  aria-hidden
+                  className={`absolute rounded-full transition-transform duration-200 ease-out shadow-sm ${activePill}`}
+                  style={{
+                    top: insetPx,
+                    bottom: insetPx,
+                    left: insetPx,
+                    width: `calc(50% - ${gapPx / 2}px)`,
+                    transform: isProjects ? 'translateX(0)' : `translateX(calc(100% + ${gapPx}px))`,
+                  }}
+                />
+                <div className="relative z-10 inline-flex" style={{ gap: gapPx }}>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('projects')}
+                    className={`whitespace-nowrap rounded-full px-6 py-2 text-sm font-bold transition-colors duration-200 ${
+                      isProjects ? activeText : inactiveText
+                    }`}
+                    style={{ minWidth: 140, textAlign: 'center' }}
+                  >
+                    {c.portfolio.modeProjects}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('skills')}
+                    className={`whitespace-nowrap rounded-full px-6 py-2 text-sm font-bold transition-colors duration-200 ${
+                      !isProjects ? activeText : inactiveText
+                    }`}
+                    style={{ minWidth: 140, textAlign: 'center' }}
+                  >
+                    {c.portfolio.modeSkills}
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
         </div>
-      </div>
-    );
-  })()}
-</div>
 
-        {/* Intro text */}
+        {/* Intro */}
         <div className="text-center mb-14">
           <p className={`max-w-3xl mx-auto ${isDark ? 'text-neutral-300' : 'text-gray-700'}`}>
             {viewMode === 'projects' ? c.portfolio.projectsIntro : c.portfolio.skillsIntro}
           </p>
         </div>
 
-        {/* Projects grid */}
+        {/* Projects */}
         {viewMode === 'projects' && (
           <>
-            <div
-              ref={gridRef}
-              className={`grid grid-cols-1 gap-8 ${
-                displayedProjects.length > 1 ? 'md:grid-cols-2' : 'md:grid-cols-1 justify-items-center'
-              }`}
-            >
+            <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 place-items-center">
               {displayedProjects.map((project) => (
                 <button
                   key={project.id}
                   type="button"
                   onClick={() => setSelectedProjectId(project.id)}
-                  className={`relative text-left group rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ${
-                    displayedProjects.length === 1 ? 'w-full max-w-4xl' : 'w-full'
-                  }`}
+                  className={`${cardMaxWidth} ${cardRadius} overflow-hidden ${cardShadow} transition-all duration-300 bg-transparent`}
                   aria-label={`Open ${project.title[language]}`}
                 >
-                  <div className="relative h-72 sm:h-80 overflow-hidden">
+                  <div className={`relative ${cardMediaHeight} overflow-hidden`}>
                     <img
                       src={project.images[0]?.src}
                       alt={project.title[language]}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover object-center"
                       loading="lazy"
                       decoding="async"
                     />
-                    {/* Ingen tittel/tekst på bildet (som du ønsket) */}
                   </div>
                 </button>
               ))}
@@ -280,12 +255,9 @@ export function Portfolio() {
                   onClick={handleShowMore}
                   className="flex flex-col items-center gap-2 group"
                   aria-label="Load more projects"
+                  type="button"
                 >
-                  <span
-                    className={`text-sm uppercase tracking-wider ${
-                      isDark ? 'text-white group-hover:text-neutral-300' : 'text-gray-900 group-hover:text-gray-600'
-                    }`}
-                  >
+                  <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {c.portfolio.more}
                   </span>
                   <div className={`flex flex-col -space-y-2 ${isDark ? 'text-white' : 'text-gray-900'} wiggle-animation`}>
@@ -299,16 +271,13 @@ export function Portfolio() {
                   onClick={handleShowLess}
                   className="flex flex-col items-center gap-2 group"
                   aria-label="Show less projects"
+                  type="button"
                 >
                   <div className={`flex flex-col -space-y-2 ${isDark ? 'text-white' : 'text-gray-900'} wiggle-animation`}>
                     <ChevronUp size={20} className="-mb-3" />
                     <ChevronUp size={20} />
                   </div>
-                  <span
-                    className={`text-sm uppercase tracking-wider ${
-                      isDark ? 'text-white group-hover:text-neutral-300' : 'text-gray-900 group-hover:text-gray-600'
-                    }`}
-                  >
+                  <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {c.portfolio.less}
                   </span>
                 </button>
@@ -319,20 +288,23 @@ export function Portfolio() {
 
         {/* Skills */}
         {viewMode === 'skills' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 place-items-center">
             {skills.map((skill) => (
               <div
                 key={skill.title.en}
-                className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+                className={`${cardMaxWidth} ${cardRadius} overflow-hidden ${cardShadow} transition-all duration-300 ${
+                  isDark ? 'bg-neutral-900' : 'bg-white'
+                }`}
               >
-                <div className="relative h-72 sm:h-80 overflow-hidden">
+                <div className={`relative ${cardMediaHeight} overflow-hidden`}>
                   <div
-                    className="w-full h-full group-hover:scale-105 transition-transform duration-500 flex items-center justify-center"
+                    className="w-full h-full flex items-center justify-center"
                     style={{ backgroundColor: isDark ? 'white' : 'black' }}
                   >
                     <skill.icon size={40} className="text-gray-900" />
                   </div>
                 </div>
+
                 <div className="p-5">
                   <div className="mb-2">
                     <span className="glass-pill">{skill.title[language]}</span>
@@ -354,32 +326,25 @@ export function Portfolio() {
           role="dialog"
           aria-modal="true"
           onMouseDown={(e) => {
-            // kun lukk hvis du klikker på backdrop (ikke inni modal)
             if (e.target === e.currentTarget) setSelectedProjectId(null);
           }}
         >
           <div
-            className={`max-w-5xl w-full rounded-lg overflow-hidden ${
-              isDark ? 'bg-neutral-900' : 'bg-white'
-            } max-h-[90vh]`}
+            className={`max-w-5xl w-full ${modalRadius} overflow-hidden ${isDark ? 'bg-neutral-900' : 'bg-white'}`}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            {/* Scroll-container for "iOS bounce"/momentum */}
-            <div
-              className="max-h-[90vh] overflow-y-auto overscroll-contain"
-              style={{ WebkitOverflowScrolling: 'touch' }}
-            >
+            <div className="max-h-[90vh] overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
               <div className="relative">
-                <img
-                  src={selectedProject.images[currentImageIndex]?.src}
-                  alt={`${selectedProject.title[language]} – ${currentImageIndex + 1}`}
-                  className="w-full h-[50vh] sm:h-[60vh] object-cover"
-                  loading="eager"
-                  decoding="async"
-                  onClick={() => setSelectedProjectId(null)} // klikk på bildet = lukk (uten å blokkere piler)
-                />
+                <div className={`w-full ${modalImageHeight} overflow-hidden`}>
+                  <img
+                    src={selectedProject.images[currentImageIndex]?.src}
+                    alt={`${selectedProject.title[language]} – ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover object-center"
+                    loading="eager"
+                    decoding="async"
+                  />
+                </div>
 
-                {/* Prev/Next */}
                 {selectedProject.images.length > 1 && (
                   <>
                     <button
@@ -433,9 +398,7 @@ export function Portfolio() {
                   <span className="glass-pill">{selectedProject.category[language]}</span>
                 </div>
 
-                <h2 className={`mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  {selectedProject.title[language]}
-                </h2>
+                <h2 className={`mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>{selectedProject.title[language]}</h2>
 
                 <p className={`mb-6 ${isDark ? 'text-neutral-300' : 'text-gray-700'}`}>
                   {selectedProject.fullDescription[language]}
@@ -445,14 +408,16 @@ export function Portfolio() {
                   <div className="mb-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {selectedProject.processImages.map((img, idx) => (
-                        <figure key={idx} className="rounded-lg overflow-hidden">
-                          <img
-                            src={img.src}
-                            alt={img.caption ?? `Process ${idx + 1}`}
-                            className="w-full h-48 object-cover"
-                            loading="lazy"
-                            decoding="async"
-                          />
+                        <figure key={idx} className={`${cardRadius} overflow-hidden`}>
+                          <div className="h-48 overflow-hidden">
+                            <img
+                              src={img.src}
+                              alt={img.caption ?? `Process ${idx + 1}`}
+                              className="w-full h-full object-cover object-center"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </div>
                           {img.caption && (
                             <figcaption className={`text-xs mt-2 ${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>
                               {img.caption}
@@ -465,9 +430,7 @@ export function Portfolio() {
                 )}
 
                 <div className={`border-t pt-6 ${isDark ? 'border-neutral-700' : 'border-gray-200'}`}>
-                  <h3 className={`mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {c.portfolio.modal.detailsTitle}
-                  </h3>
+                  <h3 className={`mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>{c.portfolio.modal.detailsTitle}</h3>
                   <p className={`${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>
                     {selectedProject.description[language]}
                   </p>
