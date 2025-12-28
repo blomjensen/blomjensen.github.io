@@ -67,10 +67,86 @@ function animateScrollTo(targetY: number, durationMs = 650) {
   requestAnimationFrame(tick);
 }
 
+function SegmentedToggle({
+  value,
+  onChange,
+  leftLabel,
+  rightLabel,
+  isDark,
+}: {
+  value: 'left' | 'right';
+  onChange: (v: 'left' | 'right') => void;
+  leftLabel: string;
+  rightLabel: string;
+  isDark: boolean;
+}) {
+  const isLeft = value === 'left';
+
+  // Tuning for "screenshot look"
+  const inset = 6; // padding inside outer pill
+  const gap = 18; // space between inner pills (feel free to tweak)
+  const btnMinW = 160;
+
+  const outer = isDark
+    ? 'bg-white/5 border-white/10'
+    : 'bg-gray-200/70 border-gray-300/60';
+
+  const highlight = isDark ? 'bg-white' : 'bg-gray-900';
+  const activeText = isDark ? 'text-black' : 'text-white';
+  const inactiveText = isDark
+    ? 'text-white/70 hover:text-white'
+    : 'text-gray-700 hover:text-gray-900';
+
+  return (
+    <div
+      className={`relative inline-flex rounded-full border backdrop-blur-md ${outer}`}
+      style={{ padding: inset }}
+    >
+      {/* Sliding highlight */}
+      <span
+        aria-hidden
+        className={`absolute rounded-full transition-transform duration-200 ease-out ${highlight}`}
+        style={{
+          top: inset,
+          bottom: inset,
+          left: inset,
+          width: `calc(50% - ${gap / 2}px)`,
+          transform: isLeft ? 'translateX(0)' : `translateX(calc(100% + ${gap}px))`,
+        }}
+      />
+
+      <div className="relative z-10 inline-flex" style={{ gap }}>
+        <button
+          type="button"
+          onClick={() => onChange('left')}
+          className={`rounded-full px-7 py-2 text-base font-semibold tracking-wide transition-colors ${
+            isLeft ? activeText : inactiveText
+          }`}
+          style={{ minWidth: btnMinW, textAlign: 'center' }}
+        >
+          {leftLabel}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onChange('right')}
+          className={`rounded-full px-7 py-2 text-base font-semibold tracking-wide transition-colors ${
+            !isLeft ? activeText : inactiveText
+          }`}
+          style={{ minWidth: btnMinW, textAlign: 'center' }}
+        >
+          {rightLabel}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function Portfolio() {
   const { theme } = useTheme();
   const { language } = useLanguage();
   const c = content[language];
+  const isDark = theme === 'dark';
 
   const [viewMode, setViewMode] = useState<ViewMode>('projects');
   const [showMore, setShowMore] = useState(false);
@@ -85,22 +161,20 @@ export function Portfolio() {
     [selectedProjectId]
   );
 
-  const isDark = theme === 'dark';
-
-  // Reset carousel index when switching project
+  // reset carousel index when changing project
   useEffect(() => setCurrentImageIndex(0), [selectedProjectId]);
 
-  // Lock background scroll when modal is open
+  // lock background scroll when modal open
   useEffect(() => {
     if (!selectedProject) return;
-    const prevOverflow = document.body.style.overflow;
+    const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = prevOverflow;
+      document.body.style.overflow = prev;
     };
   }, [selectedProject]);
 
-  // Keyboard controls when modal open
+  // keyboard controls when modal open
   useEffect(() => {
     if (!selectedProject) return;
 
@@ -118,7 +192,7 @@ export function Portfolio() {
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedProject]);
 
-  const displayedProjects = showMore ? projects : projects.slice(0, 3);
+  const displayedProjects = showMore ? projects : projects.slice(0, 4);
 
   const handleShowMore = () => {
     setShowMore(true);
@@ -150,99 +224,54 @@ export function Portfolio() {
     setCurrentImageIndex((prev) => (prev - 1 + selectedProject.images.length) % selectedProject.images.length);
   };
 
-  // ===== Style constants =====
-  const cardRadius = 'rounded-2xl';
-  const cardShadow = 'shadow-md hover:shadow-xl';
-  const cardMediaHeight = 'h-64 sm:h-72 lg:h-80';
-  const cardMaxWidth = 'w-full max-w-[620px]';
-  const modalRadius = 'rounded-2xl';
-  const modalImageHeight = 'h-[42vh] sm:h-[52vh]';
+  // === “screenshot” card styling ===
+  const cardRadius = 'rounded-3xl';
+  const cardHeight = 'h-72 sm:h-80 lg:h-[360px]';
+  const cardBorder = isDark ? 'border border-white/10' : 'border border-black/10';
+  const cardShadow = 'shadow-sm hover:shadow-xl transition-shadow duration-300';
+  const cardBg = isDark ? 'bg-black/10' : 'bg-white';
+
+  // Modal styling
+  const modalRadius = 'rounded-3xl';
+  const modalBorder = isDark ? 'border border-white/10' : 'border border-black/10';
 
   return (
-    <div className={`relative py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-black' : 'bg-gray-50'}`}>
+    <section className={`relative py-24 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-black' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto">
-        {/* Toggle (Projects/Skills) */}
+        {/* Toggle */}
         <div className="flex justify-center mb-12">
-          {(() => {
-            const isProjects = viewMode === 'projects';
-
-            // feel free å tweake
-            const gapPx = 16; // større luft mellom de 2 indre pillene
-            const insetPx = 6;
-
-            const outer = isDark ? 'bg-white/10 border-white/10' : 'bg-gray-200/70 border-gray-200';
-            const activePill = isDark ? 'bg-white' : 'bg-gray-900';
-
-            // VIKTIG: ikke-valgt tekst i dark mode må være lys grå (ikke svart)
-            const inactiveText = isDark ? 'text-neutral-300 hover:text-white' : 'text-gray-700 hover:text-gray-900';
-            const activeText = isDark ? 'text-black' : 'text-white';
-
-            return (
-              <div
-                className={`relative inline-flex rounded-full border backdrop-blur-md ${outer}`}
-                style={{ padding: insetPx }}
-              >
-                {/* sliding highlight pill */}
-                <span
-                  aria-hidden
-                  className={`absolute rounded-full transition-transform duration-200 ease-out shadow-sm ${activePill}`}
-                  style={{
-                    top: insetPx,
-                    bottom: insetPx,
-                    left: insetPx,
-                    width: `calc(50% - ${gapPx / 2}px)`,
-                    transform: isProjects ? 'translateX(0)' : `translateX(calc(100% + ${gapPx}px))`,
-                  }}
-                />
-
-                <div className="relative z-10 inline-flex" style={{ gap: gapPx }}>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('projects')}
-                    className={`whitespace-nowrap rounded-full px-8 py-2 text-sm font-bold transition-colors duration-200 ${
-                      isProjects ? activeText : inactiveText
-                    }`}
-                    style={{ minWidth: 180, textAlign: 'center' }}
-                  >
-                    {c.portfolio.modeProjects}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('skills')}
-                    className={`whitespace-nowrap rounded-full px-8 py-2 text-sm font-bold transition-colors duration-200 ${
-                      !isProjects ? activeText : inactiveText
-                    }`}
-                    style={{ minWidth: 180, textAlign: 'center' }}
-                  >
-                    {c.portfolio.modeSkills}
-                  </button>
-                </div>
-              </div>
-            );
-          })()}
+          <SegmentedToggle
+            value={viewMode === 'projects' ? 'left' : 'right'}
+            onChange={(v) => setViewMode(v === 'left' ? 'projects' : 'skills')}
+            leftLabel={c.portfolio.modeProjects}
+            rightLabel={c.portfolio.modeSkills}
+            isDark={isDark}
+          />
         </div>
 
         {/* Intro */}
         <div className="text-center mb-14">
-          <p className={`max-w-3xl mx-auto ${isDark ? 'text-neutral-200' : 'text-gray-700'}`}>
+          <p className={`max-w-3xl mx-auto text-lg ${isDark ? 'text-neutral-400' : 'text-gray-700'}`}>
             {viewMode === 'projects' ? c.portfolio.projectsIntro : c.portfolio.skillsIntro}
           </p>
         </div>
 
-        {/* Projects */}
+        {/* Projects grid */}
         {viewMode === 'projects' && (
           <>
-            <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 place-items-center">
+            <div
+              ref={gridRef}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-stretch"
+            >
               {displayedProjects.map((project) => (
                 <button
                   key={project.id}
                   type="button"
                   onClick={() => setSelectedProjectId(project.id)}
-                  className={`${cardMaxWidth} ${cardRadius} overflow-hidden ${cardShadow} transition-all duration-300 bg-transparent`}
+                  className={`w-full ${cardRadius} overflow-hidden ${cardBorder} ${cardShadow} ${cardBg}`}
                   aria-label={`Open ${project.title[language]}`}
                 >
-                  <div className={`relative ${cardMediaHeight} overflow-hidden`}>
+                  <div className={`w-full ${cardHeight} overflow-hidden`}>
                     <img
                       src={project.images[0]?.src}
                       alt={project.title[language]}
@@ -264,7 +293,7 @@ export function Portfolio() {
                   aria-label="Load more projects"
                   type="button"
                 >
-                  <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white/90' : 'text-gray-900'}`}>
                     {c.portfolio.more}
                   </span>
                   <div className={`flex flex-col -space-y-2 ${isDark ? 'text-white' : 'text-gray-900'} wiggle-animation`}>
@@ -284,7 +313,7 @@ export function Portfolio() {
                     <ChevronUp size={20} className="-mb-3" />
                     <ChevronUp size={20} />
                   </div>
-                  <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white/90' : 'text-gray-900'}`}>
                     {c.portfolio.less}
                   </span>
                 </button>
@@ -293,32 +322,32 @@ export function Portfolio() {
           </>
         )}
 
-        {/* Skills */}
+        {/* Skills grid */}
         {viewMode === 'skills' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 place-items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-stretch">
             {skills.map((skill) => (
               <div
                 key={skill.title.en}
-                className={`${cardMaxWidth} ${cardRadius} overflow-hidden ${cardShadow} transition-all duration-300 ${
-                  isDark ? 'bg-neutral-900' : 'bg-white'
+                className={`w-full ${cardRadius} overflow-hidden ${cardBorder} ${cardShadow} ${
+                  isDark ? 'bg-white/5' : 'bg-white'
                 }`}
               >
-                <div className={`relative ${cardMediaHeight} overflow-hidden`}>
+                <div className={`w-full ${cardHeight} overflow-hidden`}>
                   <div
                     className="w-full h-full flex items-center justify-center"
                     style={{ backgroundColor: isDark ? 'white' : 'black' }}
                   >
-                    <skill.icon size={40} className="text-gray-900" />
+                    <skill.icon size={44} className="text-gray-900" />
                   </div>
                 </div>
 
-                <div className="p-5">
-                  <div className="mb-2">
-                    <span className="glass-pill">{skill.title[language]}</span>
+                <div className="p-6">
+                  <div className="mb-3">
+                    <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {skill.title[language]}
+                    </span>
                   </div>
-                  <p className={`text-sm ${isDark ? 'text-neutral-300' : 'text-gray-600'}`}>
-                    {skill.description[language]}
-                  </p>
+                  <p className={`${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>{skill.description[language]}</p>
                 </div>
               </div>
             ))}
@@ -329,20 +358,26 @@ export function Portfolio() {
       {/* Modal */}
       {selectedProject && (
         <div
-          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
           role="dialog"
           aria-modal="true"
           onMouseDown={(e) => {
+            // close only when clicking backdrop
             if (e.target === e.currentTarget) setSelectedProjectId(null);
           }}
         >
           <div
-            className={`max-w-5xl w-full ${modalRadius} overflow-hidden ${isDark ? 'bg-neutral-900' : 'bg-white'}`}
+            className={`w-full max-w-5xl ${modalRadius} overflow-hidden ${modalBorder} ${
+              isDark ? 'bg-neutral-900' : 'bg-white'
+            }`}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            <div className="max-h-[90vh] overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div
+              className="max-h-[90vh] overflow-y-auto overscroll-contain"
+              style={{ WebkitOverflowScrolling: 'touch' }}
+            >
               <div className="relative">
-                <div className={`w-full ${modalImageHeight} overflow-hidden`}>
+                <div className="h-[42vh] sm:h-[52vh] overflow-hidden">
                   <img
                     src={selectedProject.images[currentImageIndex]?.src}
                     alt={`${selectedProject.title[language]} – ${currentImageIndex + 1}`}
@@ -352,6 +387,7 @@ export function Portfolio() {
                   />
                 </div>
 
+                {/* Prev/Next (don’t close modal) */}
                 {selectedProject.images.length > 1 && (
                   <>
                     <button
@@ -405,17 +441,19 @@ export function Portfolio() {
                   <span className="glass-pill">{selectedProject.category[language]}</span>
                 </div>
 
-                <h2 className={`mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>{selectedProject.title[language]}</h2>
+                <h2 className={`mb-4 text-2xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {selectedProject.title[language]}
+                </h2>
 
-                <p className={`mb-6 ${isDark ? 'text-neutral-200' : 'text-gray-700'}`}>
+                <p className={`mb-7 text-lg ${isDark ? 'text-neutral-300' : 'text-gray-700'}`}>
                   {selectedProject.fullDescription[language]}
                 </p>
 
                 {selectedProject.processImages && selectedProject.processImages.length > 0 && (
-                  <div className="mb-8">
+                  <div className="mb-10">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {selectedProject.processImages.map((img, idx) => (
-                        <figure key={idx} className={`${cardRadius} overflow-hidden`}>
+                        <figure key={idx} className={`${cardRadius} overflow-hidden ${cardBorder}`}>
                           <div className="h-48 overflow-hidden">
                             <img
                               src={img.src}
@@ -426,7 +464,7 @@ export function Portfolio() {
                             />
                           </div>
                           {img.caption && (
-                            <figcaption className={`text-xs mt-2 ${isDark ? 'text-neutral-300' : 'text-gray-600'}`}>
+                            <figcaption className={`px-3 py-2 text-xs ${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>
                               {img.caption}
                             </figcaption>
                           )}
@@ -436,9 +474,11 @@ export function Portfolio() {
                   </div>
                 )}
 
-                <div className={`border-t pt-6 ${isDark ? 'border-neutral-700' : 'border-gray-200'}`}>
-                  <h3 className={`mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>{c.portfolio.modal.detailsTitle}</h3>
-                  <p className={`${isDark ? 'text-neutral-300' : 'text-gray-600'}`}>
+                <div className={`border-t pt-6 ${isDark ? 'border-white/10' : 'border-black/10'}`}>
+                  <h3 className={`mb-3 font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    {c.portfolio.modal.detailsTitle}
+                  </h3>
+                  <p className={`${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>
                     {selectedProject.description[language]}
                   </p>
                 </div>
@@ -449,6 +489,6 @@ export function Portfolio() {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }
