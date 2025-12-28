@@ -47,7 +47,7 @@ export const projects: Project[] = [
       no: "Lengre tekst under karusellen…",
     },
     images: [
-      { src: "/projects/ferry_station/1_5000 støer og annet.jpeg", caption: "Plan 1:5000" },
+      { src: "/projects/ferry_station/1_5000 støer og annet.webp", caption: "Plan 1:5000" },
       //{ src: "/projects/ferry_station/02_section.webp", caption: "Section" },
      // { src: "/projects/ferry_station/03_model.webp", caption: "Model" },
     ],
