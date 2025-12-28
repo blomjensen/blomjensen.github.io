@@ -71,7 +71,6 @@ export function Portfolio() {
   const { theme } = useTheme();
   const { language } = useLanguage();
   const c = content[language];
-  const isDark = theme === 'dark';
 
   const [viewMode, setViewMode] = useState<ViewMode>('projects');
   const [showMore, setShowMore] = useState(false);
@@ -85,6 +84,8 @@ export function Portfolio() {
     () => projects.find((p) => p.id === selectedProjectId) ?? null,
     [selectedProjectId]
   );
+
+  const isDark = theme === 'dark';
 
   // Reset carousel index when switching project
   useEffect(() => setCurrentImageIndex(0), [selectedProjectId]);
@@ -149,7 +150,7 @@ export function Portfolio() {
     setCurrentImageIndex((prev) => (prev - 1 + selectedProject.images.length) % selectedProject.images.length);
   };
 
-  // ===== Layout/shape constants =====
+  // ===== Style constants =====
   const cardRadius = 'rounded-2xl';
   const cardShadow = 'shadow-md hover:shadow-xl';
   const cardMediaHeight = 'h-64 sm:h-72 lg:h-80';
@@ -157,68 +158,73 @@ export function Portfolio() {
   const modalRadius = 'rounded-2xl';
   const modalImageHeight = 'h-[42vh] sm:h-[52vh]';
 
-  // ===== Segmented toggle styles (fixed!) =====
-  const toggleOuter = isDark ? 'bg-white/10 border-white/10' : 'bg-gray-200/80 border-gray-300/60';
-  const toggleActivePill = isDark ? 'bg-white' : 'bg-gray-900';
-  const toggleActiveText = isDark ? 'text-black' : 'text-white';
-  const toggleInactiveText = isDark ? 'text-white/70 hover:text-white' : 'text-gray-700 hover:text-gray-900';
-
-  const isProjects = viewMode === 'projects';
-  const insetPx = 6; // padding inside the outer pill
-  const gapPx = 14;  // comfy distance between the two inner pills
-  const buttonMinWidth = 160; // keeps text centered and highlight stable in NO/EN lengths
-
   return (
     <div className={`relative py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-black' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto">
         {/* Toggle (Projects/Skills) */}
-        <div className="flex justify-center mb-14">
-          <div
-            className={`relative inline-flex rounded-full border backdrop-blur-md ${toggleOuter}`}
-            style={{ padding: insetPx }}
-          >
-            {/* Sliding highlight */}
-            <span
-              aria-hidden
-              className={`absolute rounded-full transition-transform duration-200 ease-out shadow-sm ${toggleActivePill}`}
-              style={{
-                top: insetPx,
-                bottom: insetPx,
-                left: insetPx,
-                width: `calc(50% - ${gapPx / 2}px)`,
-                transform: isProjects ? 'translateX(0)' : `translateX(calc(100% + ${gapPx}px))`,
-              }}
-            />
+        <div className="flex justify-center mb-12">
+          {(() => {
+            const isProjects = viewMode === 'projects';
 
-            {/* Buttons */}
-            <div className="relative z-10 inline-flex" style={{ gap: gapPx }}>
-              <button
-                type="button"
-                onClick={() => setViewMode('projects')}
-                className={`rounded-full px-6 py-2 text-sm font-bold transition-colors ${
-                  isProjects ? toggleActiveText : toggleInactiveText
-                }`}
-                style={{ minWidth: buttonMinWidth, textAlign: 'center' }}
-              >
-                {c.portfolio.modeProjects}
-              </button>
+            // feel free å tweake
+            const gapPx = 16; // større luft mellom de 2 indre pillene
+            const insetPx = 6;
 
-              <button
-                type="button"
-                onClick={() => setViewMode('skills')}
-                className={`rounded-full px-6 py-2 text-sm font-bold transition-colors ${
-                  !isProjects ? toggleActiveText : toggleInactiveText
-                }`}
-                style={{ minWidth: buttonMinWidth, textAlign: 'center' }}
+            const outer = isDark ? 'bg-white/10 border-white/10' : 'bg-gray-200/70 border-gray-200';
+            const activePill = isDark ? 'bg-white' : 'bg-gray-900';
+
+            // VIKTIG: ikke-valgt tekst i dark mode må være lys grå (ikke svart)
+            const inactiveText = isDark ? 'text-neutral-300 hover:text-white' : 'text-gray-700 hover:text-gray-900';
+            const activeText = isDark ? 'text-black' : 'text-white';
+
+            return (
+              <div
+                className={`relative inline-flex rounded-full border backdrop-blur-md ${outer}`}
+                style={{ padding: insetPx }}
               >
-                {c.portfolio.modeSkills}
-              </button>
-            </div>
-          </div>
+                {/* sliding highlight pill */}
+                <span
+                  aria-hidden
+                  className={`absolute rounded-full transition-transform duration-200 ease-out shadow-sm ${activePill}`}
+                  style={{
+                    top: insetPx,
+                    bottom: insetPx,
+                    left: insetPx,
+                    width: `calc(50% - ${gapPx / 2}px)`,
+                    transform: isProjects ? 'translateX(0)' : `translateX(calc(100% + ${gapPx}px))`,
+                  }}
+                />
+
+                <div className="relative z-10 inline-flex" style={{ gap: gapPx }}>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('projects')}
+                    className={`whitespace-nowrap rounded-full px-8 py-2 text-sm font-bold transition-colors duration-200 ${
+                      isProjects ? activeText : inactiveText
+                    }`}
+                    style={{ minWidth: 180, textAlign: 'center' }}
+                  >
+                    {c.portfolio.modeProjects}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('skills')}
+                    className={`whitespace-nowrap rounded-full px-8 py-2 text-sm font-bold transition-colors duration-200 ${
+                      !isProjects ? activeText : inactiveText
+                    }`}
+                    style={{ minWidth: 180, textAlign: 'center' }}
+                  >
+                    {c.portfolio.modeSkills}
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Intro */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-14">
           <p className={`max-w-3xl mx-auto ${isDark ? 'text-neutral-200' : 'text-gray-700'}`}>
             {viewMode === 'projects' ? c.portfolio.projectsIntro : c.portfolio.skillsIntro}
           </p>
@@ -244,7 +250,6 @@ export function Portfolio() {
                       loading="lazy"
                       decoding="async"
                     />
-                    {/* Ingen tittel/summary på bildet */}
                   </div>
                 </button>
               ))}
