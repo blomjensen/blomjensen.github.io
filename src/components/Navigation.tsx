@@ -18,6 +18,8 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
   const { language, toggleLanguage } = useLanguage();
   const c = content[language];
 
+  const isDark = theme === 'dark';
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
@@ -43,28 +45,9 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
 
   const displaySection = hoveredSection || activeSection;
 
-  const navBase =
-    isScrolled
-      ? theme === 'dark'
-        ? 'text-white/60 hover:text-white/85'
-        : 'text-gray-600 hover:text-gray-800'
-      : theme === 'dark'
-        ? 'text-white/60 hover:text-white/85'
-        : 'text-gray-700/60 hover:text-gray-700/85';
-
-  const navActive =
-    theme === 'dark'
-      ? 'text-white'
-      : 'text-gray-900';
-
-  const iconColor =
-    isScrolled
-      ? theme === 'dark'
-        ? 'text-neutral-300 hover:text-white'
-        : 'text-gray-400 hover:text-gray-900'
-      : theme === 'dark'
-        ? 'text-white/90 hover:text-white'
-        : 'text-gray-600 hover:text-gray-900';
+  const activeText = isDark ? 'text-white' : 'text-gray-900';
+  const inactiveText = isDark ? 'text-white/55 hover:text-white/85' : 'text-gray-700/70 hover:text-gray-900';
+  const iconText = isDark ? 'text-white/75 hover:text-white' : 'text-gray-600 hover:text-gray-900';
 
   return (
     <nav
@@ -76,13 +59,15 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center items-center">
-          {/* Desktop Navigation */}
+          {/* Desktop */}
           <div className="hidden md:flex gap-8 items-center">
             <button
               onClick={() => handleNavClick('home')}
               onMouseEnter={() => onHover('home')}
               onMouseLeave={() => onHover(null)}
-              className={`transition-all font-bold ${displaySection === 'home' ? navActive : navBase}`}
+              className={`transition-all font-bold ${
+                displaySection === 'home' ? activeText : inactiveText
+              }`}
             >
               {c.nav.home}
             </button>
@@ -94,32 +79,46 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
                 aria-current={activeSection === item.id ? 'true' : undefined}
                 onMouseEnter={() => onHover(item.id)}
                 onMouseLeave={() => onHover(null)}
-                className={`transition-all font-bold ${displaySection === item.id ? navActive : navBase}`}
+                className={`transition-all font-bold ${
+                  displaySection === item.id ? activeText : inactiveText
+                }`}
               >
                 {item.label}
               </button>
             ))}
 
-            <button onClick={toggleTheme} className={`transition-colors ${iconColor}`} aria-label="Toggle theme">
-              {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
-            </button>
-
-            {/* Language toggle as nav-text (NO | EN) */}
             <button
-              onClick={toggleLanguage}
-              className={`text-sm font-bold tracking-wider transition-colors ${
-                theme === 'dark' ? 'text-white/70 hover:text-white' : 'text-gray-700/80 hover:text-gray-900'
-              }`}
-              aria-label="Toggle language"
-              title="Toggle language"
+              onClick={toggleTheme}
+              className={`transition-colors ${iconText}`}
+              aria-label="Toggle theme"
               type="button"
             >
-              <span className={language === 'no' ? (theme === 'dark' ? 'text-white' : 'text-gray-900') : 'opacity-50'}>
-                NO
-              </span>
-              <span className={theme === 'dark' ? 'text-white/30' : 'text-gray-400'}>&nbsp;|&nbsp;</span>
-              <span className={language === 'en' ? (theme === 'dark' ? 'text-white' : 'text-gray-900') : 'opacity-50'}>
-                EN
+              {isDark ? <Sun size={24} /> : <Moon size={24} />}
+            </button>
+
+            {/* Language toggle as “text-like” */}
+            <button
+              onClick={toggleLanguage}
+              className={`text-sm font-bold tracking-wider transition-colors ${inactiveText}`}
+              aria-label="Toggle language"
+              type="button"
+              title="Toggle language"
+            >
+              <span className={language === 'no' ? (isDark ? 'text-white' : 'text-gray-900') : ''}>NO</span>
+              <span className={isDark ? 'text-white/35' : 'text-gray-400'}>&nbsp;|&nbsp;</span>
+              <span className={language === 'en' ? (isDark ? 'text-white' : 'text-gray-900') : ''}>EN</span>
+
+              {/* subtle underline for active */}
+              <span className="block h-[2px] mt-1">
+                <span
+                  className={`block h-full rounded-full transition-all duration-200 ${
+                    isDark ? 'bg-white/60' : 'bg-gray-900/40'
+                  }`}
+                  style={{
+                    width: 20,
+                    transform: language === 'no' ? 'translateX(0px)' : 'translateX(34px)',
+                  }}
+                />
               </span>
             </button>
           </div>
@@ -129,7 +128,8 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
             <div />
             <button
               onClick={() => handleNavClick('home')}
-              className={`transition-all font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+              className={`transition-all font-bold ${activeText}`}
+              type="button"
             >
               {getCurrentSectionLabel()}
             </button>
@@ -137,8 +137,9 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
               aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-menu"
-              className={`transition-colors ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+              className={`transition-colors ${activeText}`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              type="button"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -149,9 +150,7 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
         {isMobileMenuOpen && (
           <div
             id="mobile-menu"
-            className={`md:hidden mt-4 rounded-lg shadow-lg py-4 ${
-              theme === 'dark' ? 'bg-neutral-900' : 'bg-white'
-            }`}
+            className={`md:hidden mt-4 rounded-2xl shadow-lg py-4 ${isDark ? 'bg-neutral-900' : 'bg-white'}`}
           >
             {navItems.map((item) => (
               <button
@@ -159,14 +158,9 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
                 onClick={() => handleNavClick(item.id)}
                 aria-current={activeSection === item.id ? 'true' : undefined}
                 className={`block w-full text-left px-4 py-3 transition-all font-bold ${
-                  activeSection === item.id
-                    ? theme === 'dark'
-                      ? 'text-white'
-                      : 'text-gray-900'
-                    : theme === 'dark'
-                      ? 'text-white/50'
-                      : 'text-gray-900/50'
-                } ${theme === 'dark' ? 'hover:bg-neutral-800' : 'hover:bg-gray-50'}`}
+                  activeSection === item.id ? activeText : isDark ? 'text-white/50' : 'text-gray-900/50'
+                } ${isDark ? 'hover:bg-neutral-800' : 'hover:bg-gray-50'}`}
+                type="button"
               >
                 {item.label}
               </button>
@@ -178,12 +172,12 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
                 setIsMobileMenuOpen(false);
               }}
               className={`flex items-center gap-2 w-full text-left px-4 py-3 transition-colors ${
-                theme === 'dark' ? 'text-neutral-300 hover:bg-neutral-800' : 'text-gray-600 hover:bg-gray-50'
+                isDark ? 'text-white/80 hover:bg-neutral-800' : 'text-gray-700 hover:bg-gray-50'
               }`}
               type="button"
             >
-              {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
-              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+              {isDark ? <Sun size={24} /> : <Moon size={24} />}
+              <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
             </button>
 
             <button
@@ -192,7 +186,7 @@ export function Navigation({ activeSection, onNavigate, hoveredSection, onHover 
                 setIsMobileMenuOpen(false);
               }}
               className={`flex items-center justify-between w-full text-left px-4 py-3 transition-colors ${
-                theme === 'dark' ? 'text-neutral-300 hover:bg-neutral-800' : 'text-gray-600 hover:bg-gray-50'
+                isDark ? 'text-white/80 hover:bg-neutral-800' : 'text-gray-700 hover:bg-gray-50'
               }`}
               aria-label="Toggle language"
               type="button"
