@@ -27,12 +27,12 @@ export const projects: Project[] = [
       no: "Lengre tekst under karusellen…",
     },
     images: [
-      { src: "/projects/rockfall_gallery/01_plan.png", caption: "Plan 1:500" },
-      { src: "/projects/rockfall_gallery/02_section.png", caption: "Snitt 1:50" },
-      { src: "/projects/rockfall_gallery/03_model.png", caption: "Modell 1:200" },
+      { src: "/projects/rockfall_gallery/01_plan.webp", caption: "Plan 1:500" },
+      { src: "/projects/rockfall_gallery/02_section.webp", caption: "Snitt 1:50" },
+      { src: "/projects/rockfall_gallery/03_model.webp", caption: "Modell 1:200" },
     ],
     processImages: [
-      // { src: "/projects/rockfall_gallery/10_process.png", caption: "Prosess" },
+      // { src: "/projects/rockfall_gallery/10_process.webp", caption: "Prosess" },
     ],
   },
 ];
