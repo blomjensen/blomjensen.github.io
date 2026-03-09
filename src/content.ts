@@ -19,9 +19,9 @@ export const content = {
       modeProjects: 'Projects',
       modeSkills: 'Skills',
       projectsIntro:
-        'A selection of work from studio courses and independent explorations — focusing on landscape, systems, and storytelling.',
+        'A selection of academic and independent work in landscape architecture, with a focus on spatial strategy, ecological systems, and visual communication.',
       skillsIntro:
-        'Core competencies — both digital tools and landscape architecture fundamentals that shape how I work.',
+        'A practical toolkit spanning landscape architecture, digital workflows, and visual representation.',
       more: 'More',
       less: 'Less',
       modal: {
@@ -34,15 +34,16 @@ export const content = {
     about: {
       title: 'About',
       p1:
-        "I'm a landscape architecture student at AHO (Oslo School of Architecture and Design) — working at the intersection of design, ecology, and digital workflows.",
+        'I am a landscape architecture student at AHO (The Oslo School of Architecture and Design), working across design, ecology, and digital workflows.',
       p2:
-        'I enjoy building clear concepts, strong visual narratives, and practical design systems — from site analysis to detailed representation and model making.',
+        'My work combines site reading, concept development, and clear visual communication, from early analysis to detailed drawings, models, and presentations.',
       p3:
-        "I'm looking for a full-time role from 2026, and I'm also available for selected freelance projects.",
+        'I am seeking a full-time role from 2026, and I remain available for selected freelance work in design, visualization, mapping, and digital production.',
     },
     contact: {
       title: 'Get in touch',
-      intro: "Want to collaborate or discuss a project? Send a message — I'd love to hear from you.",
+      intro:
+        'Interested in collaborating, discussing a role, or talking through a project? Send a message and I will get back to you.',
       form: {
         name: 'Name',
         email: 'Email',
@@ -54,7 +55,7 @@ export const content = {
       connectTitle: 'Connect',
       availabilityTitle: 'Availability',
       availabilityText:
-        "Open to full-time roles from 2026 and selected freelance projects (design, visualization, mapping, and digital workflows).",
+        'Available for full-time roles from 2026, and for selected freelance work in design, visualization, mapping, and digital workflows.',
       availabilityBadge: 'Available',
     },
   },
@@ -74,9 +75,9 @@ export const content = {
       modeProjects: 'Prosjekter',
       modeSkills: 'Kompetanse',
       projectsIntro:
-        'Et utvalg arbeid fra studio og egne utforskninger — med fokus på landskap, systemer og formidling.',
+        'Et utvalg akademisk arbeid og egne prosjekter innen landskapsarkitektur, med fokus på romlige strategier, økologiske systemer og visuell formidling.',
       skillsIntro:
-        'Kjernekompetanse — både digitale verktøy og landskapsarkitektur-fundamentet som styrer hvordan jeg jobber.',
+        'Et praktisk verktøysett som spenner fra landskapsarkitektur og digitale arbeidsflyter til visuell representasjon.',
       more: 'Mer',
       less: 'Mindre',
       modal: {
@@ -89,15 +90,16 @@ export const content = {
     about: {
       title: 'Om meg',
       p1:
-        'Jeg er landskapsarkitektstudent ved AHO — og jobber i skjæringspunktet mellom design, økologi og digitale arbeidsflyter.',
+        'Jeg er landskapsarkitektstudent ved AHO og jobber i skjæringspunktet mellom design, økologi og digitale arbeidsflyter.',
       p2:
-        'Jeg liker å bygge tydelige konsepter, sterke visuelle narrativ og praktiske designsystemer — fra analyse til detaljert representasjon og modellbygging.',
+        'Arbeidet mitt kombinerer stedslesning, konseptutvikling og tydelig visuell formidling - fra tidlig analyse til detaljerte tegninger, modeller og presentasjoner.',
       p3:
-        'Jeg ser etter fast jobb fra 2026, og kan også ta utvalgte freelance-oppdrag.',
+        'Jeg søker fast jobb fra 2026, og er også tilgjengelig for utvalgte freelance-oppdrag innen design, visualisering, kart og digital produksjon.',
     },
     contact: {
       title: 'Ta kontakt',
-      intro: 'Vil du samarbeide eller diskutere et prosjekt? Send en melding — jeg hører gjerne fra deg.',
+      intro:
+        'Vil du samarbeide, diskutere en rolle eller snakke om et prosjekt? Send en melding, så hører du fra meg.',
       form: {
         name: 'Navn',
         email: 'E-post',
@@ -109,7 +111,7 @@ export const content = {
       connectTitle: 'Lenker',
       availabilityTitle: 'Tilgjengelighet',
       availabilityText:
-        'Åpen for fast jobb fra 2026 og utvalgte freelance-oppdrag (design, visualisering, kart, og digitale arbeidsflyter).',
+        'Tilgjengelig for fast jobb fra 2026, og for utvalgte freelance-oppdrag innen design, visualisering, kart og digitale arbeidsflyter.',
       availabilityBadge: 'Tilgjengelig',
     },
   },
