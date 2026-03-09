@@ -16,6 +16,7 @@ export function Contact() {
   const c = content[language];
 
   const TO_EMAIL = 'bjorn@blom-jensen.no';
+  const phoneHref = 'tel:+4790640381';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,18 +42,20 @@ export function Contact() {
   };
 
   return (
-    <div className={`py-20 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`}>
+    <div
+      data-tone={theme}
+      className={`py-20 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-black' : 'bg-gray-50'}`}
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className={`mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{c.contact.title}</h2>
-          <p className={`max-w-2xl mx-auto ${theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}`}>
-            {c.contact.intro}
-          </p>
+        <div className="section-header">
+          <p className="section-kicker">{language === 'no' ? 'Kontakt' : 'Contact'}</p>
+          <h2 className="section-title">{c.contact.title}</h2>
+          <p className="section-lead">{c.contact.intro}</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Contact Form */}
-          <div className="relative z-40 p-8">
+          <div className="section-card relative z-40">
             <form onSubmit={handleSubmit}>
               <div className="mb-6">
                 <label htmlFor="name" className={`block mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -122,9 +125,9 @@ export function Contact() {
           </div>
 
           {/* Contact Information */}
-          <div className="relative z-40">
-            <div className="mb-8">
-              <h3 className={`mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{c.contact.infoTitle}</h3>
+          <div className="relative z-40 space-y-6">
+            <div className="section-card">
+              <h3 className="section-subtitle mb-6">{c.contact.infoTitle}</h3>
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
                   <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
@@ -133,7 +136,9 @@ export function Contact() {
                     <Mail size={20} />
                   </div>
                   <div>
-                    <p className={theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}>bjorn@blom-jensen.no</p>
+                    <a href={`mailto:${TO_EMAIL}`} className="contact-meta hover:opacity-80 transition-opacity">
+                      {TO_EMAIL}
+                    </a>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -143,7 +148,7 @@ export function Contact() {
                     <MapPin size={20} />
                   </div>
                   <div>
-                    <p className={theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}>Oslo, Norway</p>
+                    <p className="contact-meta">Oslo, Norway</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -153,44 +158,42 @@ export function Contact() {
                     <Phone size={20} />
                   </div>
                   <div>
-                    <p className={theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}>+47 906 40 381</p>
+                    <a href={phoneHref} className="contact-meta hover:opacity-80 transition-opacity">
+                      +47 906 40 381
+                    </a>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div>
-              <h3 className={`mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{c.contact.connectTitle}</h3>
-              <div className="flex gap-4">
+            <div className="section-card">
+              <h3 className="section-subtitle mb-6">{c.contact.connectTitle}</h3>
+              <div className="contact-link-grid">
                 <a
                   href="https://www.linkedin.com/in/bjornblomjensen/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 p-4 transition-opacity hover:opacity-70"
+                  className="contact-link-card"
                 >
-                  <Linkedin size={24} className={theme === 'dark' ? 'text-white' : 'text-gray-900'} />
-                  <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>LinkedIn</span>
+                  <Linkedin size={24} />
+                  <span>LinkedIn</span>
                 </a>
                 <a
                   href="https://www.instagram.com/bjornblomjensen/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 p-4 transition-opacity hover:opacity-70"
+                  className="contact-link-card"
                 >
-                  <Instagram size={24} className={theme === 'dark' ? 'text-white' : 'text-gray-900'} />
-                  <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Instagram</span>
+                  <Instagram size={24} />
+                  <span>Instagram</span>
                 </a>
               </div>
             </div>
 
-            <div className="mt-8 p-6">
-              <h3 className={`mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{c.contact.availabilityTitle}</h3>
-              <p className={`mb-4 ${theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}`}>
-                {c.contact.availabilityText}
-              </p>
-              <div className="inline-block px-4 py-2 bg-green-900/30 text-green-400 rounded-full border border-green-500/30">
-                {c.contact.availabilityBadge}
-              </div>
+            <div className="section-card">
+              <h3 className="section-subtitle mb-4">{c.contact.availabilityTitle}</h3>
+              <p className="section-copy mb-4">{c.contact.availabilityText}</p>
+              <div className="contact-badge">{c.contact.availabilityBadge}</div>
             </div>
           </div>
         </div>

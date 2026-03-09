@@ -236,8 +236,19 @@ export function Portfolio() {
   const modalBorder = isDark ? 'border border-white/10' : 'border border-black/10';
 
   return (
-    <section className={`relative py-24 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-black' : 'bg-gray-50'}`}>
+    <section
+      data-tone={theme}
+      className={`relative py-24 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-black' : 'bg-gray-50'}`}
+    >
       <div className="max-w-7xl mx-auto">
+        <div className="section-header">
+          <p className="section-kicker">{c.nav.portfolio}</p>
+          <h2 className="section-title">{c.portfolio.title}</h2>
+          <p className="section-lead">
+            {viewMode === 'projects' ? c.portfolio.projectsIntro : c.portfolio.skillsIntro}
+          </p>
+        </div>
+
         {/* Toggle */}
         <div className="flex justify-center mb-12">
           <SegmentedToggle
@@ -247,13 +258,6 @@ export function Portfolio() {
             rightLabel={c.portfolio.modeSkills}
             isDark={isDark}
           />
-        </div>
-
-        {/* Intro */}
-        <div className="text-center mb-14">
-          <p className={`max-w-3xl mx-auto text-lg ${isDark ? 'text-neutral-400' : 'text-gray-700'}`}>
-            {viewMode === 'projects' ? c.portfolio.projectsIntro : c.portfolio.skillsIntro}
-          </p>
         </div>
 
         {/* Projects grid */}

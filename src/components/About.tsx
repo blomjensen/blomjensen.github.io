@@ -33,33 +33,37 @@ export function About() {
       setParallaxOffset(scrollProgress * -20);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Initial call
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <div ref={sectionRef} className={`py-20 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}>
+    <div
+      ref={sectionRef}
+      data-tone={theme}
+      className={`py-20 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}
+    >
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="relative z-40">
-            <h2 className={`mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{c.about.title}</h2>
-            <p className={`mb-4 ${theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}`}>
-              {c.about.p1}
-            </p>
-            <p className={`mb-4 ${theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}`}>
-              {c.about.p2}
-            </p>
-            <p className={theme === 'dark' ? 'text-neutral-400' : 'text-gray-600'}>
-              {c.about.p3}
-            </p>
+            <div className="section-header section-header--left">
+              <p className="section-kicker">{language === 'no' ? 'Profil' : 'Profile'}</p>
+              <h2 className="section-title">{c.about.title}</h2>
+            </div>
+
+            <div className="section-card">
+              <p className="section-copy">{c.about.p1}</p>
+              <p className="section-copy">{c.about.p2}</p>
+              <p className="section-copy">{c.about.p3}</p>
+            </div>
           </div>
-          <div className="relative z-40 h-96 rounded-lg overflow-hidden shadow-lg">
+          <div className="section-image-frame relative z-40 h-96">
             <img
               src={aboutImage}
-              alt="About Me"
+              alt="Portrait of Bjorn Blom-Jensen"
               className="w-full object-cover"
-              loading="lazy"
+              loading="eager"
               decoding="async"
               style={{ 
                 transform: `scaleX(-1) translateY(${parallaxOffset}%)`,

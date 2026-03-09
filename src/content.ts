@@ -15,6 +15,7 @@ export const content = {
       status: 'Under construction',
     },
     portfolio: {
+      title: 'Selected work and skills',
       modeProjects: 'Projects',
       modeSkills: 'Skills',
       projectsIntro:
@@ -69,6 +70,7 @@ export const content = {
       status: 'Under utvikling',
     },
     portfolio: {
+      title: 'Utvalgte arbeider og kompetanse',
       modeProjects: 'Prosjekter',
       modeSkills: 'Kompetanse',
       projectsIntro:
