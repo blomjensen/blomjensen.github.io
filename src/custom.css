@@ -144,6 +144,37 @@
     gap: 0.75rem;
     padding: 0.8rem 1rem;
   }
+
+  .site-nav-shell,
+  .site-mobile-menu,
+  .hero-status,
+  .section-card,
+  .contact-link-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  [data-tone='dark'] .site-nav-shell,
+  [data-tone='dark'] .site-mobile-menu {
+    background: rgba(8, 8, 8, 0.82);
+  }
+
+  [data-tone='light'] .site-nav-shell,
+  [data-tone='light'] .site-mobile-menu {
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  [data-tone='dark'] .hero-status,
+  [data-tone='dark'] .section-card,
+  [data-tone='dark'] .contact-link-card {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  [data-tone='light'] .hero-status,
+  [data-tone='light'] .section-card,
+  [data-tone='light'] .contact-link-card {
+    background: rgba(255, 255, 255, 0.94);
+  }
 }
 
 .section-header {

@@ -4,6 +4,7 @@ import heroImage from '../assets/e36c99279b001e794c342b64cce041989d85e9a9.webp';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { content } from '../content';
+import { useReducedEffects } from '../hooks/useReducedEffects';
 
 interface HeroProps {
   onExploreClick: () => void;
@@ -16,17 +17,25 @@ export function Hero({ onExploreClick }: HeroProps) {
   const { theme } = useTheme();
   const { language } = useLanguage();
   const c = content[language];
+  const reduceEffects = useReducedEffects();
 
   useEffect(() => {
+    if (reduceEffects) {
+      setScrollY(0);
+      return;
+    }
+
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [reduceEffects]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (reduceEffects) return;
+
     if (textRef.current) {
       const rect = textRef.current.getBoundingClientRect();
       setMousePos({
@@ -41,6 +50,7 @@ export function Hero({ onExploreClick }: HeroProps) {
   };
 
   const calculateScale = (letterIndex: number, totalLetters: number) => {
+    if (reduceEffects) return 1;
     if (!textRef.current) return 1;
     
     const letterWidth = textRef.current.offsetWidth / totalLetters;
@@ -71,8 +81,8 @@ export function Hero({ onExploreClick }: HeroProps) {
           loading="eager"
           decoding="async"
           style={{
-            transform: `translate3d(0, ${scrollY * 0.5}px, 0)`,
-            willChange: 'transform',
+            transform: reduceEffects ? 'none' : `translate3d(0, ${scrollY * 0.5}px, 0)`,
+            willChange: reduceEffects ? 'auto' : 'transform',
             filter: theme === 'light' ? 'invert(1)' : 'none',
           }}
         />

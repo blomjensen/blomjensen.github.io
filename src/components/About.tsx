@@ -3,6 +3,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { content } from '../content';
+import { useReducedEffects } from '../hooks/useReducedEffects';
 
 export function About() {
   const { theme } = useTheme();
@@ -10,8 +11,14 @@ export function About() {
   const c = content[language];
   const [parallaxOffset, setParallaxOffset] = useState(0);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const reduceEffects = useReducedEffects();
 
   useEffect(() => {
+    if (reduceEffects) {
+      setParallaxOffset(0);
+      return;
+    }
+
     const handleScroll = () => {
       if (!sectionRef.current) return;
       
@@ -36,7 +43,7 @@ export function About() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Initial call
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [reduceEffects]);
 
   return (
     <div
@@ -66,8 +73,8 @@ export function About() {
               loading="eager"
               decoding="async"
               style={{ 
-                transform: `scaleX(-1) translateY(${parallaxOffset}%)`,
-                willChange: 'transform',
+                transform: reduceEffects ? 'scaleX(-1)' : `scaleX(-1) translateY(${parallaxOffset}%)`,
+                willChange: reduceEffects ? 'auto' : 'transform',
                 height: '120%',
                 marginTop: '0'
               }}
