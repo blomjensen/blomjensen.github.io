@@ -22,7 +22,7 @@ export function Hero({ onExploreClick }: HeroProps) {
       setScrollY(window.scrollY);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -81,38 +81,47 @@ export function Hero({ onExploreClick }: HeroProps) {
 
       {/* Content */}
       <div className={`relative h-full flex flex-col items-center justify-center text-center px-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-        <button
-          onClick={onExploreClick}
-          className="cursor-pointer"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div
-            ref={textRef}
-            className="inline-flex"
-            style={{ 
-              fontFamily: 'Futura, "Century Gothic", "Trebuchet MS", Arial, sans-serif', 
-              fontWeight: 600, 
-              fontSize: 'clamp(1rem, 4vw, 1.75rem)', 
-              letterSpacing: '0.15em',
-              height: 'clamp(2.5rem, 8vw, 3.5rem)', // Fixed height to prevent layout shift
-              alignItems: 'center',
-            }}
+        <div className="flex flex-col items-center">
+          <button
+            onClick={onExploreClick}
+            className="cursor-pointer"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
           >
-            {letters.map((letter, index) => (
-              <span
-                key={index}
-                className="inline-block transition-transform duration-200 ease-out"
-                style={{
-                  transform: `scale(${calculateScale(index, letters.length)})`,
-                  transformOrigin: 'center center',
-                }}
-              >
-                {letter === ' ' ? '\u00A0' : letter}
-              </span>
-            ))}
-          </div>
-        </button>
+            <div
+              ref={textRef}
+              className="inline-flex"
+              style={{ 
+                fontFamily: 'Futura, "Century Gothic", "Trebuchet MS", Arial, sans-serif', 
+                fontWeight: 600, 
+                fontSize: 'clamp(1rem, 4vw, 1.75rem)', 
+                letterSpacing: '0.15em',
+                height: 'clamp(2.5rem, 8vw, 3.5rem)', // Fixed height to prevent layout shift
+                alignItems: 'center',
+              }}
+            >
+              {letters.map((letter, index) => (
+                <span
+                  key={index}
+                  className="inline-block transition-transform duration-200 ease-out"
+                  style={{
+                    transform: `scale(${calculateScale(index, letters.length)})`,
+                    transformOrigin: 'center center',
+                  }}
+                >
+                  {letter === ' ' ? '\u00A0' : letter}
+                </span>
+              ))}
+            </div>
+          </button>
+
+          <p
+            className="hero-status sm:text-xs"
+            data-tone={theme}
+          >
+            {c.hero.status}
+          </p>
+        </div>
       </div>
 
       {/* Scroll Indicator - Clickable */}

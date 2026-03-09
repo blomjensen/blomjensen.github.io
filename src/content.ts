@@ -12,6 +12,7 @@ export const content = {
     },
     hero: {
       ariaScroll: 'Scroll to portfolio',
+      status: 'Under construction',
     },
     portfolio: {
       modeProjects: 'Projects',
@@ -65,6 +66,7 @@ export const content = {
     },
     hero: {
       ariaScroll: 'Scroll til portefølje',
+      status: 'Under utvikling',
     },
     portfolio: {
       modeProjects: 'Prosjekter',
