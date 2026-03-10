@@ -182,7 +182,8 @@ export function Portfolio() {
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedProject]);
 
-  const displayedProjects = showMore ? projects : projects.slice(0, 4);
+  const hasProjectOverflow = projects.length > 4;
+  const displayedProjects = hasProjectOverflow && !showMore ? projects.slice(0, 4) : projects;
 
   const handleShowMore = () => {
     setShowMore(true);
@@ -255,7 +256,7 @@ export function Portfolio() {
               ref={gridRef}
               className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-stretch"
             >
-              {displayedProjects.map((project) => (
+              {displayedProjects.map((project, index) => (
                 <button
                   key={project.id}
                   type="button"
@@ -268,49 +269,66 @@ export function Portfolio() {
                       src={project.images[0]?.src}
                       alt={project.title[language]}
                       className="portfolio-media-image"
-                      loading="lazy"
+                      loading={index < 2 ? 'eager' : 'lazy'}
                       decoding="async"
                     />
+                  </div>
+                  <div className="px-6 pb-6 text-left">
+                    <p
+                      className={`mb-2 text-xs font-semibold uppercase tracking-[0.22em] ${
+                        isDark ? 'text-white/45' : 'text-gray-500'
+                      }`}
+                    >
+                      {project.category[language]}
+                    </p>
+                    <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {project.title[language]}
+                    </h3>
+                    <p className={`mt-3 text-sm leading-7 ${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>
+                      {project.description[language]}
+                    </p>
                   </div>
                 </button>
               ))}
             </div>
 
-            <div className="flex justify-center mt-10">
-              {!showMore ? (
-                <button
-                  ref={moreButtonRef}
-                  onClick={handleShowMore}
-                  className="flex flex-col items-center gap-2 group"
-                  aria-label="Load more projects"
-                  type="button"
-                >
-                  <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white/90' : 'text-gray-900'}`}>
-                    {c.portfolio.more}
-                  </span>
-                  <div className={`flex flex-col -space-y-2 ${isDark ? 'text-white' : 'text-gray-900'} wiggle-animation`}>
-                    <ChevronDown size={20} className="-mb-3" />
-                    <ChevronDown size={20} />
-                  </div>
-                </button>
-              ) : (
-                <button
-                  ref={moreButtonRef}
-                  onClick={handleShowLess}
-                  className="flex flex-col items-center gap-2 group"
-                  aria-label="Show less projects"
-                  type="button"
-                >
-                  <div className={`flex flex-col -space-y-2 ${isDark ? 'text-white' : 'text-gray-900'} wiggle-animation`}>
-                    <ChevronUp size={20} className="-mb-3" />
-                    <ChevronUp size={20} />
-                  </div>
-                  <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white/90' : 'text-gray-900'}`}>
-                    {c.portfolio.less}
-                  </span>
-                </button>
-              )}
-            </div>
+            {hasProjectOverflow && (
+              <div className="flex justify-center mt-10">
+                {!showMore ? (
+                  <button
+                    ref={moreButtonRef}
+                    onClick={handleShowMore}
+                    className="flex flex-col items-center gap-2 group"
+                    aria-label="Load more projects"
+                    type="button"
+                  >
+                    <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white/90' : 'text-gray-900'}`}>
+                      {c.portfolio.more}
+                    </span>
+                    <div className={`flex flex-col -space-y-2 ${isDark ? 'text-white' : 'text-gray-900'} wiggle-animation`}>
+                      <ChevronDown size={20} className="-mb-3" />
+                      <ChevronDown size={20} />
+                    </div>
+                  </button>
+                ) : (
+                  <button
+                    ref={moreButtonRef}
+                    onClick={handleShowLess}
+                    className="flex flex-col items-center gap-2 group"
+                    aria-label="Show less projects"
+                    type="button"
+                  >
+                    <div className={`flex flex-col -space-y-2 ${isDark ? 'text-white' : 'text-gray-900'} wiggle-animation`}>
+                      <ChevronUp size={20} className="-mb-3" />
+                      <ChevronUp size={20} />
+                    </div>
+                    <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white/90' : 'text-gray-900'}`}>
+                      {c.portfolio.less}
+                    </span>
+                  </button>
+                )}
+              </div>
+            )}
           </>
         )}
 
