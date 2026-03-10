@@ -268,7 +268,7 @@ export function Portfolio() {
                     <img
                       src={project.images[0]?.src}
                       alt={project.title[language]}
-                      className="portfolio-media-image"
+                      className="portfolio-card-image"
                       loading={index < 2 ? 'eager' : 'lazy'}
                       decoding="async"
                     />
@@ -391,7 +391,7 @@ export function Portfolio() {
                   <img
                     src={selectedProject.images[currentImageIndex]?.src}
                     alt={`${selectedProject.title[language]} – ${currentImageIndex + 1}`}
-                    className="portfolio-media-image"
+                    className="portfolio-modal-image"
                     loading="eager"
                     decoding="async"
                   />
@@ -468,7 +468,7 @@ export function Portfolio() {
                             <img
                               src={img.src}
                               alt={img.caption ?? `Process ${idx + 1}`}
-                              className="portfolio-media-image"
+                              className="portfolio-modal-image"
                               loading="lazy"
                               decoding="async"
                             />
