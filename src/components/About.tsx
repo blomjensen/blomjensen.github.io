@@ -55,7 +55,6 @@ export function About() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="relative z-40">
             <div className="section-header section-header--left">
-              <p className="section-kicker">{language === 'no' ? 'Profil' : 'Profile'}</p>
               <h2 className="section-title">{c.about.title}</h2>
             </div>
 
@@ -65,7 +64,7 @@ export function About() {
               <p className="section-copy">{c.about.p3}</p>
             </div>
           </div>
-          <div className="section-image-frame relative z-40 h-96">
+          <div className="section-image-frame about-media-frame relative z-40">
             <img
               src={aboutImage}
               alt="Portrait of Bjorn Blom-Jensen"

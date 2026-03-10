@@ -48,7 +48,6 @@ export function Contact() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="section-header">
-          <p className="section-kicker">{language === 'no' ? 'Kontakt' : 'Contact'}</p>
           <h2 className="section-title">{c.contact.title}</h2>
           <p className="section-lead">{c.contact.intro}</p>
         </div>

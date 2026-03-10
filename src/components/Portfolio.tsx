@@ -81,31 +81,23 @@ function SegmentedToggle({
   isDark: boolean;
 }) {
   const isLeft = value === 'left';
+  const tone = isDark ? 'dark' : 'light';
 
   // Tuning for "screenshot look"
   const inset = 6; // padding inside outer pill
   const gap = 18; // space between inner pills (feel free to tweak)
   const btnMinW = 160;
 
-  const outer = isDark
-    ? 'bg-white/5 border-white/10'
-    : 'bg-gray-200/70 border-gray-300/60';
-
-  const highlight = isDark ? 'bg-white' : 'bg-gray-900';
-  const activeText = isDark ? 'text-black' : 'text-white';
-  const inactiveText = isDark
-    ? 'text-white/70 hover:text-white'
-    : 'text-gray-700 hover:text-gray-900';
-
   return (
     <div
-      className={`relative inline-flex rounded-full border backdrop-blur-md ${outer}`}
+      className="segmented-toggle"
+      data-tone={tone}
       style={{ padding: inset }}
     >
       {/* Sliding highlight */}
       <span
         aria-hidden
-        className={`absolute rounded-full transition-transform duration-200 ease-out ${highlight}`}
+        className="segmented-toggle-thumb"
         style={{
           top: inset,
           bottom: inset,
@@ -119,9 +111,8 @@ function SegmentedToggle({
         <button
           type="button"
           onClick={() => onChange('left')}
-          className={`rounded-full px-7 py-2 text-base font-semibold tracking-wide transition-colors ${
-            isLeft ? activeText : inactiveText
-          }`}
+          className="segmented-toggle-button"
+          data-active={isLeft ? 'true' : 'false'}
           style={{ minWidth: btnMinW, textAlign: 'center' }}
         >
           {leftLabel}
@@ -130,9 +121,8 @@ function SegmentedToggle({
         <button
           type="button"
           onClick={() => onChange('right')}
-          className={`rounded-full px-7 py-2 text-base font-semibold tracking-wide transition-colors ${
-            !isLeft ? activeText : inactiveText
-          }`}
+          className="segmented-toggle-button"
+          data-active={!isLeft ? 'true' : 'false'}
           style={{ minWidth: btnMinW, textAlign: 'center' }}
         >
           {rightLabel}
@@ -226,7 +216,6 @@ export function Portfolio() {
 
   // === “screenshot” card styling ===
   const cardRadius = 'rounded-3xl';
-  const cardHeight = 'h-72 sm:h-80 lg:h-[360px]';
   const cardBorder = isDark ? 'border border-white/10' : 'border border-black/10';
   const cardShadow = 'shadow-sm hover:shadow-xl transition-shadow duration-300';
   const cardBg = isDark ? 'bg-black/10' : 'bg-white';
@@ -242,7 +231,6 @@ export function Portfolio() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="section-header">
-          <p className="section-kicker">{c.nav.portfolio}</p>
           <h2 className="section-title">{c.portfolio.title}</h2>
           <p className="section-lead">
             {viewMode === 'projects' ? c.portfolio.projectsIntro : c.portfolio.skillsIntro}
@@ -272,14 +260,14 @@ export function Portfolio() {
                   key={project.id}
                   type="button"
                   onClick={() => setSelectedProjectId(project.id)}
-                  className={`w-full ${cardRadius} overflow-hidden ${cardBorder} ${cardShadow} ${cardBg}`}
+                  className={`group w-full ${cardRadius} overflow-hidden ${cardBorder} ${cardShadow} ${cardBg}`}
                   aria-label={`Open ${project.title[language]}`}
                 >
-                  <div className={`w-full ${cardHeight} overflow-hidden`}>
+                  <div className="portfolio-media-frame" data-tone={theme}>
                     <img
                       src={project.images[0]?.src}
                       alt={project.title[language]}
-                      className="w-full h-full object-cover object-center"
+                      className="portfolio-media-image"
                       loading="lazy"
                       decoding="async"
                     />
@@ -336,10 +324,10 @@ export function Portfolio() {
                   isDark ? 'bg-white/5' : 'bg-white'
                 }`}
               >
-                <div className={`w-full ${cardHeight} overflow-hidden`}>
+                <div className="portfolio-media-frame" data-tone={theme}>
                   <div
                     className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: isDark ? 'white' : 'black' }}
+                    style={{ borderRadius: '1.25rem', backgroundColor: isDark ? 'white' : 'black' }}
                   >
                     <skill.icon size={44} className="text-gray-900" />
                   </div>
@@ -381,11 +369,11 @@ export function Portfolio() {
               style={{ WebkitOverflowScrolling: 'touch' }}
             >
               <div className="relative">
-                <div className="h-[42vh] sm:h-[52vh] overflow-hidden">
+                <div className="portfolio-modal-media" data-tone={theme}>
                   <img
                     src={selectedProject.images[currentImageIndex]?.src}
                     alt={`${selectedProject.title[language]} – ${currentImageIndex + 1}`}
-                    className="w-full h-full object-cover object-center"
+                    className="portfolio-media-image"
                     loading="eager"
                     decoding="async"
                   />
@@ -458,11 +446,11 @@ export function Portfolio() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {selectedProject.processImages.map((img, idx) => (
                         <figure key={idx} className={`${cardRadius} overflow-hidden ${cardBorder}`}>
-                          <div className="h-48 overflow-hidden">
+                          <div className="portfolio-process-media" data-tone={theme}>
                             <img
                               src={img.src}
                               alt={img.caption ?? `Process ${idx + 1}`}
-                              className="w-full h-full object-cover object-center"
+                              className="portfolio-media-image"
                               loading="lazy"
                               decoding="async"
                             />
