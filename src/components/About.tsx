@@ -1,86 +1,61 @@
 import aboutImage from '../assets/11641084856f4253f2024f07b07edcc8d4b7a88f.webp';
-import { useTheme } from '../contexts/ThemeContext';
-import { useState, useEffect, useRef } from 'react';
-import { useLanguage } from '../contexts/LanguageContext';
 import { content } from '../content';
-import { useReducedEffects } from '../hooks/useReducedEffects';
+import { useLanguage } from '../contexts/LanguageContext';
+
+const aboutMeta = {
+  en: [
+    ['Profile', 'Landscape architect, AHO 2026'],
+    ['Location', 'Oslo, Norway'],
+    ['Focus', 'Terrain, infrastructure, maintenance, climate adaptation'],
+    ['Tools', 'QGIS, Rhino, Adobe CC, model making, writing'],
+  ],
+  no: [
+    ['Profil', 'Landskapsarkitekt, AHO 2026'],
+    ['Sted', 'Oslo, Norge'],
+    ['Fokus', 'Terreng, infrastruktur, drift, klimatilpasning'],
+    ['Verktøy', 'QGIS, Rhino, Adobe CC, modellarbeid, tekst'],
+  ],
+} as const;
 
 export function About() {
-  const { theme } = useTheme();
   const { language } = useLanguage();
   const c = content[language];
-  const [parallaxOffset, setParallaxOffset] = useState(0);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const reduceEffects = useReducedEffects();
-
-  useEffect(() => {
-    if (reduceEffects) {
-      setParallaxOffset(0);
-      return;
-    }
-
-    const handleScroll = () => {
-      if (!sectionRef.current) return;
-      
-      const rect = sectionRef.current.getBoundingClientRect();
-      const sectionTop = rect.top;
-      const sectionHeight = rect.height;
-      const windowHeight = window.innerHeight;
-      
-      // Calculate center of the section
-      const sectionCenter = sectionTop + sectionHeight / 2;
-      
-      // Start when section is 50% visible (center at bottom of viewport)
-      // End when 50% has scrolled past (center at top of viewport)
-      const scrollProgress = Math.max(0, Math.min(1, 
-        (windowHeight - sectionCenter) / windowHeight
-      ));
-      
-      // Map progress to image translation (0% to -20% to show bottom of 120% height image)
-      setParallaxOffset(scrollProgress * -20);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial call
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [reduceEffects]);
 
   return (
-    <div
-      ref={sectionRef}
-      data-tone={theme}
-      className={`py-20 px-4 sm:px-6 lg:px-8 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}
-    >
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="relative z-40">
-            <div className="section-header section-header--left">
-              <h2 className="section-title">{c.about.title}</h2>
-            </div>
+    <section id="about" className="about-section" aria-labelledby="about-heading">
+      <div className="about-layout">
+        <div className="about-copy">
+          <h2 id="about-heading" className="section-title">
+            {c.about.title}
+          </h2>
 
-            <div className="section-card">
-              <p className="section-copy">{c.about.p1}</p>
-              <p className="section-copy">{c.about.p2}</p>
-              <p className="section-copy">{c.about.p3}</p>
-            </div>
-          </div>
-          <div className="section-image-frame about-media-frame relative z-40">
-            <img
-              src={aboutImage}
-              alt="Portrait of Bjorn Blom-Jensen"
-              className="w-full object-cover"
-              loading="eager"
-              decoding="async"
-              style={{ 
-                transform: reduceEffects ? 'scaleX(-1)' : `scaleX(-1) translateY(${parallaxOffset}%)`,
-                willChange: reduceEffects ? 'auto' : 'transform',
-                height: '120%',
-                marginTop: '0'
-              }}
-            />
+          <div className="about-text">
+            <p>{c.about.p1}</p>
+            <p>{c.about.p2}</p>
+            <p>{c.about.p3}</p>
           </div>
         </div>
+
+        <figure className="about-portrait">
+          <img
+            src={aboutImage}
+            alt={language === 'en' ? 'Portrait of Bjørn Blom-Jensen' : 'Portrett av Bjørn Blom-Jensen'}
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+
+        <aside className="about-meta" aria-label={language === 'en' ? 'Profile details' : 'Profildetaljer'}>
+          <dl>
+            {aboutMeta[language].map(([label, value]) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </aside>
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,502 +1,372 @@
-import {
-  Award,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  GraduationCap,
-  TreePine,
-  Users,
-  X,
-} from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, Maximize2, Minus, Plus } from 'lucide-react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useTheme } from '../contexts/ThemeContext';
 import { projects, type Project } from '../data/projects';
 
-type ViewMode = 'projects' | 'skills';
-
-const skills = [
-  {
-    icon: GraduationCap,
-    title: { en: 'Landscape Architecture', no: 'Landskapsarkitektur' },
-    description: {
-      en: 'Site analysis, concept development, spatial sequencing, planting strategy, and robust design detailing.',
-      no: 'Stedsanalyse, konseptutvikling, romlig dramaturgi, planting, og robuste detaljløsninger.',
-    },
+const labels = {
+  en: {
+    kicker: 'Project index',
+    projectType: 'Project case',
+    open: 'Open case',
+    close: 'Close case',
+    featured: 'Featured image',
+    closeImage: 'Close case by selecting the image',
+    zoomImage: 'Open image gallery',
+    closeGallery: 'Close image gallery',
+    previousImage: 'Previous image',
+    nextImage: 'Next image',
+    supporting: 'Supporting material',
   },
-  {
-    icon: Award,
-    title: { en: 'Digital Workflows', no: 'Digitale arbeidsflyter' },
-    description: {
-      en: 'Rhino + Grasshopper, QGIS, Adobe (PS/AI/ID), 3D printing, and clear visual storytelling.',
-      no: 'Rhino + Grasshopper, QGIS, Adobe (PS/AI/ID), 3D-print, og tydelig visuell formidling.',
-    },
+  no: {
+    kicker: 'Prosjektoversikt',
+    projectType: 'Prosjektcase',
+    open: 'Åpne case',
+    close: 'Lukk case',
+    featured: 'Hovedbilde',
+    closeImage: 'Lukk case ved å velge bildet',
+    zoomImage: 'Åpne bildegalleri',
+    closeGallery: 'Lukk bildegalleri',
+    previousImage: 'Forrige bilde',
+    nextImage: 'Neste bilde',
+    supporting: 'Støttemateriale',
   },
-  {
-    icon: TreePine,
-    title: { en: 'Ecology + Systems', no: 'Økologi + systemer' },
-    description: {
-      en: 'Water, soil, vegetation, and maintenance as design drivers — and how systems perform over time.',
-      no: 'Vann, jord, vegetasjon og drift som design-drivere — og hvordan systemer virker over tid.',
-    },
-  },
-  {
-    icon: Users,
-    title: { en: 'Collaboration', no: 'Samarbeid' },
-    description: {
-      en: 'Workshops, stakeholder mapping, iterative feedback, and making complex ideas easy to understand.',
-      no: 'Workshop, interessentkartlegging, iterasjon, og å gjøre komplekse ideer forståelige.',
-    },
-  },
-];
+} as const;
 
-function animateScrollTo(targetY: number, durationMs = 650) {
-  const startY = window.scrollY;
-  const delta = targetY - startY;
-  const start = performance.now();
-  const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-  const tick = (now: number) => {
-    const t = Math.min(1, (now - start) / durationMs);
-    window.scrollTo(0, startY + delta * easeOutCubic(t));
-    if (t < 1) requestAnimationFrame(tick);
-  };
-
-  requestAnimationFrame(tick);
+function getAlt(project: Project, language: 'en' | 'no', caption?: string) {
+  return caption ? `${project.title[language]} - ${caption}` : project.title[language];
 }
 
-function SegmentedToggle({
-  value,
-  onChange,
-  leftLabel,
-  rightLabel,
-  isDark,
-}: {
-  value: 'left' | 'right';
-  onChange: (v: 'left' | 'right') => void;
-  leftLabel: string;
-  rightLabel: string;
-  isDark: boolean;
-}) {
-  const isLeft = value === 'left';
-  const tone = isDark ? 'dark' : 'light';
-
-  // Tuning for "screenshot look"
-  const inset = 6; // padding inside outer pill
-  const gap = 18; // space between inner pills (feel free to tweak)
-  const btnMinW = 160;
-
-  return (
-    <div
-      className="segmented-toggle"
-      data-tone={tone}
-      style={{ padding: inset }}
-    >
-      {/* Sliding highlight */}
-      <span
-        aria-hidden
-        className="segmented-toggle-thumb"
-        style={{
-          top: inset,
-          bottom: inset,
-          left: inset,
-          width: `calc(50% - ${gap / 2}px)`,
-          transform: isLeft ? 'translateX(0)' : `translateX(calc(100% + ${gap}px))`,
-        }}
-      />
-
-      <div className="relative z-10 inline-flex" style={{ gap }}>
-        <button
-          type="button"
-          onClick={() => onChange('left')}
-          className="segmented-toggle-button"
-          data-active={isLeft ? 'true' : 'false'}
-          style={{ minWidth: btnMinW, textAlign: 'center' }}
-        >
-          {leftLabel}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => onChange('right')}
-          className="segmented-toggle-button"
-          data-active={!isLeft ? 'true' : 'false'}
-          style={{ minWidth: btnMinW, textAlign: 'center' }}
-        >
-          {rightLabel}
-        </button>
-      </div>
-    </div>
-  );
+function getProjectImages(project: Project) {
+  return [
+    ...project.images,
+    ...(project.processImages ?? []),
+    ...(project.imageRows?.flatMap((row) => row.images) ?? []),
+  ];
 }
 
 export function Portfolio() {
-  const { theme } = useTheme();
   const { language } = useLanguage();
   const c = content[language];
-  const isDark = theme === 'dark';
+  const copy = labels[language];
+  const [expandedProjectId, setExpandedProjectId] = useState<number | null>(null);
+  const [gallery, setGallery] = useState<{ projectId: number; imageIndex: number } | null>(null);
+  const projectRefs = useRef<Record<number, HTMLElement | null>>({});
+  const positionLockRef = useRef<{ projectId: number; top: number } | null>(null);
 
-  const [viewMode, setViewMode] = useState<ViewMode>('projects');
-  const [showMore, setShowMore] = useState(false);
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const galleryProject = gallery ? projects.find((project) => project.id === gallery.projectId) : null;
+  const galleryImages = galleryProject ? getProjectImages(galleryProject) : [];
+  const galleryImage = gallery ? galleryImages[gallery.imageIndex] : null;
 
-  const moreButtonRef = useRef<HTMLButtonElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  const selectedProject: Project | null = useMemo(
-    () => projects.find((p) => p.id === selectedProjectId) ?? null,
-    [selectedProjectId]
-  );
-
-  // reset carousel index when changing project
-  useEffect(() => setCurrentImageIndex(0), [selectedProjectId]);
-
-  // lock background scroll when modal open
   useEffect(() => {
-    if (!selectedProject) return;
-    const prev = document.body.style.overflow;
+    if (!gallery) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setGallery(null);
+      if (event.key === 'ArrowLeft') {
+        setGallery((current) =>
+          current ? { ...current, imageIndex: (current.imageIndex - 1 + galleryImages.length) % galleryImages.length } : null
+        );
+      }
+      if (event.key === 'ArrowRight') {
+        setGallery((current) => current ? { ...current, imageIndex: (current.imageIndex + 1) % galleryImages.length } : null);
+      }
+    };
+
     document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKeyDown);
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
     };
-  }, [selectedProject]);
+  }, [gallery, galleryImages.length]);
 
-  // keyboard controls when modal open
-  useEffect(() => {
-    if (!selectedProject) return;
+  useLayoutEffect(() => {
+    const positionLock = positionLockRef.current;
+    if (!positionLock) return;
 
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedProjectId(null);
-      if (e.key === 'ArrowRight') {
-        setCurrentImageIndex((prev) => (prev + 1) % selectedProject.images.length);
-      }
-      if (e.key === 'ArrowLeft') {
-        setCurrentImageIndex((prev) => (prev - 1 + selectedProject.images.length) % selectedProject.images.length);
-      }
-    };
+    const target = projectRefs.current[positionLock.projectId];
+    positionLockRef.current = null;
+    if (!target) return;
 
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [selectedProject]);
+    const offset = target.getBoundingClientRect().top - positionLock.top;
+    if (Math.abs(offset) < 1) return;
 
-  const hasProjectOverflow = projects.length > 4;
-  const displayedProjects = hasProjectOverflow && !showMore ? projects.slice(0, 4) : projects;
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollBy(0, offset);
+    root.style.scrollBehavior = previousScrollBehavior;
+  }, [expandedProjectId]);
 
-  const handleShowMore = () => {
-    setShowMore(true);
-    window.setTimeout(() => {
-      const el = gridRef.current;
-      if (!el) return;
-      const y = window.scrollY + el.getBoundingClientRect().top - 110;
-      animateScrollTo(y);
-    }, 40);
+  const scrollProjectIntoView = (projectId: number, behavior: ScrollBehavior) => {
+    projectRefs.current[projectId]?.scrollIntoView({ behavior, block: 'start' });
   };
 
-  const handleShowLess = () => {
-    setShowMore(false);
-    window.setTimeout(() => {
-      const el = moreButtonRef.current;
-      if (!el) return;
-      const y = window.scrollY + el.getBoundingClientRect().top - 110;
-      animateScrollTo(y);
-    }, 60);
+  const handleToggle = (projectId: number) => {
+    const currentProjectId = expandedProjectId;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scrollBehavior: ScrollBehavior = reducedMotion ? 'auto' : 'smooth';
+
+    if (currentProjectId === projectId) {
+      setExpandedProjectId(null);
+      window.requestAnimationFrame(() => scrollProjectIntoView(projectId, scrollBehavior));
+      return;
+    }
+
+    if (currentProjectId === null) {
+      setExpandedProjectId(projectId);
+      window.requestAnimationFrame(() => scrollProjectIntoView(projectId, scrollBehavior));
+      return;
+    }
+
+    const target = projectRefs.current[projectId];
+    if (target) {
+      positionLockRef.current = {
+        projectId,
+        top: target.getBoundingClientRect().top,
+      };
+    }
+
+    setExpandedProjectId(projectId);
+    window.requestAnimationFrame(() => scrollProjectIntoView(projectId, scrollBehavior));
   };
 
-  const handleNextImage = () => {
-    if (!selectedProject) return;
-    setCurrentImageIndex((prev) => (prev + 1) % selectedProject.images.length);
+  const showGalleryImage = (projectId: number, imageIndex: number) => {
+    setGallery({ projectId, imageIndex });
   };
 
-  const handlePrevImage = () => {
-    if (!selectedProject) return;
-    setCurrentImageIndex((prev) => (prev - 1 + selectedProject.images.length) % selectedProject.images.length);
+  const moveGallery = (direction: -1 | 1) => {
+    setGallery((current) => {
+      if (!current) return null;
+      const imageCount = getProjectImages(projects.find((project) => project.id === current.projectId)!).length;
+      return { ...current, imageIndex: (current.imageIndex + direction + imageCount) % imageCount };
+    });
   };
-
-  // === “screenshot” card styling ===
-  const cardRadius = 'rounded-3xl';
-  const cardBorder = isDark ? 'border border-white/10' : 'border border-black/10';
-  const cardShadow = 'shadow-sm hover:shadow-xl transition-shadow duration-300';
-  const cardBg = isDark ? 'bg-black/10' : 'bg-white';
-
-  // Modal styling
-  const modalRadius = 'rounded-3xl';
-  const modalBorder = isDark ? 'border border-white/10' : 'border border-black/10';
 
   return (
-    <section
-      data-tone={theme}
-      className={`relative py-24 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-black' : 'bg-gray-50'}`}
-    >
-      <div className="max-w-7xl mx-auto">
-        <div className="section-header">
-          <h2 className="section-title">{c.portfolio.title}</h2>
-          <p className="section-lead">
-            {viewMode === 'projects' ? c.portfolio.projectsIntro : c.portfolio.skillsIntro}
-          </p>
+    <section id="portfolio" className="portfolio-section" aria-labelledby="portfolio-heading">
+      <div className="section-intro">
+        <div>
+          <p className="section-kicker">{copy.kicker}</p>
+          <h2 id="portfolio-heading" className="section-title">
+            {c.portfolio.title}
+          </h2>
         </div>
-
-        {/* Toggle */}
-        <div className="flex justify-center mb-12">
-          <SegmentedToggle
-            value={viewMode === 'projects' ? 'left' : 'right'}
-            onChange={(v) => setViewMode(v === 'left' ? 'projects' : 'skills')}
-            leftLabel={c.portfolio.modeProjects}
-            rightLabel={c.portfolio.modeSkills}
-            isDark={isDark}
-          />
-        </div>
-
-        {/* Projects grid */}
-        {viewMode === 'projects' && (
-          <>
-            <div
-              ref={gridRef}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-stretch"
-            >
-              {displayedProjects.map((project, index) => (
-                <button
-                  key={project.id}
-                  type="button"
-                  onClick={() => setSelectedProjectId(project.id)}
-                  className={`group w-full ${cardRadius} overflow-hidden ${cardBorder} ${cardShadow} ${cardBg}`}
-                  aria-label={`Open ${project.title[language]}`}
-                >
-                  <div className="portfolio-media-frame" data-tone={theme}>
-                    <img
-                      src={project.images[0]?.src}
-                      alt={project.title[language]}
-                      className="portfolio-card-image"
-                      loading={index < 2 ? 'eager' : 'lazy'}
-                      decoding="async"
-                    />
-                  </div>
-                  <div className="px-6 pb-6 text-left">
-                    <p
-                      className={`mb-2 text-xs font-semibold uppercase tracking-[0.22em] ${
-                        isDark ? 'text-white/45' : 'text-gray-500'
-                      }`}
-                    >
-                      {project.category[language]}
-                    </p>
-                    <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {project.title[language]}
-                    </h3>
-                    <p className={`mt-3 text-sm leading-7 ${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>
-                      {project.description[language]}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {hasProjectOverflow && (
-              <div className="flex justify-center mt-10">
-                {!showMore ? (
-                  <button
-                    ref={moreButtonRef}
-                    onClick={handleShowMore}
-                    className="flex flex-col items-center gap-2 group"
-                    aria-label="Load more projects"
-                    type="button"
-                  >
-                    <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white/90' : 'text-gray-900'}`}>
-                      {c.portfolio.more}
-                    </span>
-                    <div className={`flex flex-col -space-y-2 ${isDark ? 'text-white' : 'text-gray-900'} wiggle-animation`}>
-                      <ChevronDown size={20} className="-mb-3" />
-                      <ChevronDown size={20} />
-                    </div>
-                  </button>
-                ) : (
-                  <button
-                    ref={moreButtonRef}
-                    onClick={handleShowLess}
-                    className="flex flex-col items-center gap-2 group"
-                    aria-label="Show less projects"
-                    type="button"
-                  >
-                    <div className={`flex flex-col -space-y-2 ${isDark ? 'text-white' : 'text-gray-900'} wiggle-animation`}>
-                      <ChevronUp size={20} className="-mb-3" />
-                      <ChevronUp size={20} />
-                    </div>
-                    <span className={`text-sm uppercase tracking-wider ${isDark ? 'text-white/90' : 'text-gray-900'}`}>
-                      {c.portfolio.less}
-                    </span>
-                  </button>
-                )}
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Skills grid */}
-        {viewMode === 'skills' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-stretch">
-            {skills.map((skill) => (
-              <div
-                key={skill.title.en}
-                className={`w-full ${cardRadius} overflow-hidden ${cardBorder} ${cardShadow} ${
-                  isDark ? 'bg-white/5' : 'bg-white'
-                }`}
-              >
-                <div className="portfolio-media-frame" data-tone={theme}>
-                  <div
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ borderRadius: '1.25rem', backgroundColor: isDark ? 'white' : 'black' }}
-                  >
-                    <skill.icon size={44} className="text-gray-900" />
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="mb-3">
-                    <span className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {skill.title[language]}
-                    </span>
-                  </div>
-                  <p className={`${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>{skill.description[language]}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <p className="section-lead">{c.portfolio.projectsIntro}</p>
       </div>
 
-      {/* Modal */}
-      {selectedProject && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
-          role="dialog"
-          aria-modal="true"
-          onMouseDown={(e) => {
-            // close only when clicking backdrop
-            if (e.target === e.currentTarget) setSelectedProjectId(null);
-          }}
-        >
-          <div
-            className={`w-full max-w-5xl ${modalRadius} overflow-hidden ${modalBorder} ${
-              isDark ? 'bg-neutral-900' : 'bg-white'
-            }`}
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            <div
-              className="max-h-[90vh] overflow-y-auto overscroll-contain"
-              style={{ WebkitOverflowScrolling: 'touch' }}
+      <div className="project-index">
+        {projects.map((project, index) => {
+          const isOpen = expandedProjectId === project.id;
+          const titleId = `project-${project.id}-title`;
+          const actionLabel = `${isOpen ? copy.close : copy.open}: ${project.title[language]}`;
+          const primaryImage = project.images[0];
+          const primaryCaption = primaryImage?.caption?.[language];
+          const secondaryImages = [...project.images.slice(1), ...(project.processImages ?? [])];
+          const imageRowStartIndex = 1 + secondaryImages.length;
+
+          return (
+            <article
+              className={`project-entry ${isOpen ? 'is-open' : ''}`}
+              key={project.id}
+              aria-labelledby={titleId}
+              ref={(node) => {
+                projectRefs.current[project.id] = node;
+              }}
             >
-              <div className="relative">
-                <div className="portfolio-modal-media" data-tone={theme}>
-                  <img
-                    src={selectedProject.images[currentImageIndex]?.src}
-                    alt={`${selectedProject.title[language]} – ${currentImageIndex + 1}`}
-                    className="portfolio-modal-image"
-                    loading="eager"
-                    decoding="async"
-                  />
-                </div>
+              <button
+                type="button"
+                className="project-summary"
+                aria-label={actionLabel}
+                aria-expanded={isOpen}
+                aria-controls={`project-${project.id}-detail`}
+                onClick={() => handleToggle(project.id)}
+              >
+                <span className="project-number">{String(index + 1).padStart(2, '0')}</span>
 
-                {/* Prev/Next (don’t close modal) */}
-                {selectedProject.images.length > 1 && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePrevImage();
-                      }}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 z-20 glass-button"
-                      aria-label={c.portfolio.modal.prev}
-                    >
-                      <ChevronLeft size={24} className="text-white" />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleNextImage();
-                      }}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 z-20 glass-button"
-                      aria-label={c.portfolio.modal.next}
-                    >
-                      <ChevronRight size={24} className="text-white" />
-                    </button>
-
-                    <div className="absolute bottom-4 right-4 z-20 glass-pill text-sm">
-                      {currentImageIndex + 1} / {selectedProject.images.length}
-                    </div>
-                  </>
+                {primaryImage && (
+                  <span className={`project-thumb${primaryImage.fit === 'dark-contain' ? ' is-dark-contained' : ''}`}>
+                    <img src={primaryImage.src} alt={getAlt(project, language, primaryCaption)} loading="lazy" />
+                  </span>
                 )}
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedProjectId(null)}
-                  className="absolute top-4 right-4 z-30 glass-button"
-                  aria-label={c.portfolio.modal.close}
-                >
-                  <X size={22} className="text-white" />
-                </button>
+                <span className="project-summary-copy">
+                  <span className="project-category">{project.category[language]}</span>
+                  <strong id={titleId}>{project.title[language]}</strong>
+                  <span>{project.description[language]}</span>
+                </span>
 
-                {selectedProject.images[currentImageIndex]?.caption && (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-                    <span className="glass-caption">{selectedProject.images[currentImageIndex].caption}</span>
-                  </div>
-                )}
-              </div>
+                <span className="project-toggle">
+                  <span>{isOpen ? copy.close : copy.open}</span>
+                  {isOpen ? <Minus size={18} aria-hidden="true" /> : <Plus size={18} aria-hidden="true" />}
+                </span>
+              </button>
 
-              <div className="p-8">
-                <div className="mb-3">
-                  <span className="glass-pill">{selectedProject.category[language]}</span>
-                </div>
+              {isOpen && (
+                <div className="project-detail" id={`project-${project.id}-detail`}>
+                  {primaryImage && (
+                    <figure className={`project-main-image${primaryImage.fit === 'dark-contain' ? ' is-dark-contained' : ''}`}>
+                      <div className="project-image-media">
+                        <button
+                          type="button"
+                          className="project-main-image-button"
+                          aria-label={`${copy.closeImage}: ${project.title[language]}`}
+                          onClick={() => handleToggle(project.id)}
+                        >
+                          <img src={primaryImage.src} alt={getAlt(project, language, primaryCaption)} loading="lazy" />
+                        </button>
+                        <button
+                          type="button"
+                          className="project-image-zoom"
+                          aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                          onClick={() => showGalleryImage(project.id, 0)}
+                        >
+                          <Maximize2 size={18} aria-hidden="true" />
+                        </button>
+                      </div>
+                      <figcaption>{primaryCaption ?? copy.featured}</figcaption>
+                    </figure>
+                  )}
 
-                <h2 className={`mb-4 text-2xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  {selectedProject.title[language]}
-                </h2>
+                  <div className="project-detail-copy">
+                    <p className="detail-label">{copy.projectType}</p>
+                    <p>{project.fullDescription[language]}</p>
 
-                <p className={`mb-7 text-lg ${isDark ? 'text-neutral-300' : 'text-gray-700'}`}>
-                  {selectedProject.fullDescription[language]}
-                </p>
-
-                {selectedProject.processImages && selectedProject.processImages.length > 0 && (
-                  <div className="mb-10">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {selectedProject.processImages.map((img, idx) => (
-                        <figure key={idx} className={`${cardRadius} overflow-hidden ${cardBorder}`}>
-                          <div className="portfolio-process-media" data-tone={theme}>
-                            <img
-                              src={img.src}
-                              alt={img.caption ?? `Process ${idx + 1}`}
-                              className="portfolio-modal-image"
-                              loading="lazy"
-                              decoding="async"
-                            />
-                          </div>
-                          {img.caption && (
-                            <figcaption className={`px-3 py-2 text-xs ${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>
-                              {img.caption}
-                            </figcaption>
-                          )}
-                        </figure>
+                    <dl className="project-meta-list">
+                      {project.facts.map((fact) => (
+                        <div key={fact.label.en}>
+                          <dt>{fact.label[language]}</dt>
+                          <dd>{fact.value[language]}</dd>
+                        </div>
                       ))}
-                    </div>
+                    </dl>
                   </div>
-                )}
 
-                <div className={`border-t pt-6 ${isDark ? 'border-white/10' : 'border-black/10'}`}>
-                  <h3 className={`mb-3 font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {c.portfolio.modal.detailsTitle}
-                  </h3>
-                  <p className={`${isDark ? 'text-neutral-400' : 'text-gray-600'}`}>
-                    {selectedProject.description[language]}
-                  </p>
+                  {secondaryImages.length > 0 && (
+                    <div className="supporting-images" aria-label={copy.supporting}>
+                      {secondaryImages.map((image, imageIndex) => {
+                        const caption = image.caption?.[language];
+
+                        return (
+                          <figure
+                            className={
+                              image.fit === 'contain'
+                                ? 'is-contained'
+                                : image.fit === 'dark-contain'
+                                  ? 'is-dark-contained'
+                                  : undefined
+                            }
+                            key={`${project.id}-${image.src}`}
+                          >
+                            <div className="project-image-media">
+                              <img src={image.src} alt={getAlt(project, language, caption)} loading="lazy" />
+                              <button
+                                type="button"
+                                className="project-image-zoom"
+                                aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                                onClick={() => showGalleryImage(project.id, imageIndex + 1)}
+                              >
+                                <Maximize2 size={18} aria-hidden="true" />
+                              </button>
+                            </div>
+                            {caption && <figcaption>{caption}</figcaption>}
+                          </figure>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {project.imageRows?.map((row, rowIndex) => (
+                    <div
+                      className={[
+                        'supporting-images',
+                        row.columns === 1 ? 'is-one-column' : '',
+                        row.columns === 3 ? 'is-three-column' : '',
+                        row.columns === 4 ? 'is-four-column' : '',
+                        row.naturalAspect ? 'uses-natural-aspect' : '',
+                        row.matchHorizontalHeight ? 'uses-matched-horizontal-height' : '',
+                        row.uniformAspect === 'portrait' ? 'uses-portrait-crop' : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                      aria-label={copy.supporting}
+                      key={`${project.id}-row-${rowIndex}`}
+                    >
+                      {row.images.map((image, imageIndex) => {
+                        const caption = image.caption?.[language];
+                        const previousRowImageCount = (project.imageRows ?? [])
+                          .slice(0, rowIndex)
+                          .reduce((count, previousRow) => count + previousRow.images.length, 0);
+
+                        return (
+                          <figure
+                            className={
+                              image.fit === 'contain'
+                                ? 'is-contained'
+                                : image.fit === 'dark-contain'
+                                  ? 'is-dark-contained'
+                                  : undefined
+                            }
+                            key={`${project.id}-${rowIndex}-${image.src}`}
+                          >
+                            <div className="project-image-media">
+                              <img src={image.src} alt={getAlt(project, language, caption)} loading="lazy" />
+                              <button
+                                type="button"
+                                className="project-image-zoom"
+                                aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                                onClick={() =>
+                                  showGalleryImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex)
+                                }
+                              >
+                                <Maximize2 size={18} aria-hidden="true" />
+                              </button>
+                            </div>
+                            {caption && <figcaption>{caption}</figcaption>}
+                          </figure>
+                        );
+                      })}
+                    </div>
+                  ))}
                 </div>
+              )}
+            </article>
+          );
+        })}
+      </div>
 
-                <div className="h-6" />
-              </div>
-            </div>
-          </div>
+      {gallery && galleryProject && galleryImage && (
+        <div className="project-gallery" role="dialog" aria-modal="true" aria-label={galleryProject.title[language]}>
+          <button
+            type="button"
+            className="project-gallery-image"
+            aria-label={copy.closeGallery}
+            onClick={() => setGallery(null)}
+          >
+            <img
+              src={galleryImage.src}
+              alt={getAlt(galleryProject, language, galleryImage.caption?.[language])}
+              decoding="async"
+            />
+          </button>
+
+          {galleryImages.length > 1 && (
+            <>
+              <button type="button" className="project-gallery-nav is-previous" onClick={() => moveGallery(-1)} aria-label={copy.previousImage}>
+                <ChevronLeft size={28} aria-hidden="true" />
+              </button>
+              <button type="button" className="project-gallery-nav is-next" onClick={() => moveGallery(1)} aria-label={copy.nextImage}>
+                <ChevronRight size={28} aria-hidden="true" />
+              </button>
+            </>
+          )}
+
+          <p className="project-gallery-caption">
+            {galleryImage.caption?.[language] ?? galleryProject.title[language]}
+            {galleryImages.length > 1 && <span>{`${gallery.imageIndex + 1} / ${galleryImages.length}`}</span>}
+          </p>
         </div>
       )}
     </section>

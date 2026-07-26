@@ -10,16 +10,28 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('en');
+function getBrowserLanguage(): Language {
+  if (typeof window === 'undefined') return 'en';
 
-  useEffect(() => {
-    const saved = localStorage.getItem('language') as Language | null;
-    if (saved === 'no' || saved === 'en') setLanguage(saved);
-  }, []);
+  const preferred = (navigator.languages?.[0] ?? navigator.language ?? 'en').toLowerCase();
+  return preferred.startsWith('no') || preferred.startsWith('nb') || preferred.startsWith('nn') ? 'no' : 'en';
+}
+
+function getInitialLanguage(): Language {
+  if (typeof window === 'undefined') return 'en';
+
+  const saved = localStorage.getItem('language');
+  if (saved === 'no' || saved === 'en') return saved;
+
+  return getBrowserLanguage();
+}
+
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  const [language, setLanguage] = useState<Language>(getInitialLanguage);
 
   useEffect(() => {
     localStorage.setItem('language', language);
+    document.documentElement.lang = language === 'no' ? 'nb' : 'en';
   }, [language]);
 
   const value = useMemo<LanguageContextType>(() => {

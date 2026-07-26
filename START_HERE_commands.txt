@@ -1,10 +1,10 @@
 PORTFOLIO HOMEPAGE — QUICK START (Vite)
 
 Project folder:
-~/portfolio_hjemmeside/portfolio_homepage_optimized
+/Users/bjornblomjensen/Developer/bjorn-portfolio
 
 START
-cd ~/portfolio_hjemmeside/portfolio_homepage_optimized
+cd /Users/bjornblomjensen/Developer/bjorn-portfolio
 npm install
 npm run dev
 

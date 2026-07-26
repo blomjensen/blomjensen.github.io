@@ -7,21 +7,22 @@ export const content = {
     nav: {
       home: 'Bjørn Blom-Jensen',
       portfolio: 'Portfolio',
+      photography: 'Photography',
       about: 'About',
       contact: 'Contact',
     },
     hero: {
       ariaScroll: 'Scroll to portfolio',
-      status: 'Under construction',
+      status: 'Landscape architect, AHO 2026',
     },
     portfolio: {
-      title: 'Selected work and skills',
+      title: 'Selected work',
       modeProjects: 'Projects',
-      modeSkills: 'Skills',
+      modeSkills: 'Methods',
       projectsIntro:
-        'A selection of academic and independent work in landscape architecture, with a focus on spatial strategy, ecological systems, and visual communication.',
+        'Academic and independent work across terrain, infrastructure, mapping, model studies, and landscape systems.',
       skillsIntro:
-        'A practical toolkit spanning landscape architecture, digital workflows, and visual representation.',
+        'Methods and tools used to read sites, test proposals, and communicate complex landscape conditions clearly.',
       more: 'More',
       less: 'Less',
       modal: {
@@ -31,14 +32,33 @@ export const content = {
         next: 'Next image',
       },
     },
+    photography: {
+      kicker: 'Fieldwork and independent studies',
+      title: 'Photographic studies',
+      intro:
+        'Photo series and selected images from self-initiated studies, study trips, and project-related site visits during my education.',
+      category: 'Self-initiated photographic study',
+      projectTitle: 'Transitions — Portugal, 2025',
+      description:
+        'A self-initiated photo series made during a study trip to Portugal in 2025. The same 36 photographs are shown at two speeds, allowing the sequence to be read at both a slow and a compressed rhythm.',
+      comparisonLabel: 'Transitions shown at two animation speeds',
+      slowLabel: '0.5 fps',
+      slowDetail: '36 photographs · 72-second loop',
+      slowAlt: 'Transitions photo sequence from Portugal playing at 0.5 frames per second',
+      fastLabel: '2 fps',
+      fastDetail: '36 photographs · 18-second loop',
+      fastAlt: 'Transitions photo sequence from Portugal playing at 2 frames per second',
+      play: 'Play',
+      pause: 'Pause',
+    },
     about: {
       title: 'About',
       p1:
-        'I am a landscape architecture student at AHO (The Oslo School of Architecture and Design), working across design, ecology, and digital workflows.',
+        'I am a newly graduated landscape architect from AHO, working across terrain, infrastructure landscapes, climate adaptation, and digital workflows.',
       p2:
-        'My work combines site reading, concept development, and clear visual communication, from early analysis to detailed drawings, models, and presentations.',
+        'My work combines site reading, mapping, modelling, and visual storytelling, with a particular interest in how landscape systems are built, maintained, and transformed over time.',
       p3:
-        'I am seeking a full-time role from 2026, and I remain available for selected freelance work in design, visualization, mapping, and digital production.',
+        'I am looking for a landscape architecture role in Norway or internationally, and I am open to selected collaborations in mapping, visualization, and design research.',
     },
     contact: {
       title: 'Get in touch',
@@ -55,29 +75,30 @@ export const content = {
       connectTitle: 'Connect',
       availabilityTitle: 'Availability',
       availabilityText:
-        'Available for full-time roles from 2026, and for selected freelance work in design, visualization, mapping, and digital workflows.',
-      availabilityBadge: 'Available',
+        'Open to landscape architecture roles, and to selected collaborations in mapping, visualization, design research, and digital workflows.',
+      availabilityBadge: 'Open to roles',
     },
   },
   no: {
     nav: {
       home: 'Bjørn Blom-Jensen',
       portfolio: 'Portefølje',
+      photography: 'Fotografi',
       about: 'Om',
       contact: 'Kontakt',
     },
     hero: {
       ariaScroll: 'Scroll til portefølje',
-      status: 'Under utvikling',
+      status: 'Landskapsarkitekt, AHO 2026',
     },
     portfolio: {
-      title: 'Utvalgte arbeider og kompetanse',
+      title: 'Utvalgte arbeider',
       modeProjects: 'Prosjekter',
-      modeSkills: 'Kompetanse',
+      modeSkills: 'Metoder',
       projectsIntro:
-        'Et utvalg akademisk arbeid og egne prosjekter innen landskapsarkitektur, med fokus på romlige strategier, økologiske systemer og visuell formidling.',
+        'Akademiske og egne arbeider innen terreng, infrastruktur, kartlegging, modellstudier og landskapssystemer.',
       skillsIntro:
-        'Et praktisk verktøysett som spenner fra landskapsarkitektur og digitale arbeidsflyter til visuell representasjon.',
+        'Metoder og verktøy for å lese steder, teste forslag og formidle komplekse landskapsforhold tydelig.',
       more: 'Mer',
       less: 'Mindre',
       modal: {
@@ -87,14 +108,33 @@ export const content = {
         next: 'Neste bilde',
       },
     },
+    photography: {
+      kicker: 'Feltarbeid og egne studier',
+      title: 'Fotografiske studier',
+      intro:
+        'Fotoserier og utvalgte enkeltbilder fra selvinitierte studier, studieturer og prosjektbesøk i forbindelse med utdanningen.',
+      category: 'Selvinitiert fotografisk studie',
+      projectTitle: 'Transitions — Portugal, 2025',
+      description:
+        'En selvinitiert fotoserie laget under en studietur til Portugal i 2025. De samme 36 fotografiene vises i to hastigheter, slik at sekvensen kan leses i både et langsomt og et komprimert tempo.',
+      comparisonLabel: 'Transitions vist i to animasjonshastigheter',
+      slowLabel: '0,5 fps',
+      slowDetail: '36 fotografier · 72 sekunder per runde',
+      slowAlt: 'Transitions-fotoserien fra Portugal avspilt med 0,5 bilder per sekund',
+      fastLabel: '2 fps',
+      fastDetail: '36 fotografier · 18 sekunder per runde',
+      fastAlt: 'Transitions-fotoserien fra Portugal avspilt med 2 bilder per sekund',
+      play: 'Spill av',
+      pause: 'Pause',
+    },
     about: {
       title: 'Om meg',
       p1:
-        'Jeg er landskapsarkitektstudent ved AHO og jobber i skjæringspunktet mellom design, økologi og digitale arbeidsflyter.',
+        'Jeg er nyutdannet landskapsarkitekt fra AHO og arbeider med terreng, infrastrukturlandskap, klimatilpasning og digitale arbeidsflyter.',
       p2:
-        'Arbeidet mitt kombinerer stedslesning, konseptutvikling og tydelig visuell formidling - fra tidlig analyse til detaljerte tegninger, modeller og presentasjoner.',
+        'Arbeidet mitt kombinerer stedslesning, kartlegging, modellering og visuell fortelling, med særlig interesse for hvordan landskapssystemer bygges, driftes og endrer seg over tid.',
       p3:
-        'Jeg søker fast jobb fra 2026, og er også tilgjengelig for utvalgte freelance-oppdrag innen design, visualisering, kart og digital produksjon.',
+        'Jeg søker en stilling innen landskapsarkitektur i Norge eller internasjonalt og er også åpen for utvalgte samarbeid innen kartlegging, visualisering og designbasert forskning.',
     },
     contact: {
       title: 'Ta kontakt',
@@ -111,8 +151,8 @@ export const content = {
       connectTitle: 'Lenker',
       availabilityTitle: 'Tilgjengelighet',
       availabilityText:
-        'Tilgjengelig for fast jobb fra 2026, og for utvalgte freelance-oppdrag innen design, visualisering, kart og digitale arbeidsflyter.',
-      availabilityBadge: 'Tilgjengelig',
+        'Åpen for stillinger innen landskapsarkitektur og utvalgte samarbeid innen kartlegging, visualisering, designbasert forskning og digitale arbeidsflyter.',
+      availabilityBadge: 'Åpen for roller',
     },
   },
 } as const;
