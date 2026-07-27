@@ -7,7 +7,7 @@ import { Photography } from './components/Photography';
 import { Portfolio } from './components/Portfolio';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
-const sections = ['home', 'portfolio', 'photography', 'about', 'contact'];
+const sections = ['home', 'portfolio', 'studies', 'about', 'contact'];
 
 function AppContent() {
   const [activeSection, setActiveSection] = useState('home');

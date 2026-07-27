@@ -7,7 +7,7 @@ export const content = {
     nav: {
       home: 'Bjørn Blom-Jensen',
       portfolio: 'Portfolio',
-      photography: 'Photography',
+      studies: 'Studies',
       about: 'About',
       contact: 'Contact',
     },
@@ -32,12 +32,15 @@ export const content = {
         next: 'Next image',
       },
     },
-    photography: {
-      kicker: 'Fieldwork and independent studies',
-      title: 'Photographic studies',
+    studies: {
+      kicker: 'Fieldwork, material, and collective experiments',
+      title: 'Studies & workshops',
       intro:
-        'Photo series and selected images from self-initiated studies, study trips, and project-related site visits during my education.',
-      category: 'Self-initiated photographic study',
+        'A selection of short-form investigations developed through fieldwork, photography, material testing, and collaborative workshops alongside larger projects.',
+      fieldworkLabel: 'Fieldwork & photography',
+      materialLabel: 'Material & representation studies',
+      workshopLabel: 'Workshops & collective experiments',
+      transitionsCategory: 'Self-initiated photographic study',
       projectTitle: 'Transitions — Portugal, 2025',
       description:
         'A self-initiated photo series made during a study trip to Portugal in 2025. The same 36 photographs are shown at two speeds, allowing the sequence to be read at both a slow and a compressed rhythm.',
@@ -50,6 +53,20 @@ export const content = {
       fastAlt: 'Transitions photo sequence from Portugal playing at 2 frames per second',
       play: 'Play',
       pause: 'Pause',
+      aquateketCategory: 'Material study, workshop, AHO 2021',
+      aquateketTitle: 'Aquateket',
+      aquateketDescription:
+        'A series of material experiments translating water conditions - rippling, cascading, and foaming - through paint, water, concrete, and organic material.',
+      aquateketImages: [
+        { alt: 'Bølgete, paint drawn with a stick and scraped with a sharp object', label: 'Bølgete, 02' },
+        { alt: 'Bølgete, paint drawn with a stick in horizontal strokes', label: 'Bølgete, 03' },
+        { alt: 'Bølgete, oil paint applied with a brush in horizontal strokes', label: 'Bølgete, 04' },
+        { alt: 'Fossende, paint drawn with a stick on concrete', label: 'Fossende, 02' },
+        { alt: 'Fossende, paint stamped with reindeer lichen', label: 'Fossende, 04' },
+        { alt: 'Skummende, paint and water allowed to run and dry', label: 'Skummende, 02' },
+        { alt: 'Skummende, paint and water allowed to run and dry', label: 'Skummende, 03' },
+        { alt: 'Skummende, paint and water allowed to run and dry', label: 'Skummende, 04' },
+      ],
     },
     about: {
       title: 'About',
@@ -83,7 +100,7 @@ export const content = {
     nav: {
       home: 'Bjørn Blom-Jensen',
       portfolio: 'Portefølje',
-      photography: 'Fotografi',
+      studies: 'Studier',
       about: 'Om',
       contact: 'Kontakt',
     },
@@ -108,12 +125,15 @@ export const content = {
         next: 'Neste bilde',
       },
     },
-    photography: {
-      kicker: 'Feltarbeid og egne studier',
-      title: 'Fotografiske studier',
+    studies: {
+      kicker: 'Feltarbeid, materiale og kollektive eksperimenter',
+      title: 'Studier og verksteder',
       intro:
-        'Fotoserier og utvalgte enkeltbilder fra selvinitierte studier, studieturer og prosjektbesøk i forbindelse med utdanningen.',
-      category: 'Selvinitiert fotografisk studie',
+        'Et utvalg korte undersøkelser utviklet gjennom feltarbeid, fotografi, materialtesting og samarbeidsbaserte verksteder ved siden av større prosjekter.',
+      fieldworkLabel: 'Feltarbeid og fotografi',
+      materialLabel: 'Material- og representasjonsstudier',
+      workshopLabel: 'Verksteder og kollektive eksperimenter',
+      transitionsCategory: 'Selvinitiert fotografisk studie',
       projectTitle: 'Transitions — Portugal, 2025',
       description:
         'En selvinitiert fotoserie laget under en studietur til Portugal i 2025. De samme 36 fotografiene vises i to hastigheter, slik at sekvensen kan leses i både et langsomt og et komprimert tempo.',
@@ -126,6 +146,20 @@ export const content = {
       fastAlt: 'Transitions-fotoserien fra Portugal avspilt med 2 bilder per sekund',
       play: 'Spill av',
       pause: 'Pause',
+      aquateketCategory: 'Materialstudie, verksted, AHO 2021',
+      aquateketTitle: 'Aquateket',
+      aquateketDescription:
+        'En serie materialeksperimenter som oversetter vanntilstander - bølgete, fossende og skummende - gjennom maling, vann, betong og organisk materiale.',
+      aquateketImages: [
+        { alt: 'Bølgete, maling dratt med pinne og skrapt med skarp gjenstand', label: 'Bølgete, 02' },
+        { alt: 'Bølgete, maling dratt med pinne i horisontale drag', label: 'Bølgete, 03' },
+        { alt: 'Bølgete, olje og maling påført med pensel i horisontale drag', label: 'Bølgete, 04' },
+        { alt: 'Fossende, maling dratt med pinne på betong', label: 'Fossende, 02' },
+        { alt: 'Fossende, maling stemplet med reinlav', label: 'Fossende, 04' },
+        { alt: 'Skummende, maling og vann rennende og tørket', label: 'Skummende, 02' },
+        { alt: 'Skummende, maling og vann rennende og tørket', label: 'Skummende, 03' },
+        { alt: 'Skummende, maling og vann rennende og tørket', label: 'Skummende, 04' },
+      ],
     },
     about: {
       title: 'Om meg',

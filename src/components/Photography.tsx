@@ -108,24 +108,40 @@ function SequenceFigure({
 
 export function Photography() {
   const { language } = useLanguage();
-  const c = content[language].photography;
+  const c = content[language].studies;
+  const aquateketImages = [
+    '/projects/aquateket/bolgete.webp',
+    '/projects/aquateket/bolgete-3.webp',
+    '/projects/aquateket/bolgete-4.webp',
+    '/projects/aquateket/fossende.webp',
+    '/projects/aquateket/fossende-4.webp',
+    '/projects/aquateket/skummende.webp',
+    '/projects/aquateket/skummende-3.webp',
+    '/projects/aquateket/skummende-4.webp',
+  ];
 
   return (
-    <section id="photography" className="photography-section" aria-labelledby="photography-heading">
+    <section id="studies" className="studies-section" aria-labelledby="studies-heading">
       <div className="section-intro">
         <div>
           <p className="section-kicker">{c.kicker}</p>
-          <h2 id="photography-heading" className="section-title">
+          <h2 id="studies-heading" className="section-title">
             {c.title}
           </h2>
         </div>
         <p className="section-lead">{c.intro}</p>
       </div>
 
+      <div className="study-tracks" aria-label={language === 'en' ? 'Study categories' : 'Studiekategorier'}>
+        <span>{c.fieldworkLabel}</span>
+        <span>{c.materialLabel}</span>
+        <span>{c.workshopLabel}</span>
+      </div>
+
       <article className="study-entry" aria-labelledby="transitions-heading">
         <header className="study-header">
           <div>
-            <p className="project-category">{c.category}</p>
+            <p className="project-category">{c.transitionsCategory}</p>
             <h3 id="transitions-heading">{c.projectTitle}</h3>
           </div>
           <p>{c.description}</p>
@@ -148,6 +164,28 @@ export function Photography() {
             playLabel={c.play}
             pauseLabel={c.pause}
           />
+        </div>
+      </article>
+
+      <article className="study-entry aquateket-entry" aria-labelledby="aquateket-heading">
+        <header className="study-header">
+          <div>
+            <p className="project-category">{c.aquateketCategory}</p>
+            <h3 id="aquateket-heading">{c.aquateketTitle}</h3>
+          </div>
+          <p>{c.aquateketDescription}</p>
+        </header>
+
+        <div className="aquateket-gallery">
+          {aquateketImages.map((src, index) => {
+            const image = c.aquateketImages[index];
+            return (
+              <figure key={src}>
+                <img src={src} alt={image.alt} loading="lazy" decoding="async" />
+                <figcaption>{image.label}</figcaption>
+              </figure>
+            );
+          })}
         </div>
       </article>
     </section>

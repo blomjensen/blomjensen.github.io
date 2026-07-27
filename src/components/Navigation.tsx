@@ -41,7 +41,7 @@ export function Navigation({ activeSection, onNavigate }: NavigationProps) {
 
   const navItems = [
     { id: 'portfolio', label: c.nav.portfolio },
-    { id: 'photography', label: c.nav.photography },
+    { id: 'studies', label: c.nav.studies },
     { id: 'about', label: c.nav.about },
     { id: 'contact', label: c.nav.contact },
   ];

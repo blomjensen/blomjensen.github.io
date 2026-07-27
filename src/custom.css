@@ -239,7 +239,7 @@ main {
 
 .hero-section,
 .portfolio-section,
-.photography-section,
+.studies-section,
 .about-section,
 .contact-section {
   scroll-margin-top: calc(var(--nav-height) + 1rem);
@@ -400,7 +400,7 @@ dd {
 }
 
 .portfolio-section,
-.photography-section,
+.studies-section,
 .about-section,
 .contact-section {
   padding: 6rem 2rem;
@@ -841,8 +841,23 @@ dd {
   flex: 0 0 auto;
 }
 
-.photography-section {
+.studies-section {
   background: var(--surface);
+}
+
+.study-tracks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  max-width: 1380px;
+  margin: 3rem auto 1.5rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.study-tracks span::before {
+  content: '— ';
 }
 
 .study-entry {
@@ -850,6 +865,38 @@ dd {
   margin: 0 auto;
   padding-top: 1.5rem;
   border-top: 1px solid var(--ink);
+}
+
+.aquateket-entry {
+  margin-top: 5rem;
+}
+
+.aquateket-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.aquateket-gallery figure {
+  min-width: 0;
+  margin: 0;
+}
+
+.aquateket-gallery img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  height: auto;
+  background: var(--paper);
+  object-fit: contain;
+}
+
+.aquateket-gallery figcaption {
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.78rem;
 }
 
 .study-header {
@@ -1264,7 +1311,7 @@ dd {
 
   .hero-section,
   .portfolio-section,
-  .photography-section,
+  .studies-section,
   .about-section,
   .contact-section {
     padding-right: 1rem;
@@ -1400,6 +1447,10 @@ dd {
     gap: 1.2rem;
   }
 
+  .aquateket-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .study-sequence figcaption {
     align-items: flex-start;
   }
@@ -1417,7 +1468,7 @@ dd {
   }
 
   .portfolio-section,
-  .photography-section,
+  .studies-section,
   .about-section,
   .contact-section {
     padding-top: 4.5rem;
@@ -1491,9 +1542,20 @@ dd {
 }
 
 @media (max-width: 699px) {
+  .study-tracks {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 2rem;
+  }
+
   .study-sequences {
     grid-template-columns: 1fr;
     gap: 2.5rem;
+  }
+
+  .aquateket-gallery {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .supporting-images.is-three-column.uses-matched-horizontal-height img {
