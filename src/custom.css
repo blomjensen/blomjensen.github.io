@@ -949,6 +949,13 @@ dd {
   background: #ffffff;
 }
 
+/* Keep the editorial frame clean when iOS temporarily pauses a muted loop.
+   Playback remains available through the small control in the lower corner. */
+.study-media video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
 .sequence-media-toggle {
   position: absolute;
   inset: 0;

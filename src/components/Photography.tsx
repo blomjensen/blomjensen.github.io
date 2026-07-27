@@ -25,6 +25,18 @@ function SequenceFigure({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const attemptPlayback = () => {
+    const video = videoRef.current;
+    if (!video || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // Set these as DOM properties as well as JSX attributes: iOS is stricter
+    // about muted, inline playback before it permits autoplay.
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    void video.play().catch(() => setIsPlaying(false));
+  };
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -36,7 +48,7 @@ function SequenceFigure({
         return;
       }
 
-      void video.play().catch(() => setIsPlaying(false));
+      attemptPlayback();
     };
 
     applyMotionPreference();
@@ -68,12 +80,9 @@ function SequenceFigure({
           loop
           playsInline
           preload="auto"
-          onCanPlay={() => {
-            const video = videoRef.current;
-            if (!video || !video.paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-            void video.play().catch(() => setIsPlaying(false));
-          }}
+          disablePictureInPicture
+          onLoadedData={attemptPlayback}
+          onCanPlay={attemptPlayback}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         />
