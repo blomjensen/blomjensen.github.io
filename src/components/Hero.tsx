@@ -59,10 +59,23 @@ export function Hero({ onExploreClick }: HeroProps) {
           <p className="hero-lead">{copy.lead}</p>
 
           <div className="hero-actions" aria-label={copy.actionsLabel}>
-            <button type="button" className="plain-action" onClick={onExploreClick}>
+            <button
+              type="button"
+              className="plain-action"
+              onClick={onExploreClick}
+              data-umami-event="navigation_click"
+              data-umami-event-section="portfolio"
+              data-umami-event-location="hero"
+            >
               {copy.viewWork}
             </button>
-            <a className="plain-link" href="mailto:bjorn@blom-jensen.no">
+            <a
+              className="plain-link"
+              href="mailto:bjorn@blom-jensen.no"
+              data-umami-event="contact_click"
+              data-umami-event-method="email"
+              data-umami-event-location="hero"
+            >
               {copy.contact}
             </a>
           </div>

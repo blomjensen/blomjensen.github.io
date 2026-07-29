@@ -74,6 +74,9 @@ export function Navigation({ activeSection, onNavigate }: NavigationProps) {
         type="button"
         aria-current={activeSection === 'home' ? 'true' : undefined}
         onClick={() => handleNavClick('home')}
+        data-umami-event="navigation_click"
+        data-umami-event-section="home"
+        data-umami-event-location="desktop"
       >
         Bjørn Blom-Jensen
       </button>
@@ -86,11 +89,23 @@ export function Navigation({ activeSection, onNavigate }: NavigationProps) {
             onClick={() => handleNavClick(item.id)}
             className="nav-link"
             aria-current={activeSection === item.id ? 'true' : undefined}
+            data-umami-event="navigation_click"
+            data-umami-event-section={item.id}
+            data-umami-event-location="desktop"
           >
             {item.label}
           </button>
         ))}
-        <button className="nav-link nav-language" type="button" onClick={handleLanguageToggle} aria-label={nextLanguageLabel}>
+        <button
+          className="nav-link nav-language"
+          type="button"
+          onClick={handleLanguageToggle}
+          aria-label={nextLanguageLabel}
+          data-umami-event="language_change"
+          data-umami-event-from={language}
+          data-umami-event-to={language === 'en' ? 'no' : 'en'}
+          data-umami-event-location="desktop"
+        >
           {language === 'en' ? 'NO' : 'EN'}
         </button>
       </nav>
@@ -112,6 +127,9 @@ export function Navigation({ activeSection, onNavigate }: NavigationProps) {
             type="button"
             aria-current={activeSection === 'home' ? 'true' : undefined}
             onClick={() => handleNavClick('home')}
+            data-umami-event="navigation_click"
+            data-umami-event-section="home"
+            data-umami-event-location="mobile"
           >
             {c.nav.home}
           </button>
@@ -121,11 +139,22 @@ export function Navigation({ activeSection, onNavigate }: NavigationProps) {
               type="button"
               aria-current={activeSection === item.id ? 'true' : undefined}
               onClick={() => handleNavClick(item.id)}
+              data-umami-event="navigation_click"
+              data-umami-event-section={item.id}
+              data-umami-event-location="mobile"
             >
               {item.label}
             </button>
           ))}
-          <button type="button" onClick={handleLanguageToggle} aria-label={nextLanguageLabel}>
+          <button
+            type="button"
+            onClick={handleLanguageToggle}
+            aria-label={nextLanguageLabel}
+            data-umami-event="language_change"
+            data-umami-event-from={language}
+            data-umami-event-to={language === 'en' ? 'no' : 'en'}
+            data-umami-event-location="mobile"
+          >
             {language === 'en' ? 'Norsk' : 'English'}
           </button>
         </nav>

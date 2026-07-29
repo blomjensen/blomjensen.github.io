@@ -30,12 +30,14 @@ export function Contact() {
       value: 'bjorn@blom-jensen.no',
       href: 'mailto:bjorn@blom-jensen.no',
       icon: Mail,
+      analyticsMethod: 'email',
     },
     {
       label: language === 'en' ? 'Phone' : 'Telefon',
       value: '+47 906 40 381',
       href: 'tel:+4790640381',
       icon: Phone,
+      analyticsMethod: 'phone',
     },
   ];
 
@@ -45,12 +47,14 @@ export function Contact() {
       value: 'bjornblomjensen',
       href: 'https://www.linkedin.com/in/bjornblomjensen/',
       icon: Linkedin,
+      analyticsMethod: 'linkedin',
     },
     {
       label: 'Instagram',
       value: '@bjornblomjensen',
       href: 'https://www.instagram.com/bjornblomjensen/',
       icon: Instagram,
+      analyticsMethod: 'instagram',
     },
   ];
 
@@ -71,7 +75,14 @@ export function Contact() {
             {directLinks.map((item) => {
               const Icon = item.icon;
               return (
-                <a className="contact-row" href={item.href} key={item.label}>
+                <a
+                  className="contact-row"
+                  href={item.href}
+                  key={item.label}
+                  data-umami-event="contact_click"
+                  data-umami-event-method={item.analyticsMethod}
+                  data-umami-event-location="contact"
+                >
                   <Icon size={18} aria-hidden="true" />
                   <span>
                     <small>{item.label}</small>
@@ -87,7 +98,16 @@ export function Contact() {
             {socialLinks.map((item) => {
               const Icon = item.icon;
               return (
-                <a className="contact-row" href={item.href} target="_blank" rel="noopener noreferrer" key={item.label}>
+                <a
+                  className="contact-row"
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  key={item.label}
+                  data-umami-event="contact_click"
+                  data-umami-event-method={item.analyticsMethod}
+                  data-umami-event-location="contact"
+                >
                   <Icon size={18} aria-hidden="true" />
                   <span>
                     <small>{item.label}</small>

@@ -92,6 +92,9 @@ function SequenceFigure({
           aria-label={`${isPlaying ? pauseLabel : playLabel}: ${label}`}
           aria-pressed={isPlaying}
           onClick={handleToggle}
+          data-umami-event="study_video_toggle"
+          data-umami-event-study={label}
+          data-umami-event-action={isPlaying ? 'pause' : 'play'}
         />
         <button
           type="button"
@@ -99,6 +102,9 @@ function SequenceFigure({
           aria-label={`${isPlaying ? pauseLabel : playLabel}: ${label}`}
           aria-pressed={isPlaying}
           onClick={handleToggle}
+          data-umami-event="study_video_toggle"
+          data-umami-event-study={label}
+          data-umami-event-action={isPlaying ? 'pause' : 'play'}
         >
           {isPlaying ? (
             <Pause size={18} fill="currentColor" strokeWidth={0} aria-hidden="true" />
