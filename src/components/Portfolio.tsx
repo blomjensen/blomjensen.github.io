@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Maximize2, Minus, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Maximize2, Minus, Plus, X } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -53,6 +53,8 @@ export function Portfolio() {
   const [gallery, setGallery] = useState<{ projectId: number; imageIndex: number } | null>(null);
   const projectRefs = useRef<Record<number, HTMLElement | null>>({});
   const positionLockRef = useRef<{ projectId: number; top: number } | null>(null);
+  const galleryTouchStartX = useRef<number | null>(null);
+  const galleryHasSwiped = useRef(false);
 
   const galleryProject = gallery ? projects.find((project) => project.id === gallery.projectId) : null;
   const galleryImages = galleryProject ? getProjectImages(galleryProject) : [];
@@ -143,6 +145,25 @@ export function Portfolio() {
       const imageCount = getProjectImages(projects.find((project) => project.id === current.projectId)!).length;
       return { ...current, imageIndex: (current.imageIndex + direction + imageCount) % imageCount };
     });
+  };
+
+  const handleGalleryTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    galleryTouchStartX.current = event.touches[0]?.clientX ?? null;
+    galleryHasSwiped.current = false;
+  };
+
+  const handleGalleryTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const startX = galleryTouchStartX.current;
+    const endX = event.changedTouches[0]?.clientX;
+    galleryTouchStartX.current = null;
+
+    if (startX === null || endX === undefined) return;
+
+    const delta = endX - startX;
+    if (Math.abs(delta) < 42) return;
+
+    galleryHasSwiped.current = true;
+    moveGallery(delta < 0 ? 1 : -1);
   };
 
   return (
@@ -338,12 +359,29 @@ export function Portfolio() {
       </div>
 
       {gallery && galleryProject && galleryImage && (
-        <div className="project-gallery" role="dialog" aria-modal="true" aria-label={galleryProject.title[language]}>
+        <div
+          className="project-gallery"
+          role="dialog"
+          aria-modal="true"
+          aria-label={galleryProject.title[language]}
+          onTouchStart={handleGalleryTouchStart}
+          onTouchEnd={handleGalleryTouchEnd}
+        >
+          <button type="button" className="project-gallery-close" onClick={() => setGallery(null)} aria-label={copy.closeGallery}>
+            <X size={22} aria-hidden="true" />
+          </button>
           <button
             type="button"
             className="project-gallery-image"
             aria-label={copy.closeGallery}
-            onClick={() => setGallery(null)}
+            onClick={() => {
+              if (galleryHasSwiped.current) {
+                galleryHasSwiped.current = false;
+                return;
+              }
+
+              setGallery(null);
+            }}
           >
             <img
               src={galleryImage.src}
