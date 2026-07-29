@@ -203,6 +203,8 @@ export function Portfolio() {
                 aria-label={actionLabel}
                 aria-expanded={isOpen}
                 aria-controls={`project-${project.id}-detail`}
+                data-umami-event={isOpen ? undefined : 'project-case-open'}
+                data-umami-event-project={isOpen ? undefined : project.title.en}
                 onClick={() => handleToggle(project.id)}
               >
                 <span className="project-number">{String(index + 1).padStart(2, '0')}</span>
