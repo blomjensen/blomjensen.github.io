@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { trackEvent } from './analytics';
 import { About } from './components/About';
 import { Contact } from './components/Contact';
 import { Hero } from './components/Hero';
@@ -11,6 +12,7 @@ const sections = ['home', 'portfolio', 'studies', 'about', 'contact'];
 
 function AppContent() {
   const [activeSection, setActiveSection] = useState('home');
+  const viewedSections = useRef(new Set<string>(['home']));
   const { language } = useLanguage();
 
   const scrollToSection = (sectionId: string) => {
@@ -39,6 +41,16 @@ function AppContent() {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (viewedSections.current.has(activeSection)) return;
+
+    viewedSections.current.add(activeSection);
+    trackEvent('section_view', {
+      section: activeSection,
+      language,
+    });
+  }, [activeSection, language]);
 
   return (
     <div className="site-root">

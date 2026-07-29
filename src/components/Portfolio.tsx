@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, Maximize2, Minus, Plus } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { trackEvent } from '../analytics';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 import { projects, type Project } from '../data/projects';
@@ -106,16 +107,31 @@ export function Portfolio() {
 
   const handleToggle = (projectId: number) => {
     const currentProjectId = expandedProjectId;
+    const project = projects.find((item) => item.id === projectId);
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const scrollBehavior: ScrollBehavior = reducedMotion ? 'auto' : 'smooth';
 
     if (currentProjectId === projectId) {
+      if (project) {
+        trackEvent('project_close', {
+          project: project.title.en,
+          project_id: project.id,
+          language,
+        });
+      }
       setExpandedProjectId(null);
       window.requestAnimationFrame(() => scrollProjectIntoView(projectId, scrollBehavior));
       return;
     }
 
     if (currentProjectId === null) {
+      if (project) {
+        trackEvent('project_open', {
+          project: project.title.en,
+          project_id: project.id,
+          language,
+        });
+      }
       setExpandedProjectId(projectId);
       window.requestAnimationFrame(() => scrollProjectIntoView(projectId, scrollBehavior));
       return;
@@ -129,11 +145,27 @@ export function Portfolio() {
       };
     }
 
+    if (project) {
+      trackEvent('project_open', {
+        project: project.title.en,
+        project_id: project.id,
+        language,
+      });
+    }
     setExpandedProjectId(projectId);
     window.requestAnimationFrame(() => scrollProjectIntoView(projectId, scrollBehavior));
   };
 
   const showGalleryImage = (projectId: number, imageIndex: number) => {
+    const project = projects.find((item) => item.id === projectId);
+    if (project) {
+      trackEvent('gallery_open', {
+        project: project.title.en,
+        project_id: project.id,
+        image: imageIndex + 1,
+        language,
+      });
+    }
     setGallery({ projectId, imageIndex });
   };
 
