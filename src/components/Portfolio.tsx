@@ -305,6 +305,7 @@ export function Portfolio() {
                     <div
                       className={[
                         'supporting-images',
+                        project.id === 7 && rowIndex === 1 ? 'is-carousel' : '',
                         row.columns === 1 ? 'is-one-column' : '',
                         row.columns === 3 ? 'is-three-column' : '',
                         row.columns === 4 ? 'is-four-column' : '',
@@ -315,6 +316,8 @@ export function Portfolio() {
                         .filter(Boolean)
                         .join(' ')}
                       aria-label={copy.supporting}
+                      role={project.id === 7 && rowIndex === 1 ? 'region' : undefined}
+                      tabIndex={project.id === 7 && rowIndex === 1 ? 0 : undefined}
                       key={`${project.id}-row-${rowIndex}`}
                     >
                       {row.images.map((image, imageIndex) => {

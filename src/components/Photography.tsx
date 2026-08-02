@@ -185,7 +185,12 @@ export function Photography() {
           <p>{c.aquateketDescription}</p>
         </header>
 
-        <div className="aquateket-gallery">
+        <div
+          className="aquateket-gallery"
+          role="region"
+          aria-label={language === 'en' ? 'Aquateket image carousel' : 'Aquateket bilderekke'}
+          tabIndex={0}
+        >
           {aquateketImages.map((src, index) => {
             const image = c.aquateketImages[index];
             return (

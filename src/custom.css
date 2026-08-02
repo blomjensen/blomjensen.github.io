@@ -325,6 +325,21 @@ main {
   color: var(--accent);
 }
 
+.hero-contact-action {
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.hero-contact-action:hover,
+.hero-contact-action:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--surface);
+}
+
 .hero-figure {
   align-self: stretch;
   min-height: 30rem;
@@ -680,6 +695,38 @@ dd {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.supporting-images.is-carousel {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 0.7rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: var(--line) transparent;
+  scrollbar-width: thin;
+}
+
+.supporting-images.is-carousel::-webkit-scrollbar {
+  height: 0.45rem;
+}
+
+.supporting-images.is-carousel::-webkit-scrollbar-thumb {
+  background: var(--line);
+}
+
+.supporting-images.is-carousel:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 0.4rem;
+}
+
+.supporting-images.is-carousel figure {
+  flex: 0 0 clamp(18rem, 26vw, 24rem);
+  min-width: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
 .supporting-images figure {
   margin: 0;
 }
@@ -930,15 +977,37 @@ dd {
 }
 
 .aquateket-gallery {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
   gap: 1rem;
   margin-top: 2.5rem;
+  padding-bottom: 0.7rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: var(--line) transparent;
+  scrollbar-width: thin;
+}
+
+.aquateket-gallery::-webkit-scrollbar {
+  height: 0.45rem;
+}
+
+.aquateket-gallery::-webkit-scrollbar-thumb {
+  background: var(--line);
+}
+
+.aquateket-gallery:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 0.4rem;
 }
 
 .aquateket-gallery figure {
+  flex: 0 0 clamp(18rem, 26vw, 24rem);
   min-width: 0;
   margin: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .aquateket-gallery img {
@@ -1506,6 +1575,11 @@ dd {
 
   .supporting-images.is-four-column {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .supporting-images.is-carousel figure,
+  .aquateket-gallery figure {
+    flex-basis: min(78vw, 22rem);
   }
 
   .study-header {

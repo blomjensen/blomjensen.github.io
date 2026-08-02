@@ -62,7 +62,7 @@ export function Hero({ onExploreClick }: HeroProps) {
             <button type="button" className="plain-action" onClick={onExploreClick}>
               {copy.viewWork}
             </button>
-            <a className="plain-link" href="mailto:bjorn@blom-jensen.no">
+            <a className="plain-link hero-contact-action" href="mailto:bjorn@blom-jensen.no">
               {copy.contact}
             </a>
           </div>
