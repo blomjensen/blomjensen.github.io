@@ -465,6 +465,7 @@ export function Portfolio() {
                             row.columns === 1 ? 'is-one-column' : '',
                             row.columns === 3 ? 'is-three-column' : '',
                             row.columns === 4 ? 'is-four-column' : '',
+                            row.compact ? 'is-compact-carousel' : '',
                             row.naturalAspect ? 'uses-natural-aspect' : '',
                             row.matchHorizontalHeight ? 'uses-matched-horizontal-height' : '',
                             row.uniformAspect === 'portrait' ? 'uses-portrait-crop' : '',

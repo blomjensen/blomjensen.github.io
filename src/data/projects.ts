@@ -11,6 +11,7 @@ export type ProjectImage = {
 
 export type ProjectImageRow = {
   columns?: 1 | 2 | 3 | 4;
+  compact?: boolean;
   naturalAspect?: boolean;
   matchHorizontalHeight?: boolean;
   uniformAspect?: 'portrait';
@@ -129,6 +130,7 @@ export const projects: Project[] = [
     imageRows: [
       {
         columns: 3,
+        compact: true,
         naturalAspect: true,
         images: [
           {
@@ -503,6 +505,7 @@ export const projects: Project[] = [
       {
         columns: 4,
         naturalAspect: true,
+        uniformAspect: 'portrait',
         images: [
           {
             src: '/projects/design-by-entropy/04-detail-card.webp',

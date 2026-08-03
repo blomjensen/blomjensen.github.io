@@ -119,7 +119,9 @@ export function Photography() {
   const { language } = useLanguage();
   const c = content[language].studies;
   const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const [carouselProgress, setCarouselProgress] = useState<Record<string, { value: number; scrollable: boolean }>>({});
+  const [carouselProgress, setCarouselProgress] = useState<
+    Record<string, { value: number; thumb: number; scrollable: boolean }>
+  >({});
   const previousLabel = language === 'en' ? 'Show previous media' : 'Vis forrige medier';
   const nextLabel = language === 'en' ? 'Show next media' : 'Vis neste medier';
   const aquateketImages = [
@@ -135,11 +137,20 @@ export function Photography() {
 
   const updateCarouselProgress = useCallback((carouselId: string, carousel: HTMLDivElement) => {
     const maximum = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
-    const next = { value: maximum === 0 ? 0 : carousel.scrollLeft / maximum, scrollable: maximum > 2 };
+    const next = {
+      value: maximum === 0 ? 0 : carousel.scrollLeft / maximum,
+      thumb: carousel.scrollWidth === 0 ? 1 : Math.min(carousel.clientWidth / carousel.scrollWidth, 1),
+      scrollable: maximum > 2,
+    };
 
     setCarouselProgress((current) => {
       const previous = current[carouselId];
-      if (previous && Math.abs(previous.value - next.value) < 0.001 && previous.scrollable === next.scrollable) {
+      if (
+        previous &&
+        Math.abs(previous.value - next.value) < 0.001 &&
+        Math.abs(previous.thumb - next.thumb) < 0.001 &&
+        previous.scrollable === next.scrollable
+      ) {
         return current;
       }
       return { ...current, [carouselId]: next };
@@ -193,7 +204,8 @@ export function Photography() {
   };
 
   const renderCarouselControls = (carouselId: string) => {
-    const indicator = carouselProgress[carouselId] ?? { value: 0, scrollable: false };
+    const indicator = carouselProgress[carouselId] ?? { value: 0, thumb: 1, scrollable: false };
+    const left = indicator.value * (1 - indicator.thumb) * 100;
 
     return (
       <>
@@ -211,6 +223,11 @@ export function Photography() {
           <button type="button" className="carousel-next" aria-label={nextLabel} onClick={() => scrollCarousel(carouselId, 1)}>
             <ChevronRight size={18} aria-hidden="true" />
           </button>
+        )}
+        {indicator.scrollable && (
+          <div className="carousel-progress" aria-hidden="true">
+            <span style={{ width: `${indicator.thumb * 100}%`, left: `${left}%` }} />
+          </div>
         )}
       </>
     );
