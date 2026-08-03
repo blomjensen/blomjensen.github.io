@@ -1,5 +1,12 @@
 import { ChevronLeft, ChevronRight, Maximize2, Minus, Plus, X } from 'lucide-react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  type WheelEvent as ReactWheelEvent,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 import { projects, type Project } from '../data/projects';
@@ -16,6 +23,8 @@ const labels = {
     closeGallery: 'Close image gallery',
     previousImage: 'Previous image',
     nextImage: 'Next image',
+    previousImages: 'Show previous images',
+    nextImages: 'Show next images',
     supporting: 'Supporting material',
   },
   no: {
@@ -29,6 +38,8 @@ const labels = {
     closeGallery: 'Lukk bildegalleri',
     previousImage: 'Forrige bilde',
     nextImage: 'Neste bilde',
+    previousImages: 'Vis forrige bilder',
+    nextImages: 'Vis neste bilder',
     supporting: 'Støttemateriale',
   },
 } as const;
@@ -55,10 +66,117 @@ export function Portfolio() {
   const positionLockRef = useRef<{ projectId: number; top: number } | null>(null);
   const galleryTouchStartX = useRef<number | null>(null);
   const galleryHasSwiped = useRef(false);
+  const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [carouselIndicators, setCarouselIndicators] = useState<
+    Record<string, { progress: number; thumb: number; isScrollable: boolean }>
+  >({});
 
   const galleryProject = gallery ? projects.find((project) => project.id === gallery.projectId) : null;
   const galleryImages = galleryProject ? getProjectImages(galleryProject) : [];
   const galleryImage = gallery ? galleryImages[gallery.imageIndex] : null;
+
+  const updateCarouselIndicator = useCallback((carouselId: string, node: HTMLDivElement) => {
+    const maximum = Math.max(node.scrollWidth - node.clientWidth, 0);
+    const next = {
+      progress: maximum === 0 ? 0 : node.scrollLeft / maximum,
+      thumb: node.scrollWidth === 0 ? 1 : Math.min(node.clientWidth / node.scrollWidth, 1),
+      isScrollable: maximum > 2,
+    };
+
+    setCarouselIndicators((current) => {
+      const previous = current[carouselId];
+      if (
+        previous &&
+        Math.abs(previous.progress - next.progress) < 0.001 &&
+        Math.abs(previous.thumb - next.thumb) < 0.001 &&
+        previous.isScrollable === next.isScrollable
+      ) {
+        return current;
+      }
+      return { ...current, [carouselId]: next };
+    });
+  }, []);
+
+  const updateAllCarouselIndicators = useCallback(() => {
+    Object.entries(carouselRefs.current).forEach(([carouselId, node]) => {
+      if (node) updateCarouselIndicator(carouselId, node);
+    });
+  }, [updateCarouselIndicator]);
+
+  useEffect(() => {
+    if (expandedProjectId === null) return;
+
+    updateAllCarouselIndicators();
+    window.addEventListener('resize', updateAllCarouselIndicators);
+
+    const resizeObserver =
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(updateAllCarouselIndicators);
+
+    Object.values(carouselRefs.current).forEach((node) => {
+      if (!node || !resizeObserver) return;
+      resizeObserver.observe(node);
+      node.querySelectorAll('figure, img').forEach((element) => resizeObserver.observe(element));
+    });
+
+    return () => {
+      window.removeEventListener('resize', updateAllCarouselIndicators);
+      resizeObserver?.disconnect();
+    };
+  }, [expandedProjectId, updateAllCarouselIndicators]);
+
+  const scrollCarousel = (carouselId: string, direction: 1 | -1) => {
+    const carousel = carouselRefs.current[carouselId];
+    if (!carousel) return;
+    carousel.scrollBy({ left: Math.max(carousel.clientWidth * 0.72, 220) * direction, behavior: 'smooth' });
+  };
+
+  const handleCarouselWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+
+    const carousel = event.currentTarget;
+    const maximum = carousel.scrollWidth - carousel.clientWidth;
+    const leavingAtStart = event.deltaX < 0 && carousel.scrollLeft <= 0;
+    const leavingAtEnd = event.deltaX > 0 && carousel.scrollLeft >= maximum;
+
+    if (leavingAtStart || leavingAtEnd) event.preventDefault();
+  };
+
+  const renderCarouselControls = (carouselId: string) => {
+    const indicator = carouselIndicators[carouselId] ?? { progress: 0, thumb: 1, isScrollable: false };
+    const left = indicator.progress * (1 - indicator.thumb) * 100;
+    const canGoBack = indicator.isScrollable && indicator.progress > 0.01;
+    const canGoForward = indicator.isScrollable && indicator.progress < 0.99;
+
+    return (
+      <>
+        {canGoBack && (
+          <button
+            type="button"
+            className="carousel-next carousel-previous"
+            aria-label={copy.previousImages}
+            onClick={() => scrollCarousel(carouselId, -1)}
+          >
+            <ChevronLeft size={18} aria-hidden="true" />
+          </button>
+        )}
+        {canGoForward && (
+          <button
+            type="button"
+            className="carousel-next"
+            aria-label={copy.nextImages}
+            onClick={() => scrollCarousel(carouselId, 1)}
+          >
+            <ChevronRight size={18} aria-hidden="true" />
+          </button>
+        )}
+        {indicator.isScrollable && (
+          <div className="carousel-progress" aria-hidden="true">
+            <span style={{ width: `${indicator.thumb * 100}%`, left: `${left}%` }} />
+          </div>
+        )}
+      </>
+    );
+  };
 
   useEffect(() => {
     if (!gallery) return;
@@ -186,6 +304,8 @@ export function Portfolio() {
           const primaryImage = project.images[0];
           const primaryCaption = primaryImage?.caption?.[language];
           const secondaryImages = [...project.images.slice(1), ...(project.processImages ?? [])];
+          const secondaryIsCarousel = secondaryImages.length >= 3;
+          const secondaryCarouselId = `project-${project.id}-secondary`;
           const imageRowStartIndex = 1 + secondaryImages.length;
 
           return (
@@ -268,94 +388,119 @@ export function Portfolio() {
                   </div>
 
                   {secondaryImages.length > 0 && (
-                    <div className="supporting-images" aria-label={copy.supporting}>
-                      {secondaryImages.map((image, imageIndex) => {
-                        const caption = image.caption?.[language];
+                    <div className={secondaryIsCarousel ? 'image-carousel' : 'image-row'}>
+                      <div
+                        className={`supporting-images ${secondaryIsCarousel ? 'is-carousel is-secondary-carousel' : ''}`}
+                        aria-label={copy.supporting}
+                        role={secondaryIsCarousel ? 'region' : undefined}
+                        tabIndex={secondaryIsCarousel ? 0 : undefined}
+                        ref={(node) => {
+                          carouselRefs.current[secondaryCarouselId] = node;
+                        }}
+                        onScroll={(event) => updateCarouselIndicator(secondaryCarouselId, event.currentTarget)}
+                        onWheel={handleCarouselWheel}
+                      >
+                        {secondaryImages.map((image, imageIndex) => {
+                          const caption = image.caption?.[language];
 
-                        return (
-                          <figure
-                            className={
-                              image.fit === 'contain'
-                                ? 'is-contained'
-                                : image.fit === 'dark-contain'
-                                  ? 'is-dark-contained'
-                                  : undefined
-                            }
-                            key={`${project.id}-${image.src}`}
-                          >
-                            <div className="project-image-media">
-                              <img src={image.src} alt={getAlt(project, language, caption)} loading="lazy" />
-                              <button
-                                type="button"
-                                className="project-image-zoom"
-                                aria-label={`${copy.zoomImage}: ${project.title[language]}`}
-                                onClick={() => showGalleryImage(project.id, imageIndex + 1)}
-                              >
-                                <Maximize2 size={18} aria-hidden="true" />
-                              </button>
-                            </div>
-                            {caption && <figcaption>{caption}</figcaption>}
-                          </figure>
-                        );
-                      })}
+                          return (
+                            <figure
+                              className={
+                                image.fit === 'contain'
+                                  ? 'is-contained'
+                                  : image.fit === 'dark-contain'
+                                    ? 'is-dark-contained'
+                                    : undefined
+                              }
+                              key={`${project.id}-${image.src}`}
+                            >
+                              <div className="project-image-media">
+                                <img src={image.src} alt={getAlt(project, language, caption)} loading="lazy" />
+                                <button
+                                  type="button"
+                                  className="project-image-zoom"
+                                  aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                                  onClick={() => showGalleryImage(project.id, imageIndex + 1)}
+                                >
+                                  <Maximize2 size={18} aria-hidden="true" />
+                                </button>
+                              </div>
+                              {caption && <figcaption>{caption}</figcaption>}
+                            </figure>
+                          );
+                        })}
+                      </div>
+                      {secondaryIsCarousel && renderCarouselControls(secondaryCarouselId)}
                     </div>
                   )}
 
-                  {project.imageRows?.map((row, rowIndex) => (
-                    <div
-                      className={[
-                        'supporting-images',
-                        project.id === 7 && rowIndex === 1 ? 'is-carousel' : '',
-                        row.columns === 1 ? 'is-one-column' : '',
-                        row.columns === 3 ? 'is-three-column' : '',
-                        row.columns === 4 ? 'is-four-column' : '',
-                        row.naturalAspect ? 'uses-natural-aspect' : '',
-                        row.matchHorizontalHeight ? 'uses-matched-horizontal-height' : '',
-                        row.uniformAspect === 'portrait' ? 'uses-portrait-crop' : '',
-                      ]
-                        .filter(Boolean)
-                        .join(' ')}
-                      aria-label={copy.supporting}
-                      role={project.id === 7 && rowIndex === 1 ? 'region' : undefined}
-                      tabIndex={project.id === 7 && rowIndex === 1 ? 0 : undefined}
-                      key={`${project.id}-row-${rowIndex}`}
-                    >
-                      {row.images.map((image, imageIndex) => {
-                        const caption = image.caption?.[language];
-                        const previousRowImageCount = (project.imageRows ?? [])
-                          .slice(0, rowIndex)
-                          .reduce((count, previousRow) => count + previousRow.images.length, 0);
+                  {project.imageRows?.map((row, rowIndex) => {
+                    const rowIsCarousel = row.images.length >= 3;
+                    const rowCarouselId = `project-${project.id}-row-${rowIndex}`;
 
-                        return (
-                          <figure
-                            className={
-                              image.fit === 'contain'
-                                ? 'is-contained'
-                                : image.fit === 'dark-contain'
-                                  ? 'is-dark-contained'
-                                  : undefined
-                            }
-                            key={`${project.id}-${rowIndex}-${image.src}`}
-                          >
-                            <div className="project-image-media">
-                              <img src={image.src} alt={getAlt(project, language, caption)} loading="lazy" />
-                              <button
-                                type="button"
-                                className="project-image-zoom"
-                                aria-label={`${copy.zoomImage}: ${project.title[language]}`}
-                                onClick={() =>
-                                  showGalleryImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex)
+                    return (
+                      <div className={rowIsCarousel ? 'image-carousel' : 'image-row'} key={rowCarouselId}>
+                        <div
+                          className={[
+                            'supporting-images',
+                            rowIsCarousel ? 'is-carousel' : '',
+                            row.columns === 1 ? 'is-one-column' : '',
+                            row.columns === 3 ? 'is-three-column' : '',
+                            row.columns === 4 ? 'is-four-column' : '',
+                            row.naturalAspect ? 'uses-natural-aspect' : '',
+                            row.matchHorizontalHeight ? 'uses-matched-horizontal-height' : '',
+                            row.uniformAspect === 'portrait' ? 'uses-portrait-crop' : '',
+                          ]
+                            .filter(Boolean)
+                            .join(' ')}
+                          aria-label={copy.supporting}
+                          role={rowIsCarousel ? 'region' : undefined}
+                          tabIndex={rowIsCarousel ? 0 : undefined}
+                          ref={(node) => {
+                            carouselRefs.current[rowCarouselId] = node;
+                          }}
+                          onScroll={(event) => updateCarouselIndicator(rowCarouselId, event.currentTarget)}
+                          onWheel={handleCarouselWheel}
+                        >
+                          {row.images.map((image, imageIndex) => {
+                            const caption = image.caption?.[language];
+                            const previousRowImageCount = (project.imageRows ?? [])
+                              .slice(0, rowIndex)
+                              .reduce((count, previousRow) => count + previousRow.images.length, 0);
+
+                            return (
+                              <figure
+                                className={
+                                  image.fit === 'contain'
+                                    ? 'is-contained'
+                                    : image.fit === 'dark-contain'
+                                      ? 'is-dark-contained'
+                                      : undefined
                                 }
+                                key={`${project.id}-${rowIndex}-${image.src}`}
                               >
-                                <Maximize2 size={18} aria-hidden="true" />
-                              </button>
-                            </div>
-                            {caption && <figcaption>{caption}</figcaption>}
-                          </figure>
-                        );
-                      })}
-                    </div>
-                  ))}
+                                <div className="project-image-media">
+                                  <img src={image.src} alt={getAlt(project, language, caption)} loading="lazy" />
+                                  <button
+                                    type="button"
+                                    className="project-image-zoom"
+                                    aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                                    onClick={() =>
+                                      showGalleryImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex)
+                                    }
+                                  >
+                                    <Maximize2 size={18} aria-hidden="true" />
+                                  </button>
+                                </div>
+                                {caption && <figcaption>{caption}</figcaption>}
+                              </figure>
+                            );
+                          })}
+                        </div>
+                        {rowIsCarousel && renderCarouselControls(rowCarouselId)}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </article>
