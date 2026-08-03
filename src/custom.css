@@ -214,6 +214,15 @@ main {
   background: var(--surface);
   box-shadow: 0 18px 48px rgba(17, 17, 17, 0.1);
   overscroll-behavior: contain;
+  transform-origin: top center;
+  transition: opacity 180ms ease-out, transform 180ms ease-out;
+}
+
+@starting-style {
+  .mobile-menu {
+    opacity: 0;
+    transform: translateY(-0.35rem) scale(0.985);
+  }
 }
 
 .mobile-menu button {
@@ -581,6 +590,14 @@ dd {
   grid-template-columns: minmax(0, 1.16fr) minmax(18rem, 0.72fr);
   gap: 3rem;
   padding: 0 0 3rem 5.5rem;
+  transition: opacity 220ms ease-out, transform 220ms ease-out;
+}
+
+@starting-style {
+  .project-detail {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
 }
 
 .project-main-image {
@@ -676,11 +693,20 @@ dd {
 }
 
 .supporting-images {
-  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 2rem 1rem;
   padding-top: 0.5rem;
+}
+
+.image-row,
+.image-carousel {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.image-carousel {
+  position: relative;
 }
 
 .supporting-images.is-one-column {
@@ -700,7 +726,7 @@ dd {
   gap: 1rem;
   padding-bottom: 0.7rem;
   overflow-x: auto;
-  overscroll-behavior-x: contain;
+  overscroll-behavior-x: none;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   scrollbar-color: var(--line) transparent;
@@ -721,10 +747,88 @@ dd {
 }
 
 .supporting-images.is-carousel figure {
-  flex: 0 0 clamp(18rem, 26vw, 24rem);
+  flex: 0 0 clamp(16rem, 22vw, 21rem);
   min-width: 0;
   scroll-snap-align: start;
   scroll-snap-stop: always;
+}
+
+.supporting-images.is-secondary-carousel figure {
+  flex-basis: 50%;
+}
+
+.supporting-images.is-carousel.uses-matched-horizontal-height img {
+  height: min(48.75vw, 13.75rem);
+}
+
+.supporting-images.is-carousel.uses-matched-horizontal-height figure {
+  flex: 0 0 auto;
+}
+
+@media (min-width: 861px) {
+  .supporting-images.is-carousel.uses-matched-horizontal-height img {
+    height: 31.25cqw;
+  }
+}
+
+.carousel-progress {
+  position: relative;
+  width: min(7rem, 28%);
+  height: 1px;
+  margin-top: 0.55rem;
+  background: var(--line);
+}
+
+.carousel-progress span {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: var(--ink);
+  transition: left 160ms ease-out, width 160ms ease-out;
+}
+
+.carousel-next {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: 0.45rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  box-shadow: 0 1px 8px rgb(0 0 0 / 0.08);
+  cursor: pointer;
+  opacity: 0.65;
+  transform: translateY(-50%);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.image-carousel:hover .carousel-next,
+.carousel-next:focus-visible {
+  opacity: 1;
+}
+
+.carousel-next:hover {
+  transform: translate(0.12rem, -50%);
+}
+
+.carousel-previous {
+  right: auto;
+  left: 0.45rem;
+}
+
+.carousel-previous:hover {
+  transform: translate(-0.12rem, -50%);
+}
+
+.carousel-next:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .supporting-images figure {
@@ -776,7 +880,7 @@ dd {
   height: 62.5cqw;
 }
 
-.supporting-images.is-three-column.uses-matched-horizontal-height img {
+.supporting-images.is-three-column:not(.is-carousel).uses-matched-horizontal-height img {
   height: calc((100cqw - 2rem) * 0.2083333333);
 }
 
@@ -1697,7 +1801,7 @@ dd {
     gap: 1.5rem;
   }
 
-  .supporting-images.is-three-column.uses-matched-horizontal-height img {
+  .supporting-images.is-three-column:not(.is-carousel).uses-matched-horizontal-height img {
     height: 62.5cqw;
   }
 

@@ -443,13 +443,13 @@ export const projects: Project[] = [
   {
     id: 7,
     title: { en: 'Design by Entropy', no: 'Design by Entropy' },
-    category: { en: 'Prediploma, AHO, Autumn 2025', no: 'Prediplom, AHO, host 2025' },
+    category: { en: 'Pre-diploma, AHO, Autumn 2025', no: 'Prediplom, AHO, høst 2025' },
     description: {
-      en: 'A pre diploma study of material change, maintenance, and long term park performance in Oslo.',
+      en: 'A pre-diploma study of material change, maintenance, and long-term park performance in Oslo.',
       no: 'En prediplomstudie av materialendring, drift og langvarig parkytelse i Oslo.',
     },
     fullDescription: {
-      en: 'Design by Entropy investigates how landscape architects can treat material change as a design premise rather than a defect to be repaired. Through talks with Bymiljoetaten and Sagene district, review of Parkinstruks, and field surveys in Alexander Kiellands plass, Lakkegata Aktivitetspark, and Rudolf Nilsens plass, the project studies how weather, use, maintenance, and detailing shape long term performance in Oslo parks. The work develops the Patina Card as a compact field tool and forms the conceptual groundwork for the diploma project.',
+      en: 'Design by Entropy investigates how landscape architects can treat material change as a design premise rather than a defect to be repaired. Through talks with Bymiljøetaten and Sagene district, review of Parkinstruks, and field surveys in Alexander Kiellands plass, Lakkegata Aktivitetspark, and Rudolf Nilsens plass, the project studies how weather, use, maintenance, and detailing shape long-term performance in Oslo parks. The work develops the Patina Card as a compact field tool and forms the conceptual groundwork for the diploma project.',
       no: 'Design by Entropy undersøker hvordan landskapsarkitekter kan behandle materialendring som et designpremiss i stedet for en feil som skal repareres. Gjennom samtaler med Bymiljøetaten og Bydel Sagene, lesning av Parkinstruks og feltstudier i Alexander Kiellands plass, Lakkegata Aktivitetspark og Rudolf Nilsens plass, undersøker prosjektet hvordan vær, bruk, drift og detaljering former langvarig ytelse i Oslos parker. Arbeidet utvikler Patina Card som et kompakt feltverktøy og danner det konseptuelle grunnlaget for diplomprosjektet.',
     },
     facts: [
@@ -488,7 +488,7 @@ export const projects: Project[] = [
             src: '/projects/design-by-entropy/02-case-page.webp',
             caption: {
               en: 'A case page pairs park photography with the Patina Card sequence used in the fieldwork.',
-              no: 'En caseside kobler parkfotografi med Patina Card sekvensen som ble brukt i feltarbeidet.',
+              no: 'En caseside kobler parkfotografi med Patina Card-sekvensen som ble brukt i feltarbeidet.',
             },
           },
           {
@@ -503,34 +503,61 @@ export const projects: Project[] = [
       {
         columns: 4,
         naturalAspect: true,
-        uniformAspect: 'portrait',
         images: [
           {
             src: '/projects/design-by-entropy/04-detail-card.webp',
             caption: {
-              en: 'A single Patina Card links field image, performance score, and design takeaway.',
-              no: 'Et enkelt Patina Card kobler feltbilde, ytelsesscore og designmessig læringspunkt.',
+              en: 'AKP 01 - Granite fountain framing.',
+              no: 'AKP 01 - Granittinnramming ved fontenen.',
             },
           },
           {
             src: '/projects/design-by-entropy/05-card-stone-feature.webp',
             caption: {
-              en: 'A Patina Card example traces how stone, liner, and heavy use affect long term maintenance.',
-              no: 'Et Patina Card eksempel følger hvordan stein, membran og høy bruk påvirker langvarig vedlikehold.',
+              en: 'AKP 02 - Wood railing.',
+              no: 'AKP 02 - Trerekkverk.',
             },
           },
           {
             src: '/projects/design-by-entropy/06-card-climbing-wall.webp',
             caption: {
-              en: 'A Patina Card example reads paint wear, surface change, and public use on a climbing wall.',
-              no: 'Et Patina Card eksempel leser malingens slitasje, overflateendring og bruk på en klatrevegg.',
+              en: 'AKP 03 - Stone feature and geomembrane liner.',
+              no: 'AKP 03 - Steinelement og geomembran.',
             },
           },
           {
             src: '/projects/design-by-entropy/07-card-colored-benches.webp',
             caption: {
-              en: 'A Patina Card example follows moss, moisture, and colour aging in a concrete bench detail.',
-              no: 'Et Patina Card eksempel følger mose, fukt og aldring av farge i en detalj av farget betong.',
+              en: 'LAP 01 - Pergola.',
+              no: 'LAP 01 - Pergola.',
+            },
+          },
+          {
+            src: '/projects/design-by-entropy/08-card-lap-concrete-bench.webp',
+            caption: {
+              en: 'LAP 02 - Concrete bench.',
+              no: 'LAP 02 - Betongbenk.',
+            },
+          },
+          {
+            src: '/projects/design-by-entropy/09-card-lap-climbing-wall.webp',
+            caption: {
+              en: 'LAP 03 - Concrete painted climbing wall.',
+              no: 'LAP 03 - Klatrevegg i malt betong.',
+            },
+          },
+          {
+            src: '/projects/design-by-entropy/10-card-rnp-colored-benches.webp',
+            caption: {
+              en: 'RNP 01 - Colored concrete benches.',
+              no: 'RNP 01 - Fargede betongbenker.',
+            },
+          },
+          {
+            src: '/projects/design-by-entropy/11-card-rnp-red-gravel.webp',
+            caption: {
+              en: 'RNP 02 - Red gravel.',
+              no: 'RNP 02 - Rød grus.',
             },
           },
         ],
