@@ -705,7 +705,8 @@ dd {
   min-width: 0;
 }
 
-.image-carousel {
+.image-carousel,
+.study-carousel {
   position: relative;
 }
 
@@ -753,8 +754,22 @@ dd {
   scroll-snap-stop: always;
 }
 
+.supporting-images.is-carousel::after {
+  content: '';
+  flex: 0 0 max(0px, calc(100% - clamp(16rem, 22vw, 21rem) - 1rem));
+}
+
+.aquateket-gallery::after {
+  content: '';
+  flex: 0 0 max(0px, calc(100% - clamp(18rem, 26vw, 24rem) - 1rem));
+}
+
 .supporting-images.is-secondary-carousel figure {
   flex-basis: 50%;
+}
+
+.supporting-images.is-secondary-carousel::after {
+  flex-basis: max(0px, calc(50% - 1rem));
 }
 
 .supporting-images.is-carousel.uses-matched-horizontal-height img {
@@ -809,6 +824,7 @@ dd {
 }
 
 .image-carousel:hover .carousel-next,
+.study-carousel:hover .carousel-next,
 .carousel-next:focus-visible {
   opacity: 1;
 }
@@ -1086,7 +1102,7 @@ dd {
   margin-top: 2.5rem;
   padding-bottom: 0.7rem;
   overflow-x: auto;
-  overscroll-behavior-x: contain;
+  overscroll-behavior-x: none;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   scrollbar-color: var(--line) transparent;
@@ -1161,9 +1177,44 @@ dd {
   margin: 2.5rem auto 0;
 }
 
+.study-sequences.is-carousel {
+  display: flex;
+  max-width: none;
+  overflow-x: auto;
+  overscroll-behavior-x: none;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: var(--line) transparent;
+  scrollbar-width: thin;
+}
+
+.study-sequences.is-carousel::-webkit-scrollbar {
+  height: 0.45rem;
+}
+
+.study-sequences.is-carousel::-webkit-scrollbar-thumb {
+  background: var(--line);
+}
+
+.study-sequences.is-carousel:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 0.4rem;
+}
+
 .study-sequence {
   min-width: 0;
   margin: 0;
+}
+
+.study-sequences.is-carousel .study-sequence {
+  flex: 0 0 calc((100% - 1rem) / 2);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.study-sequences.is-carousel::after {
+  content: '';
+  flex: 0 0 max(0px, calc((100% - 1rem) / 2 - 1rem));
 }
 
 .study-media {
@@ -1682,8 +1733,18 @@ dd {
   }
 
   .supporting-images.is-carousel figure,
-  .aquateket-gallery figure {
+  .aquateket-gallery figure,
+  .study-sequences.is-carousel .study-sequence {
     flex-basis: min(78vw, 22rem);
+  }
+
+  .supporting-images.is-carousel::after,
+  .aquateket-gallery::after {
+    flex-basis: max(0px, calc(100% - min(78vw, 22rem) - 1rem));
+  }
+
+  .study-sequences.is-carousel::after {
+    flex-basis: max(0px, calc(100% - min(78vw, 22rem) - 1rem));
   }
 
   .study-header {

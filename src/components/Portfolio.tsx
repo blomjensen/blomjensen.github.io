@@ -127,7 +127,25 @@ export function Portfolio() {
   const scrollCarousel = (carouselId: string, direction: 1 | -1) => {
     const carousel = carouselRefs.current[carouselId];
     if (!carousel) return;
-    carousel.scrollBy({ left: Math.max(carousel.clientWidth * 0.72, 220) * direction, behavior: 'smooth' });
+
+    const maximum = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
+    const carouselLeft = carousel.getBoundingClientRect().left;
+    const snapPoints = Array.from(
+      new Set(
+        Array.from(carousel.children)
+          .filter((element): element is HTMLElement => element instanceof HTMLElement && element.tagName === 'FIGURE')
+          .map((figure) =>
+            Math.round(Math.min(Math.max(figure.getBoundingClientRect().left - carouselLeft + carousel.scrollLeft, 0), maximum))
+          )
+      )
+    ).sort((left, right) => left - right);
+    const current = carousel.scrollLeft;
+    const target =
+      direction === 1
+        ? snapPoints.find((point) => point > current + 2) ?? maximum
+        : [...snapPoints].reverse().find((point) => point < current - 2) ?? 0;
+
+    carousel.scrollTo({ left: target, behavior: 'smooth' });
   };
 
   const handleCarouselWheel = (event: ReactWheelEvent<HTMLDivElement>) => {

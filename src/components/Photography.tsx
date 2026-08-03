@@ -1,5 +1,5 @@
-import { Pause, Play } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -118,6 +118,10 @@ function SequenceFigure({
 export function Photography() {
   const { language } = useLanguage();
   const c = content[language].studies;
+  const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [carouselProgress, setCarouselProgress] = useState<Record<string, { value: number; scrollable: boolean }>>({});
+  const previousLabel = language === 'en' ? 'Show previous media' : 'Vis forrige medier';
+  const nextLabel = language === 'en' ? 'Show next media' : 'Vis neste medier';
   const aquateketImages = [
     '/projects/aquateket/bolgete.webp',
     '/projects/aquateket/bolgete-3.webp',
@@ -128,6 +132,89 @@ export function Photography() {
     '/projects/aquateket/skummende-3.webp',
     '/projects/aquateket/skummende-4.webp',
   ];
+
+  const updateCarouselProgress = useCallback((carouselId: string, carousel: HTMLDivElement) => {
+    const maximum = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
+    const next = { value: maximum === 0 ? 0 : carousel.scrollLeft / maximum, scrollable: maximum > 2 };
+
+    setCarouselProgress((current) => {
+      const previous = current[carouselId];
+      if (previous && Math.abs(previous.value - next.value) < 0.001 && previous.scrollable === next.scrollable) {
+        return current;
+      }
+      return { ...current, [carouselId]: next };
+    });
+  }, []);
+
+  useEffect(() => {
+    const updateAll = () => {
+      Object.entries(carouselRefs.current).forEach(([carouselId, carousel]) => {
+        if (carousel) updateCarouselProgress(carouselId, carousel);
+      });
+    };
+
+    updateAll();
+    window.addEventListener('resize', updateAll);
+    const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(updateAll);
+    Object.values(carouselRefs.current).forEach((carousel) => {
+      if (!carousel || !resizeObserver) return;
+      resizeObserver.observe(carousel);
+      carousel.querySelectorAll('figure, img, video').forEach((element) => resizeObserver.observe(element));
+    });
+
+    return () => {
+      window.removeEventListener('resize', updateAll);
+      resizeObserver?.disconnect();
+    };
+  }, [updateCarouselProgress]);
+
+  const scrollCarousel = (carouselId: string, direction: 1 | -1) => {
+    const carousel = carouselRefs.current[carouselId];
+    if (!carousel) return;
+
+    const maximum = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
+    const carouselLeft = carousel.getBoundingClientRect().left;
+    const snapPoints = Array.from(
+      new Set(
+        Array.from(carousel.children)
+          .filter((element): element is HTMLElement => element instanceof HTMLElement && element.tagName === 'FIGURE')
+          .map((figure) =>
+            Math.round(Math.min(Math.max(figure.getBoundingClientRect().left - carouselLeft + carousel.scrollLeft, 0), maximum))
+          )
+      )
+    ).sort((left, right) => left - right);
+    const current = carousel.scrollLeft;
+    const target =
+      direction === 1
+        ? snapPoints.find((point) => point > current + 2) ?? maximum
+        : [...snapPoints].reverse().find((point) => point < current - 2) ?? 0;
+
+    carousel.scrollTo({ left: target, behavior: 'smooth' });
+  };
+
+  const renderCarouselControls = (carouselId: string) => {
+    const indicator = carouselProgress[carouselId] ?? { value: 0, scrollable: false };
+
+    return (
+      <>
+        {indicator.scrollable && indicator.value > 0.01 && (
+          <button
+            type="button"
+            className="carousel-next carousel-previous"
+            aria-label={previousLabel}
+            onClick={() => scrollCarousel(carouselId, -1)}
+          >
+            <ChevronLeft size={18} aria-hidden="true" />
+          </button>
+        )}
+        {indicator.scrollable && indicator.value < 0.99 && (
+          <button type="button" className="carousel-next" aria-label={nextLabel} onClick={() => scrollCarousel(carouselId, 1)}>
+            <ChevronRight size={18} aria-hidden="true" />
+          </button>
+        )}
+      </>
+    );
+  };
 
   return (
     <section id="studies" className="studies-section" aria-labelledby="studies-heading">
@@ -156,23 +243,35 @@ export function Photography() {
           <p>{c.description}</p>
         </header>
 
-        <div className="study-sequences" aria-label={c.comparisonLabel}>
-          <SequenceFigure
-            videoSrc="/projects/transitions-portugal/transitions-0.5fps.mp4"
-            alt={c.slowAlt}
-            label={c.slowLabel}
-            detail={c.slowDetail}
-            playLabel={c.play}
-            pauseLabel={c.pause}
-          />
-          <SequenceFigure
-            videoSrc="/projects/transitions-portugal/transitions-2fps.mp4"
-            alt={c.fastAlt}
-            label={c.fastLabel}
-            detail={c.fastDetail}
-            playLabel={c.play}
-            pauseLabel={c.pause}
-          />
+        <div className="study-carousel">
+          <div
+            className="study-sequences is-carousel"
+            aria-label={c.comparisonLabel}
+            role="region"
+            tabIndex={0}
+            ref={(node) => {
+              carouselRefs.current.transitions = node;
+            }}
+            onScroll={(event) => updateCarouselProgress('transitions', event.currentTarget)}
+          >
+            <SequenceFigure
+              videoSrc="/projects/transitions-portugal/transitions-0.5fps.mp4"
+              alt={c.slowAlt}
+              label={c.slowLabel}
+              detail={c.slowDetail}
+              playLabel={c.play}
+              pauseLabel={c.pause}
+            />
+            <SequenceFigure
+              videoSrc="/projects/transitions-portugal/transitions-2fps.mp4"
+              alt={c.fastAlt}
+              label={c.fastLabel}
+              detail={c.fastDetail}
+              playLabel={c.play}
+              pauseLabel={c.pause}
+            />
+          </div>
+          {renderCarouselControls('transitions')}
         </div>
       </article>
 
@@ -185,21 +284,28 @@ export function Photography() {
           <p>{c.aquateketDescription}</p>
         </header>
 
-        <div
-          className="aquateket-gallery"
-          role="region"
-          aria-label={language === 'en' ? 'Aquateket image carousel' : 'Aquateket bilderekke'}
-          tabIndex={0}
-        >
-          {aquateketImages.map((src, index) => {
-            const image = c.aquateketImages[index];
-            return (
-              <figure key={src}>
-                <img src={src} alt={image.alt} loading="lazy" decoding="async" />
-                <figcaption>{image.label}</figcaption>
-              </figure>
-            );
-          })}
+        <div className="study-carousel aquateket-carousel">
+          <div
+            className="aquateket-gallery"
+            role="region"
+            aria-label={language === 'en' ? 'Aquateket image carousel' : 'Aquateket bilderekke'}
+            tabIndex={0}
+            ref={(node) => {
+              carouselRefs.current.aquateket = node;
+            }}
+            onScroll={(event) => updateCarouselProgress('aquateket', event.currentTarget)}
+          >
+            {aquateketImages.map((src, index) => {
+              const image = c.aquateketImages[index];
+              return (
+                <figure key={src}>
+                  <img src={src} alt={image.alt} loading="lazy" decoding="async" />
+                  <figcaption>{image.label}</figcaption>
+                </figure>
+              );
+            })}
+          </div>
+          {renderCarouselControls('aquateket')}
         </div>
       </article>
     </section>
