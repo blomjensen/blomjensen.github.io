@@ -2,6 +2,7 @@ import { content } from '../content';
 import { ChartNetwork, Cuboid, Layers, Map, ScanLine, UsersRound } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import heroImage from '../assets/11641084856f4253f2024f07b07edcc8d4b7a88f.webp';
+import { InteractiveLink } from './InteractiveLink';
 
 interface HeroProps {
   onExploreClick: () => void;
@@ -9,7 +10,7 @@ interface HeroProps {
 
 const heroCopy = {
   en: {
-    kicker: 'Portfolio 2026',
+    kicker: 'Portfolio',
     title: 'Landscape architecture for terrain in change.',
     lead:
       'I am a landscape architect from AHO, working with terrain, infrastructure, maintenance, and the systems that shape places over time.',
@@ -32,11 +33,11 @@ const heroCopy = {
       { label: 'Profile', value: 'Landscape architect, AHO 2026' },
       { label: 'Email', value: 'bjorn@blom-jensen.no', href: 'mailto:bjorn@blom-jensen.no' },
       { label: 'Phone', value: '+47 906 40 381', href: 'tel:+4790640381' },
-      { label: 'CV', value: 'One-page CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },
+      { label: 'CV', value: 'CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },
     ],
   },
   no: {
-    kicker: 'Portefølje 2026',
+    kicker: 'Portefølje',
     title: 'Landskapsarkitektur for terreng i endring.',
     lead:
       'Jeg er landskapsarkitekt fra AHO og arbeider med terreng, infrastruktur, drift og systemene som former steder over tid.',
@@ -47,7 +48,7 @@ const heroCopy = {
     metadataLabel: 'Porteføljeinformasjon',
     capabilitiesLabel: 'Kompetanse',
     capabilities: [
-      { label: 'Dronekartlegging', Icon: ScanLine },
+      { label: 'Drone', Icon: ScanLine },
       { label: 'Stedsanalyse', Icon: ChartNetwork },
       { label: 'Kartlegging', Icon: Map },
       { label: '3D-studier', Icon: Cuboid },
@@ -59,7 +60,7 @@ const heroCopy = {
       { label: 'Profil', value: 'Landskapsarkitekt, AHO 2026' },
       { label: 'E-post', value: 'bjorn@blom-jensen.no', href: 'mailto:bjorn@blom-jensen.no' },
       { label: 'Telefon', value: '+47 906 40 381', href: 'tel:+4790640381' },
-      { label: 'CV', value: 'Én-sides CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },
+      { label: 'CV', value: 'CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },
     ],
   },
 } as const;
@@ -87,9 +88,9 @@ export function Hero({ onExploreClick }: HeroProps) {
             <button type="button" className="plain-action" onClick={onExploreClick}>
               {copy.viewWork}
             </button>
-            <a className="plain-link hero-contact-action" href="mailto:bjorn@blom-jensen.no">
+            <InteractiveLink className="plain-link hero-contact-action" href="mailto:bjorn@blom-jensen.no">
               {copy.contact}
-            </a>
+            </InteractiveLink>
           </div>
         </div>
 
@@ -98,41 +99,45 @@ export function Hero({ onExploreClick }: HeroProps) {
         </figure>
       </div>
 
-      <dl className="hero-details" aria-label={copy.metadataLabel}>
-        {copy.details.map((detail) => (
-          <div key={detail.label}>
-            <dt>{detail.label}</dt>
-            <dd>
-              {detail.href ? (
-                <a
-                  className="hero-detail-link"
-                  href={detail.href}
-                  target={detail.href.endsWith('.pdf') ? '_blank' : undefined}
-                  rel={detail.href.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
-                >
-                  {detail.value}
-                </a>
-              ) : (
-                detail.value
-              )}
-            </dd>
-          </div>
-        ))}
-      </dl>
-
-      <section className="hero-capabilities" aria-label={copy.capabilitiesLabel}>
-        <p>{copy.capabilitiesLabel}</p>
-        <ul>
-          {copy.capabilities.map(({ label, Icon }) => (
-            <li key={label}>
-              <span className="hero-capability-icon" aria-hidden="true">
-                <Icon size={18} strokeWidth={1.55} />
-              </span>
-              <span>{label}</span>
-            </li>
+      <div className="hero-lower">
+        <dl className="hero-details" aria-label={copy.metadataLabel}>
+          {copy.details.map((detail) => (
+            <div key={detail.label}>
+              <dt>{detail.label}</dt>
+              <dd>
+                {detail.href ? (
+                  <InteractiveLink
+                    className="hero-detail-link"
+                    href={detail.href}
+                    target={detail.href.endsWith('.pdf') ? '_blank' : undefined}
+                    rel={detail.href.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                    previewSrc={detail.href.endsWith('.pdf') ? '/files/previews/bjorn-blom-jensen-cv-2026.png' : undefined}
+                    previewAlt={detail.href.endsWith('.pdf') ? 'First page of the CV' : undefined}
+                  >
+                    {detail.value}
+                  </InteractiveLink>
+                ) : (
+                  detail.value
+                )}
+              </dd>
+            </div>
           ))}
-        </ul>
-      </section>
+        </dl>
+
+        <section className="hero-capabilities" aria-label={copy.capabilitiesLabel}>
+          <p>{copy.capabilitiesLabel}</p>
+          <ul>
+            {copy.capabilities.map(({ label, Icon }) => (
+              <li key={label}>
+                <span className="hero-capability-icon" aria-hidden="true">
+                  <Icon size={18} strokeWidth={1.55} />
+                </span>
+                <span>{label}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
     </section>
   );
 }

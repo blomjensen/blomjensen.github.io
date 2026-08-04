@@ -75,7 +75,7 @@ export function Contact() {
             {directLinks.map((item) => {
               const Icon = item.icon;
               return (
-                <a className="contact-row" href={item.href} key={item.label} data-umami-event={item.event}>
+                <a className="contact-row interactive-text" href={item.href} key={item.label} data-umami-event={item.event}>
                   <Icon size={18} aria-hidden="true" />
                   <span>
                     <small>{item.label}</small>
@@ -92,7 +92,7 @@ export function Contact() {
               const Icon = item.icon;
               return (
                 <a
-                  className="contact-row"
+                  className="contact-row interactive-text"
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"

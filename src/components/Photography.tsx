@@ -314,10 +314,14 @@ export function Photography() {
           >
             {aquateketImages.map((src, index) => {
               const image = c.aquateketImages[index];
+              const [title, description] = image.label.split('\n');
               return (
                 <figure key={src}>
                   <img src={src} alt={image.alt} loading="lazy" decoding="async" />
-                  <figcaption>{image.label}</figcaption>
+                  <figcaption>
+                    <span>{title}</span>
+                    {description && <span>{description}</span>}
+                  </figcaption>
                 </figure>
               );
             })}

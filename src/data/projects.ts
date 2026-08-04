@@ -39,7 +39,7 @@ export const projects: Project[] = [
   {
     id: 1,
     title: { en: 'Impermanence & Maintenance', no: 'Impermanence & Maintenance' },
-    category: { en: 'Diploma project, AHO 2026', no: 'Diplomprosjekt, AHO 2026' },
+    category: { en: 'Diploma project, AHO, Spring 2026', no: 'Diplomprosjekt, AHO, vår 2026' },
     description: {
       en: 'A calibrated road-protection landscape for unstable terrain along FV55 at Kjenesskreda.',
       no: 'Et kalibrert rassikringslandskap for ustabilt terreng langs FV55 ved Kjenesskreda.',
@@ -370,16 +370,16 @@ export const projects: Project[] = [
       no: 'Et blågrønt parksystem som kobler sammen skogkant, skjulte bekker og etterkrigsbebyggelse på Rødtvet.',
     },
     fullDescription: {
-      en: 'Developed in 60-526 Commons: Parks and Park Systems, the project reads Rødtvet through its forest edge, former agricultural ground, waterways, and post-war housing structure. A connected sequence of rain paths, community gardens, planted edges, and social spaces makes hidden water systems visible while strengthening biodiversity and everyday use. Developed with Maria Olof Sigurdardottir.',
-      no: 'Prosjektet ble utviklet i 60-526 Commons: Parks and Park Systems og leser Rødtvet gjennom skogkanten, tidligere jordbruksmark, vannløp og etterkrigstidens boligstruktur. En sammenhengende sekvens av regnveier, felleshager, plantede kanter og sosiale rom synliggjør skjulte vannsystemer og styrker biologisk mangfold og hverdagsbruk. Utviklet med Maria Olof Sigurdardottir.',
+      en: 'Developed in 60.526 - AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities, the project reads Rødtvet through its forest edge, former agricultural ground, waterways, and post-war housing structure. A connected sequence of rain paths, community gardens, planted edges, and social spaces makes hidden water systems visible while strengthening biodiversity and everyday use. Developed with Maria Olof Sigurdardottir.',
+      no: 'Prosjektet ble utviklet i 60.526 - AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities og leser Rødtvet gjennom skogkanten, tidligere jordbruksmark, vannløp og etterkrigstidens boligstruktur. En sammenhengende sekvens av regnveier, felleshager, plantede kanter og sosiale rom synliggjør skjulte vannsystemer og styrker biologisk mangfold og hverdagsbruk. Utviklet med Maria Olof Sigurdardottir.',
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: 'Autumn 2024', no: 'Høst 2024' } },
       {
         label: { en: 'Course', no: 'Kurs' },
         value: {
-          en: '60-526 Commons: Parks and Park Systems',
-          no: '60-526 Commons: Parks and Park Systems',
+          en: '60.526 - AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities',
+          no: '60.526 - AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities',
         },
       },
       { label: { en: 'Site', no: 'Sted' }, value: { en: 'Rødtvet, Oslo', no: 'Rødtvet, Oslo' } },
