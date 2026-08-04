@@ -1,4 +1,5 @@
 import { content } from '../content';
+import { ChartNetwork, Cuboid, Layers, Map, ScanLine, UsersRound } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import heroImage from '../assets/11641084856f4253f2024f07b07edcc8d4b7a88f.webp';
 
@@ -17,9 +18,21 @@ const heroCopy = {
     imageAlt: 'Portrait of Bjørn Blom-Jensen',
     actionsLabel: 'Primary actions',
     metadataLabel: 'Portfolio metadata',
+    capabilitiesLabel: 'Capabilities',
+    capabilities: [
+      { label: 'Aerial survey', Icon: ScanLine },
+      { label: 'Site analysis', Icon: ChartNetwork },
+      { label: 'Mapping', Icon: Map },
+      { label: '3D studies', Icon: Cuboid },
+      { label: 'GIS', Icon: Layers },
+      { label: 'Collaboration', Icon: UsersRound },
+    ],
     details: [
-      ['Base', 'Oslo, Norway'],
-      ['Profile', 'Landscape architect, AHO 2026'],
+      { label: 'Base', value: 'Oslo, Norway' },
+      { label: 'Profile', value: 'Landscape architect, AHO 2026' },
+      { label: 'Email', value: 'bjorn@blom-jensen.no', href: 'mailto:bjorn@blom-jensen.no' },
+      { label: 'Phone', value: '+47 906 40 381', href: 'tel:+4790640381' },
+      { label: 'CV', value: 'One-page CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },
     ],
   },
   no: {
@@ -32,9 +45,21 @@ const heroCopy = {
     imageAlt: 'Portrett av Bjørn Blom-Jensen',
     actionsLabel: 'Hovedhandlinger',
     metadataLabel: 'Porteføljeinformasjon',
+    capabilitiesLabel: 'Kompetanse',
+    capabilities: [
+      { label: 'Dronekartlegging', Icon: ScanLine },
+      { label: 'Stedsanalyse', Icon: ChartNetwork },
+      { label: 'Kartlegging', Icon: Map },
+      { label: '3D-studier', Icon: Cuboid },
+      { label: 'GIS', Icon: Layers },
+      { label: 'Samarbeid', Icon: UsersRound },
+    ],
     details: [
-      ['Base', 'Oslo, Norge'],
-      ['Profil', 'Landskapsarkitekt, AHO 2026'],
+      { label: 'Base', value: 'Oslo, Norge' },
+      { label: 'Profil', value: 'Landskapsarkitekt, AHO 2026' },
+      { label: 'E-post', value: 'bjorn@blom-jensen.no', href: 'mailto:bjorn@blom-jensen.no' },
+      { label: 'Telefon', value: '+47 906 40 381', href: 'tel:+4790640381' },
+      { label: 'CV', value: 'Én-sides CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },
     ],
   },
 } as const;
@@ -74,13 +99,40 @@ export function Hero({ onExploreClick }: HeroProps) {
       </div>
 
       <dl className="hero-details" aria-label={copy.metadataLabel}>
-        {copy.details.map(([label, value]) => (
-          <div key={label}>
-            <dt>{label}</dt>
-            <dd>{value}</dd>
+        {copy.details.map((detail) => (
+          <div key={detail.label}>
+            <dt>{detail.label}</dt>
+            <dd>
+              {detail.href ? (
+                <a
+                  className="hero-detail-link"
+                  href={detail.href}
+                  target={detail.href.endsWith('.pdf') ? '_blank' : undefined}
+                  rel={detail.href.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                >
+                  {detail.value}
+                </a>
+              ) : (
+                detail.value
+              )}
+            </dd>
           </div>
         ))}
       </dl>
+
+      <section className="hero-capabilities" aria-label={copy.capabilitiesLabel}>
+        <p>{copy.capabilitiesLabel}</p>
+        <ul>
+          {copy.capabilities.map(({ label, Icon }) => (
+            <li key={label}>
+              <span className="hero-capability-icon" aria-hidden="true">
+                <Icon size={18} strokeWidth={1.55} />
+              </span>
+              <span>{label}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
     </section>
   );
 }

@@ -50,7 +50,10 @@ export const projects: Project[] = [
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: 'Spring 2026', no: 'Vår 2026' } },
-      { label: { en: 'Studio', no: 'Studio' }, value: { en: 'Diploma, AHO', no: 'Diplom, AHO' } },
+      {
+        label: { en: 'Course', no: 'Kurs' },
+        value: { en: '12-803 Diploma Landscape Architecture', no: '12-803 Diplom landskapsarkitektur' },
+      },
       {
         label: { en: 'Site', no: 'Sted' },
         value: { en: 'Kjenesskreda, Esefjorden / FV55', no: 'Kjenesskreda, Esefjorden / FV55' },
@@ -168,12 +171,12 @@ export const projects: Project[] = [
       no: 'Et parprosjekt om veisikring, terreng og bevegelse ved Lonavatnet langs Rv13.',
     },
     fullDescription: {
-      en: 'Developed in AHO studio 60 540 The Road, which treated roads and their material, ecological, and social systems as constructed landscapes. At Lonavatnet along Rv13, the pair project uses high-resolution site mapping and physical models to study a sequence of protective structures across a steep roadside condition. Developed with Trong Le.',
-      no: 'Prosjektet ble utviklet i AHO-studioet 60 540 The Road, som behandlet veier og deres materielle, økologiske og sosiale systemer som konstruerte landskap. Ved Lonavatnet langs Rv13 bruker parprosjektet detaljert stedskartlegging og fysiske modeller til å undersøke en sekvens av sikringskonstruksjoner i en bratt veisituasjon. Utviklet med Trong Le.',
+      en: 'Developed in 60-540 The Road, the project treats roads and their material, ecological, and social systems as constructed landscapes. At Lonavatnet along Rv13, the pair project uses high-resolution site mapping and physical models to study a sequence of protective structures across a steep roadside condition. Developed with Trong Le.',
+      no: 'Prosjektet ble utviklet i 60-540 The Road og behandler veier og deres materielle, økologiske og sosiale systemer som konstruerte landskap. Ved Lonavatnet langs Rv13 bruker parprosjektet detaljert stedskartlegging og fysiske modeller til å undersøke en sekvens av sikringskonstruksjoner i en bratt veisituasjon. Utviklet med Trong Le.',
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: 'Autumn 2025', no: 'Høst 2025' } },
-      { label: { en: 'Studio', no: 'Studio' }, value: { en: '60 540 The Road, AHO', no: '60 540 The Road, AHO' } },
+      { label: { en: 'Course', no: 'Kurs' }, value: { en: '60-540 The Road', no: '60-540 The Road' } },
       { label: { en: 'Site', no: 'Sted' }, value: { en: 'Lonavatnet / Rv13, Norway', no: 'Lonavatnet / Rv13, Norge' } },
       { label: { en: 'Team', no: 'Team' }, value: { en: 'Pair project with Trong Le', no: 'Parprosjekt med Trong Le' } },
     ],
@@ -222,17 +225,24 @@ export const projects: Project[] = [
   {
     id: 3,
     title: { en: 'Borgeskogen', no: 'Borgeskogen' },
-    category: { en: 'Collaborative project, 2025', no: 'Samarbeidsprosjekt, 2025' },
+    category: { en: 'AHO studio, Spring 2025', no: 'AHO-studio, vår 2025' },
     description: {
-      en: 'A collaborative study moving from terrain mapping to model scenes and a detailed 1:50 section.',
-      no: 'En samarbeidsstudie som beveger seg fra terrengkartlegging til modellscener og et detaljert snitt i 1:50.',
+      en: 'A collaborative landscape study of terrain, water, and everyday access at Borgeskogen.',
+      no: 'En samarbeidsstudie av terreng, vann og hverdagsadkomst i Borgeskogen.',
     },
     fullDescription: {
-      en: 'Borgeskogen moves between territorial reading and close-range spatial detail. Relief mapping, eye-level model studies, and a 1:50 construction section test how ground, vegetation, drainage, local stone, and movement meet at the site. Developed with Dimitra.',
-      no: 'Borgeskogen beveger seg mellom territoriell lesning og nærgående romlig detalj. Relieffkartlegging, modellstudier i øyehøyde og et konstruksjonssnitt i 1:50 tester hvordan terreng, vegetasjon, drenering, lokal stein og bevegelse møtes på stedet. Utviklet med Dimitra.',
+      en: 'Developed in 60-619 Systems: Hydropolis, the project moves between territorial reading and close-range spatial detail at Borgeskogen. Relief mapping, eye-level model studies, and a 1:50 construction section test how ground, vegetation, drainage, local stone, and movement meet at the site. Developed with Dimitra.',
+      no: 'Prosjektet ble utviklet i 60-619 Systemer: Hydropolis og beveger seg mellom territoriell lesning og nærgående romlig detalj i Borgeskogen. Relieffkartlegging, modellstudier i øyehøyde og et konstruksjonssnitt i 1:50 tester hvordan terreng, vegetasjon, drenering, lokal stein og bevegelse møtes på stedet. Utviklet med Dimitra.',
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: '2025', no: '2025' } },
+      {
+        label: { en: 'Course', no: 'Kurs' },
+        value: {
+          en: '60-619 Systems: Hydropolis',
+          no: '60-619 Systems: Hydropolis',
+        },
+      },
       { label: { en: 'Site', no: 'Sted' }, value: { en: 'Borgeskogen, Norway', no: 'Borgeskogen, Norge' } },
       { label: { en: 'Team', no: 'Team' }, value: { en: 'With Dimitra', no: 'Med Dimitra' } },
       {
@@ -280,14 +290,17 @@ export const projects: Project[] = [
   {
     id: 4,
     title: { en: 'Røst', no: 'Røst' },
-    category: { en: 'GK6, AHO 2023-2024', no: 'GK6, AHO 2023-2024' },
+    category: {
+      en: 'AHO studio, Spring 2023',
+      no: 'AHO-studio, vår 2023',
+    },
     description: {
       en: 'A layered reading of Røstlandet, its settlement structure, stone walls, and cultural landscape.',
       no: 'En lagdelt lesning av Røstlandet, bebyggelsesstrukturen, steinmurene og kulturlandskapet.',
     },
     fullDescription: {
-      en: 'The project began in spring 2023 in GK6 Landskap som fellesrom, where Group C worked on Røstlandet and the pressure on bird-cliff and cultural landscapes. Bjørn continued the project independently in spring 2024. Layered mapping compares orthophoto, relief, settlement, and registered stone walls across scales to read how existing boundaries and everyday movement are shaped by terrain and water.',
-      no: 'Prosjektet begynte våren 2023 i GK6 Landskap som fellesrom, der gruppe C arbeidet med Røstlandet og fuglefjellene og kulturlandskapet under press. Bjørn videreførte prosjektet selvstendig våren 2024. Lagdelt kartlegging sammenligner ortofoto, relieff, bebyggelse og registrerte steinmurer på tvers av skalaer for å lese hvordan eksisterende grenser og hverdagsbevegelse formes av terreng og vann.',
+      en: 'The project began in spring 2023 in 61 160 Commons – Place and territories in the north, where Group C worked on Røstlandet and the pressure on bird-cliff and cultural landscapes. Bjørn continued the project independently in spring 2024. Layered mapping compares orthophoto, relief, settlement, and registered stone walls across scales to read how existing boundaries and everyday movement are shaped by terrain and water.',
+      no: 'Prosjektet begynte våren 2023 i 61 160 Fellesrom – Sted og territorier i nord, der gruppe C arbeidet med Røstlandet og fuglefjellene og kulturlandskapet under press. Bjørn videreførte prosjektet selvstendig våren 2024. Lagdelt kartlegging sammenligner ortofoto, relieff, bebyggelse og registrerte steinmurer på tvers av skalaer for å lese hvordan eksisterende grenser og hverdagsbevegelse formes av terreng og vann.',
     },
     facts: [
       {
@@ -295,8 +308,11 @@ export const projects: Project[] = [
         value: { en: 'Spring 2023 / continued spring 2024', no: 'Vår 2023 / videreført vår 2024' },
       },
       {
-        label: { en: 'Studio', no: 'Studio' },
-        value: { en: 'GK6 · Landskap som fellesrom', no: 'GK6 · Landskap som fellesrom' },
+        label: { en: 'Course', no: 'Kurs' },
+        value: {
+          en: '61 160 · Commons – Place and territories in the north',
+          no: '61 160 · Fellesrom – Sted og territorier i nord',
+        },
       },
       { label: { en: 'Site', no: 'Sted' }, value: { en: 'Røstlandet, Røst', no: 'Røstlandet, Røst' } },
       {
@@ -347,21 +363,24 @@ export const projects: Project[] = [
 
   {
     id: 5,
-    title: { en: 'Edge Landscape: Rødtvet', no: 'Edge Landscape: Rødtvet' },
-    category: { en: 'IMLA studio, AHO 2024', no: 'IMLA-studio, AHO 2024' },
+    title: { en: 'Edge Landscape', no: 'Edge Landscape' },
+    category: { en: 'AHO studio, Autumn 2024', no: 'AHO-studio, høst 2024' },
     description: {
       en: 'A blue-green park system reconnecting forest edge, hidden streams, and post-war housing at Rødtvet.',
       no: 'Et blågrønt parksystem som kobler sammen skogkant, skjulte bekker og etterkrigsbebyggelse på Rødtvet.',
     },
     fullDescription: {
-      en: 'Developed in the AHO studio Edge Landscape, the project reads Rødtvet through its forest edge, former agricultural ground, waterways, and post-war housing structure. A connected sequence of rain paths, community gardens, planted edges, and social spaces makes hidden water systems visible while strengthening biodiversity and everyday use. Developed with Maria Olof Sigurdardottir.',
-      no: 'Prosjektet ble utviklet i AHO-studioet Edge Landscape og leser Rødtvet gjennom skogkanten, tidligere jordbruksmark, vannløp og etterkrigstidens boligstruktur. En sammenhengende sekvens av regnveier, felleshager, plantede kanter og sosiale rom synliggjør skjulte vannsystemer og styrker biologisk mangfold og hverdagsbruk. Utviklet med Maria Olof Sigurdardottir.',
+      en: 'Developed in 60-526 Commons: Parks and Park Systems, the project reads Rødtvet through its forest edge, former agricultural ground, waterways, and post-war housing structure. A connected sequence of rain paths, community gardens, planted edges, and social spaces makes hidden water systems visible while strengthening biodiversity and everyday use. Developed with Maria Olof Sigurdardottir.',
+      no: 'Prosjektet ble utviklet i 60-526 Commons: Parks and Park Systems og leser Rødtvet gjennom skogkanten, tidligere jordbruksmark, vannløp og etterkrigstidens boligstruktur. En sammenhengende sekvens av regnveier, felleshager, plantede kanter og sosiale rom synliggjør skjulte vannsystemer og styrker biologisk mangfold og hverdagsbruk. Utviklet med Maria Olof Sigurdardottir.',
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: 'Autumn 2024', no: 'Høst 2024' } },
       {
-        label: { en: 'Studio', no: 'Studio' },
-        value: { en: '60 526 Edge Landscape, AHO', no: '60 526 Edge Landscape, AHO' },
+        label: { en: 'Course', no: 'Kurs' },
+        value: {
+          en: '60-526 Commons: Parks and Park Systems',
+          no: '60-526 Commons: Parks and Park Systems',
+        },
       },
       { label: { en: 'Site', no: 'Sted' }, value: { en: 'Rødtvet, Oslo', no: 'Rødtvet, Oslo' } },
       {
@@ -456,7 +475,13 @@ export const projects: Project[] = [
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: 'Autumn 2025', no: 'Høst 2025' } },
-      { label: { en: 'Course', no: 'Kurs' }, value: { en: 'Prediploma, AHO', no: 'Prediplom, AHO' } },
+      {
+        label: { en: 'Course', no: 'Kurs' },
+        value: {
+          en: '60-701 Pre-diploma for Urbanism and Landscape Architecture',
+          no: '60-701 Prediplom for urbanisme og landskapsarkitektur',
+        },
+      },
       {
         label: { en: 'Cases', no: 'Case' },
         value: {
