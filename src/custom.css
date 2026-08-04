@@ -438,18 +438,20 @@ figcaption {
 
 .hero-lower {
   display: grid;
-  grid-template-areas: "capabilities details";
-  grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
-  align-items: stretch;
+  grid-template-areas:
+    "details"
+    "capabilities";
+  grid-template-columns: 1fr;
+  align-items: start;
   max-width: var(--content-max);
   margin: 3rem auto 0;
-  gap: 3.5rem;
+  gap: 0;
 }
 
 .hero-details {
   grid-area: details;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   column-gap: 1.2rem;
   min-width: 0;
   margin: 0;
@@ -461,6 +463,23 @@ figcaption {
   min-height: 0;
   min-width: 0;
   padding: 0.55rem 0;
+}
+
+@media (min-width: 861px) {
+  .hero-details > div:nth-child(3) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .hero-details > div:nth-child(4) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .hero-details > div:nth-child(5) {
+    grid-column: 3;
+    grid-row: 2;
+  }
 }
 
 dt,
@@ -501,7 +520,7 @@ dd {
   min-width: 0;
   margin: 0;
   padding: 1.15rem 1.2rem 1.35rem;
-  border-top: 1px solid var(--line);
+  border-top: 0;
   border-bottom: 1px solid var(--line);
 }
 
