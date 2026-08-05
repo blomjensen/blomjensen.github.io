@@ -88,7 +88,7 @@ export function Hero({ onExploreClick }: HeroProps) {
             <button type="button" className="plain-action" onClick={onExploreClick}>
               {copy.viewWork}
             </button>
-            <InteractiveLink className="plain-link hero-contact-action" href="mailto:bjorn@blom-jensen.no">
+            <InteractiveLink className="plain-link hero-contact-action fx-55" href="mailto:bjorn@blom-jensen.no">
               {copy.contact}
             </InteractiveLink>
           </div>

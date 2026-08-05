@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -23,7 +23,16 @@ function SequenceFigure({
   pauseLabel,
 }: SequenceFigureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const pointerFrame = useRef<number | null>(null);
+  const pendingPointer = useRef({ x: 0, y: 0 });
   const [isPlaying, setIsPlaying] = useState(false);
+  const [cursor, setCursor] = useState({ x: 0, y: 0, visible: false });
+
+  useEffect(() => {
+    return () => {
+      if (pointerFrame.current !== null) window.cancelAnimationFrame(pointerFrame.current);
+    };
+  }, []);
 
   const attemptPlayback = () => {
     const video = videoRef.current;
@@ -67,9 +76,38 @@ function SequenceFigure({
     }
   };
 
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'mouse') return;
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    pendingPointer.current = {
+      x: event.clientX - bounds.left,
+      y: event.clientY - bounds.top,
+    };
+
+    if (pointerFrame.current !== null) return;
+    pointerFrame.current = window.requestAnimationFrame(() => {
+      setCursor({ ...pendingPointer.current, visible: true });
+      pointerFrame.current = null;
+    });
+  };
+
+  const handlePointerEnter = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'mouse') setCursor((current) => ({ ...current, visible: true }));
+  };
+
+  const handlePointerLeave = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'mouse') setCursor((current) => ({ ...current, visible: false }));
+  };
+
   return (
     <figure className="study-sequence">
-      <div className="study-media">
+      <div
+        className="study-media"
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        onPointerMove={handlePointerMove}
+      >
         <video
           ref={videoRef}
           src={videoSrc}
@@ -93,6 +131,13 @@ function SequenceFigure({
           aria-pressed={isPlaying}
           onClick={handleToggle}
         />
+        <span
+          className={`sequence-cursor${cursor.visible ? ' is-visible' : ''}`}
+          style={{ left: cursor.x, top: cursor.y }}
+          aria-hidden="true"
+        >
+          {isPlaying ? <span className="sequence-cursor-pause" /> : <span className="sequence-cursor-play" />}
+        </span>
         <button
           type="button"
           className="sequence-control"
