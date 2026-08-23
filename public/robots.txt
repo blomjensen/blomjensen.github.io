@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://blomjensen.github.io/sitemap.xml
+Sitemap: https://blomjensen.no/sitemap.xml

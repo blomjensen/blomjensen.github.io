@@ -18,6 +18,12 @@ export type ProjectImageRow = {
   images: ProjectImage[];
 };
 
+export type ProjectVideo = {
+  src: string;
+  poster?: string;
+  caption?: LocalizedText;
+};
+
 export type ProjectFact = {
   label: LocalizedText;
   value: LocalizedText;
@@ -31,6 +37,7 @@ export type Project = {
   fullDescription: LocalizedText;
   facts: ProjectFact[];
   images: ProjectImage[];
+  video?: ProjectVideo;
   processImages?: ProjectImage[];
   imageRows?: ProjectImageRow[];
 };
@@ -41,12 +48,12 @@ export const projects: Project[] = [
     title: { en: 'Impermanence & Maintenance', no: 'Impermanence & Maintenance' },
     category: { en: 'Diploma project, AHO, Spring 2026', no: 'Diplomprosjekt, AHO, vår 2026' },
     description: {
-      en: 'A calibrated road-protection landscape for unstable terrain along FV55 at Kjenesskreda.',
-      no: 'Et kalibrert rassikringslandskap for ustabilt terreng langs FV55 ved Kjenesskreda.',
+      en: 'A calibrated road-protection infrastructure between mountain, water, risk, and seasonal maintenance at Kjenesskreda.',
+      no: 'En kalibrert rassikringsinfrastruktur mellom fjell, vann, risiko og sesongbasert vedlikehold ved Kjenesskreda.',
     },
     fullDescription: {
-      en: 'Impermanence & Maintenance examines Kjenesskreda at Esefjorden near Balestrand, where FV55 passes between a steep avalanche slope and the fjord. Mapping, physical models, and spatial studies develop a calibrated road-protection sequence across avalanche, slush, debris, runoff, and seasonal maintenance conditions. The work treats protection infrastructure as a landscape that changes through use, weather, and repair. Developed with Trong Le.',
-      no: 'Impermanence & Maintenance undersøker Kjenesskreda ved Esefjorden nær Balestrand, der FV55 går mellom en bratt skredside og fjorden. Kartlegging, fysiske modeller og romlige studier utvikler en kalibrert sikringssekvens for snøskred, sørpeskred, løsmasser, avrenning og sesongbasert vedlikehold. Arbeidet behandler sikringsinfrastruktur som et landskap som endres gjennom bruk, vær og reparasjon. Utviklet med Trong Le.',
+      en: 'At Kjenesskreda near Balestrand, FV55 occupies a narrow threshold between mountain and water, movement and settlement, risk and view. The project asks how the existing road can become a more precise and perceptible form of protection. Through terrain mapping, point clouds, digital simulations, and 1:200 physical models, snow, water, debris, and runoff are studied as recurring landscape processes. Modular walls, a protective gallery, and an avalanche dam slow, redirect, and collect material while making the work of maintenance visible. Developed with Trong Le and supervised by Luis Callejas.',
+      no: 'Ved Kjenesskreda nær Balestrand ligger FV55 i en smal terskel mellom fjell og vann, bevegelse og bosetting, risiko og utsikt. Prosjektet undersøker hvordan den eksisterende veien kan bli en mer presis og lesbar form for sikring. Gjennom terrengkartlegging, punktskyer, digitale simuleringer og fysiske modeller i 1:200 studeres snø, vann, løsmasser og avrenning som tilbakevendende landskapsprosesser. Modulære vegger, en beskyttende skredgalleri-konstruksjon og en skredvoll bremser, leder og samler materialer, samtidig som vedlikeholdsarbeidet blir synlig. Utviklet med Trong Le og veiledet av Luis Callejas.',
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: 'Spring 2026', no: 'Vår 2026' } },
@@ -59,42 +66,51 @@ export const projects: Project[] = [
         value: { en: 'Kjenesskreda, Esefjorden / FV55', no: 'Kjenesskreda, Esefjorden / FV55' },
       },
       { label: { en: 'Team', no: 'Team' }, value: { en: 'With Trong Le', no: 'Med Trong Le' } },
+      { label: { en: 'Supervisor', no: 'Veileder' }, value: { en: 'Luis Callejas', no: 'Luis Callejas' } },
     ],
+    video: {
+      src: '/projects/impermanence-maintenance/aho-models/working-model.mp4',
+      poster: '/projects/impermanence-maintenance/aho-models/maintenance-model.webp',
+      caption: {
+        en: 'Working model in 1:200 tests the relationship between terrain, protection, and material movement.',
+        no: 'Arbeidsmodell i 1:200 tester forholdet mellom terreng, sikring og materialbevegelse.',
+      },
+    },
     images: [
       {
-        src: '/projects/impermanence-maintenance/01-drone-overview-bw.webp',
+        src: '/projects/impermanence-maintenance/00-point-cloud-aho.webp',
         caption: {
-          en: 'Drone survey frames the avalanche path, the road, and the fjord edge as one exposed section.',
-          no: 'Droneundersøkelsen samler skredløpet, veien og fjordkanten i ett eksponert snitt.',
+          en: 'Point-cloud terrain study reads the avalanche path, road, and fjord edge as one exposed threshold.',
+          no: 'Punktsky-studien leser skredløpet, veien og fjordkanten som én eksponert terskel.',
         },
       },
       {
-        src: '/projects/impermanence-maintenance/02-avalanche-map.webp',
+        src: '/projects/impermanence-maintenance/10-plan-aho.webp',
         caption: {
-          en: 'The avalanche map locates registered avalanche points and release areas along FV55 around Esefjorden.',
-          no: 'Skredkartet lokaliserer registrerte skredpunkt og utløsningsområder langs FV55 rundt Esefjorden.',
-        },
-      },
-      {
-        src: '/projects/impermanence-maintenance/02-model-overview.webp',
-        caption: {
-          en: 'Physical model tests how the protective sequence meets the talus slope, road, and waterline.',
-          no: 'Den fysiske modellen tester hvordan sikringssekvensen møter ura, veien og vannlinjen.',
-        },
-      },
-      {
-        src: '/projects/impermanence-maintenance/03-site-plan.webp',
-        caption: {
-          en: 'The 1:1000 site plan reads runout terrain, contour lines, and the road corridor as one continuous field.',
-          no: 'Situasjonsplanen i 1:1000 leser utløpsterreng, høydekurver og veikorridor som ett sammenhengende felt.',
+          en: 'Plan drawing develops a calibrated sequence of road protection along the edge of Esefjorden.',
+          no: 'Planen utvikler en kalibrert sekvens av rassikring langs kanten av Esefjorden.',
         },
         fit: 'contain',
       },
       {
-        src: '/projects/impermanence-maintenance/04-model-sequence.webp',
+        src: '/projects/impermanence-maintenance/11-model-bw-aho.webp',
         caption: {
-          en: 'Eye-level model study tests the scale and rhythm of protection as experienced from the road.',
-          no: 'Modellstudiet i øyehøyde tester skalaen og rytmen i sikringen slik den oppleves fra veien.',
+          en: 'A black-and-white model study tests modular protection between the road and the moving slope.',
+          no: 'Et svart-hvitt modellstudie tester modulær sikring mellom veien og den bevegelige skråningen.',
+        },
+      },
+      {
+        src: '/projects/impermanence-maintenance/12-drone-aho.webp',
+        caption: {
+          en: 'Aerial view situates the exposed road between the avalanche slope and the fjord.',
+          no: 'Dronebildet plasserer den utsatte veien mellom skredskråningen og fjorden.',
+        },
+      },
+      {
+        src: '/projects/impermanence-maintenance/13-maintenance-model-aho.webp',
+        caption: {
+          en: 'The working model makes the relationship between protection, material movement, and maintenance tangible.',
+          no: 'Arbeidsmodellen konkretiserer forholdet mellom sikring, materialbevegelse og vedlikehold.',
         },
       },
       {
@@ -155,6 +171,39 @@ export const projects: Project[] = [
             caption: {
               en: 'Computational terrain study: side view.',
               no: 'Beregnet terrengstudie: sideperspektiv.',
+            },
+          },
+        ],
+      },
+      {
+        columns: 2,
+        images: [
+          {
+            src: '/projects/impermanence-maintenance/aho-models/model-detail.webp',
+            caption: {
+              en: 'Close study of the gallery structure and its repeated supports.',
+              no: 'Nærstudie av gallerikonstruksjonen og de gjentatte støttene.',
+            },
+          },
+          {
+            src: '/projects/impermanence-maintenance/aho-models/model-wide.webp',
+            caption: {
+              en: 'The road edge is tested as a continuous protective landscape.',
+              no: 'Veikanten testes som et sammenhengende beskyttende landskap.',
+            },
+          },
+          {
+            src: '/projects/impermanence-maintenance/aho-models/model-aerial.webp',
+            caption: {
+              en: 'Aerial model view reads the intervention across slope and shoreline.',
+              no: 'Et oversiktsbilde av modellen leser inngrepet på tvers av skråning og strandlinje.',
+            },
+          },
+          {
+            src: '/projects/impermanence-maintenance/aho-models/model-outside.webp',
+            caption: {
+              en: 'The model places the infrastructure between the studio and the fjord landscape.',
+              no: 'Modellen plasserer infrastrukturen mellom studioet og fjordlandskapet.',
             },
           },
         ],

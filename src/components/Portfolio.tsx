@@ -347,11 +347,24 @@ export function Portfolio() {
               >
                 <span className="project-number">{String(index + 1).padStart(2, '0')}</span>
 
-                {primaryImage && (
+                {project.video ? (
+                  <span className="project-thumb project-thumb-video">
+                    <video
+                      src={project.video.src}
+                      poster={project.video.poster}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      aria-hidden="true"
+                    />
+                  </span>
+                ) : primaryImage ? (
                   <span className={`project-thumb${primaryImage.fit === 'dark-contain' ? ' is-dark-contained' : ''}`}>
                     <img src={primaryImage.src} alt={getAlt(project, language, primaryCaption)} loading="lazy" />
                   </span>
-                )}
+                ) : null}
 
                 <span className="project-summary-copy">
                   <span className="project-category">{project.category[language]}</span>
@@ -367,6 +380,23 @@ export function Portfolio() {
 
               {isOpen && (
                 <div className="project-detail" id={`project-${project.id}-detail`}>
+                  {project.video && (
+                    <figure className="project-video">
+                      <video
+                        src={project.video.src}
+                        poster={project.video.poster}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        controls
+                        preload="metadata"
+                        aria-label={project.video.caption?.[language] ?? project.title[language]}
+                      />
+                      {project.video.caption && <figcaption>{project.video.caption[language]}</figcaption>}
+                    </figure>
+                  )}
+
                   {primaryImage && (
                     <figure className={`project-main-image${primaryImage.fit === 'dark-contain' ? ' is-dark-contained' : ''}`}>
                       <div className="project-image-media">
@@ -376,7 +406,7 @@ export function Portfolio() {
                           aria-label={`${copy.closeImage}: ${project.title[language]}`}
                           onClick={() => handleToggle(project.id)}
                         >
-                          <img src={primaryImage.src} alt={getAlt(project, language, primaryCaption)} loading="lazy" />
+                          <img src={primaryImage.src} alt={getAlt(project, language, primaryCaption)} loading="eager" />
                         </button>
                         <button
                           type="button"
@@ -433,7 +463,7 @@ export function Portfolio() {
                               key={`${project.id}-${image.src}`}
                             >
                               <div className="project-image-media">
-                                <img src={image.src} alt={getAlt(project, language, caption)} loading="lazy" />
+                                <img src={image.src} alt={getAlt(project, language, caption)} loading="eager" />
                                 <button
                                   type="button"
                                   className="project-image-zoom"
@@ -499,7 +529,7 @@ export function Portfolio() {
                                 key={`${project.id}-${rowIndex}-${image.src}`}
                               >
                                 <div className="project-image-media">
-                                  <img src={image.src} alt={getAlt(project, language, caption)} loading="lazy" />
+                                  <img src={image.src} alt={getAlt(project, language, caption)} loading="eager" />
                                   <button
                                     type="button"
                                     className="project-image-zoom"
