@@ -412,6 +412,8 @@ export function Portfolio() {
                           type="button"
                           className="project-image-zoom"
                           aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                          data-umami-event="project-image-open"
+                          data-umami-event-project={project.title.en}
                           onClick={() => showGalleryImage(project.id, 0)}
                         >
                           <Maximize2 size={18} aria-hidden="true" />
@@ -468,6 +470,8 @@ export function Portfolio() {
                                   type="button"
                                   className="project-image-zoom"
                                   aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                                  data-umami-event="project-image-open"
+                                  data-umami-event-project={project.title.en}
                                   onClick={() => showGalleryImage(project.id, imageIndex + 1)}
                                 >
                                   <Maximize2 size={18} aria-hidden="true" />
@@ -534,6 +538,8 @@ export function Portfolio() {
                                     type="button"
                                     className="project-image-zoom"
                                     aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                                    data-umami-event="project-image-open"
+                                    data-umami-event-project={project.title.en}
                                     onClick={() =>
                                       showGalleryImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex)
                                     }
