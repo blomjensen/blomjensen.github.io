@@ -624,7 +624,9 @@ dd {
 .hero-capabilities li > span:last-child {
   max-width: 8.5rem;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 
 .hero-capability-icon {
@@ -2051,9 +2053,10 @@ dd {
   }
 
   .hero-capabilities li > span:last-child {
-    max-width: 5.8rem;
+    max-width: none;
     font-size: 0.61rem;
     line-height: 1.22;
+    white-space: nowrap;
   }
 
   .section-intro {
