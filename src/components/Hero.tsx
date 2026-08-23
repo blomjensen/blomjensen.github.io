@@ -1,5 +1,5 @@
 import { content } from '../content';
-import { ChartNetwork, Cuboid, Layers, Map, PencilRuler, Ruler } from 'lucide-react';
+import { ChartNetwork, Cuboid, Map, PencilRuler, Ruler, ScanLine } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import heroImage from '../assets/11641084856f4253f2024f07b07edcc8d4b7a88f.webp';
 import { InteractiveLink } from './InteractiveLink';
@@ -26,7 +26,7 @@ const heroCopy = {
       { label: 'Site analysis', Icon: ChartNetwork },
       { label: 'Mapping', Icon: Map },
       { label: '3D studies', Icon: Cuboid },
-      { label: 'GIS', Icon: Layers },
+      { label: 'Aerial survey', Icon: ScanLine },
     ],
     details: [
       { label: 'Base', value: 'Oslo, Norway' },
@@ -53,7 +53,7 @@ const heroCopy = {
       { label: 'Stedsanalyse', Icon: ChartNetwork },
       { label: 'Kartlegging', Icon: Map },
       { label: '3D-studier', Icon: Cuboid },
-      { label: 'GIS', Icon: Layers },
+      { label: 'Drone', Icon: ScanLine },
     ],
     details: [
       { label: 'Base', value: 'Oslo, Norge' },
