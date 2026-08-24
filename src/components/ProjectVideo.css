@@ -1,0 +1,10 @@
+.project-video-media {
+  position: relative;
+  overflow: hidden;
+  background: var(--soft);
+}
+
+.project-video video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Maximize2, Minus, Plus, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Maximize2, Minus, Pause, Play, Plus, X } from 'lucide-react';
 import {
   type WheelEvent as ReactWheelEvent,
   useCallback,
@@ -9,7 +9,8 @@ import {
 } from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
-import { projects, type Project } from '../data/projects';
+import { projects, type Project, type ProjectVideo } from '../data/projects';
+import './ProjectVideo.css';
 
 const labels = {
   en: {
@@ -26,6 +27,8 @@ const labels = {
     previousImages: 'Show previous images',
     nextImages: 'Show next images',
     supporting: 'Supporting material',
+    playVideo: 'Play video',
+    pauseVideo: 'Pause video',
   },
   no: {
     kicker: 'Prosjektoversikt',
@@ -41,8 +44,97 @@ const labels = {
     previousImages: 'Vis forrige bilder',
     nextImages: 'Vis neste bilder',
     supporting: 'Støttemateriale',
+    playVideo: 'Spill av video',
+    pauseVideo: 'Pause video',
   },
 } as const;
+
+function ProjectVideoFigure({
+  video,
+  language,
+  playLabel,
+  pauseLabel,
+}: {
+  video: ProjectVideo;
+  language: 'en' | 'no';
+  playLabel: string;
+  pauseLabel: string;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const caption = video.caption?.[language];
+
+  const attemptPlayback = useCallback(() => {
+    const element = videoRef.current;
+    if (!element || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    element.muted = true;
+    element.defaultMuted = true;
+    element.playsInline = true;
+    void element.play().catch(() => setIsPlaying(false));
+  }, []);
+
+  useEffect(() => {
+    attemptPlayback();
+  }, [attemptPlayback]);
+
+  const handleToggle = () => {
+    const element = videoRef.current;
+    if (!element) return;
+
+    if (element.paused) {
+      void element.play().catch(() => setIsPlaying(false));
+    } else {
+      element.pause();
+    }
+  };
+
+  const controlLabel = `${isPlaying ? pauseLabel : playLabel}${caption ? `: ${caption}` : ''}`;
+
+  return (
+    <figure className="project-video">
+      <div className="project-video-media">
+        <video
+          ref={videoRef}
+          src={video.src}
+          poster={video.poster}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          aria-label={caption}
+          onLoadedData={attemptPlayback}
+          onCanPlay={attemptPlayback}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
+        <button
+          type="button"
+          className="sequence-media-toggle"
+          aria-label={controlLabel}
+          aria-pressed={isPlaying}
+          onClick={handleToggle}
+        />
+        <button
+          type="button"
+          className="sequence-control"
+          aria-label={controlLabel}
+          aria-pressed={isPlaying}
+          onClick={handleToggle}
+        >
+          {isPlaying ? (
+            <Pause size={18} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+          ) : (
+            <Play size={18} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+          )}
+        </button>
+      </div>
+      {caption && <figcaption>{caption}</figcaption>}
+    </figure>
+  );
+}
 
 function getAlt(project: Project, language: 'en' | 'no', caption?: string) {
   return caption ? `${project.title[language]} - ${caption}` : project.title[language];
@@ -380,6 +472,15 @@ export function Portfolio() {
 
               {isOpen && (
                 <div className="project-detail" id={`project-${project.id}-detail`}>
+                  {project.video && (
+                    <ProjectVideoFigure
+                      video={project.video}
+                      language={language}
+                      playLabel={copy.playVideo}
+                      pauseLabel={copy.pauseVideo}
+                    />
+                  )}
+
                   {primaryImage && (
                     <figure className={`project-main-image${primaryImage.fit === 'dark-contain' ? ' is-dark-contained' : ''}`}>
                       <div className="project-image-media">
@@ -419,20 +520,6 @@ export function Portfolio() {
                       ))}
                     </dl>
                   </div>
-
-                  {project.video && (
-                    <figure className="project-video">
-                      <video
-                        src={project.video.src}
-                        poster={project.video.poster}
-                        playsInline
-                        controls
-                        preload="none"
-                        aria-label={project.video.caption?.[language] ?? project.title[language]}
-                      />
-                      {project.video.caption && <figcaption>{project.video.caption[language]}</figcaption>}
-                    </figure>
-                  )}
 
                   {secondaryImages.length > 0 && (
                     <div className={secondaryIsCarousel ? 'image-carousel' : 'image-row'}>
