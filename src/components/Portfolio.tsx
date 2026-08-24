@@ -380,23 +380,6 @@ export function Portfolio() {
 
               {isOpen && (
                 <div className="project-detail" id={`project-${project.id}-detail`}>
-                  {project.video && (
-                    <figure className="project-video">
-                      <video
-                        src={project.video.src}
-                        poster={project.video.poster}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        controls
-                        preload="metadata"
-                        aria-label={project.video.caption?.[language] ?? project.title[language]}
-                      />
-                      {project.video.caption && <figcaption>{project.video.caption[language]}</figcaption>}
-                    </figure>
-                  )}
-
                   {primaryImage && (
                     <figure className={`project-main-image${primaryImage.fit === 'dark-contain' ? ' is-dark-contained' : ''}`}>
                       <div className="project-image-media">
@@ -436,6 +419,20 @@ export function Portfolio() {
                       ))}
                     </dl>
                   </div>
+
+                  {project.video && (
+                    <figure className="project-video">
+                      <video
+                        src={project.video.src}
+                        poster={project.video.poster}
+                        playsInline
+                        controls
+                        preload="none"
+                        aria-label={project.video.caption?.[language] ?? project.title[language]}
+                      />
+                      {project.video.caption && <figcaption>{project.video.caption[language]}</figcaption>}
+                    </figure>
+                  )}
 
                   {secondaryImages.length > 0 && (
                     <div className={secondaryIsCarousel ? 'image-carousel' : 'image-row'}>
