@@ -411,7 +411,7 @@ main {
 
 .interactive-link-preview {
   position: absolute;
-  z-index: 4;
+  z-index: 10;
   bottom: calc(100% + 0.8rem);
   left: 0;
   display: grid;
@@ -421,7 +421,8 @@ main {
   background: var(--surface);
   box-shadow: 0 0.7rem 1.8rem rgba(17, 17, 17, 0.14);
   opacity: 0;
-  pointer-events: none;
+  pointer-events: auto;
+  touch-action: manipulation;
   transform: translateY(0.35rem) scale(0.97);
   transform-origin: bottom left;
   transition: opacity 160ms ease, transform 160ms ease;
@@ -435,7 +436,8 @@ main {
 }
 
 .interactive-link-wrap.has-preview:hover .interactive-link-preview,
-.interactive-link-wrap.has-preview:focus-within .interactive-link-preview {
+.interactive-link-wrap.has-preview:focus-within .interactive-link-preview,
+.interactive-link-wrap.is-preview-open .interactive-link-preview {
   opacity: 1;
   transform: translateY(0) scale(1);
 }

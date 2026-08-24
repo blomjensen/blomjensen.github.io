@@ -115,6 +115,7 @@ export function Hero({ onExploreClick }: HeroProps) {
                     data-umami-event-document={detail.href.endsWith('.pdf') ? 'cv-2026' : undefined}
                     previewSrc={detail.href.endsWith('.pdf') ? '/files/previews/bjorn-blom-jensen-cv-2026.png' : undefined}
                     previewAlt={detail.href.endsWith('.pdf') ? 'First page of the CV' : undefined}
+                    previewHref={detail.href.endsWith('.pdf') ? detail.href : undefined}
                   >
                     {detail.value}
                   </InteractiveLink>
