@@ -1,7 +1,7 @@
 import { content } from '../content';
 import { ChartNetwork, Cuboid, Map, PencilRuler, Ruler, ScanLine } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import heroImage from '../assets/11641084856f4253f2024f07b07edcc8d4b7a88f.webp';
+import heroImage from '../assets/hero-666aaa-1116.webp';
 import { InteractiveLink } from './InteractiveLink';
 
 interface HeroProps {

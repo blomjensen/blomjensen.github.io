@@ -70,7 +70,7 @@ export const projects: Project[] = [
     ],
     video: {
       src: '/projects/impermanence-maintenance/aho-models/working-model.mp4',
-      poster: '/projects/impermanence-maintenance/aho-models/maintenance-model.webp',
+      poster: '/projects/impermanence-maintenance/aho-models/working-model-poster.webp',
       caption: {
         en: 'Working model in 1:200 tests the relationship between terrain, protection, and material movement.',
         no: 'Arbeidsmodell i 1:200 tester forholdet mellom terreng, sikring og materialbevegelse.',
@@ -487,22 +487,22 @@ export const projects: Project[] = [
           {
             src: '/projects/edge-landscape/06-field-study-01.webp',
             caption: {
-              en: 'Field study image from Rødtvet.',
-              no: 'Feltstudiebilde fra Rødtvet.',
+              en: 'Field study 01 records the existing edge condition at Rødtvet.',
+              no: 'Feltstudie 01 dokumenterer den eksisterende kantsonen på Rødtvet.',
             },
           },
           {
             src: '/projects/edge-landscape/07-field-study-02.webp',
             caption: {
-              en: 'Field study image from Rødtvet.',
-              no: 'Feltstudiebilde fra Rødtvet.',
+              en: 'Field study 02 follows water, ground, and movement through Rødtvet.',
+              no: 'Feltstudie 02 følger vann, terreng og bevegelse gjennom Rødtvet.',
             },
           },
           {
             src: '/projects/edge-landscape/08-field-study-03.webp',
             caption: {
-              en: 'Field study image from Rødtvet.',
-              no: 'Feltstudiebilde fra Rødtvet.',
+              en: 'Field study 03 records the meeting between the housing landscape and forest edge.',
+              no: 'Feltstudie 03 dokumenterer møtet mellom boliglandskapet og skogkanten.',
             },
           },
         ],
@@ -591,22 +591,22 @@ export const projects: Project[] = [
           {
             src: '/projects/design-by-entropy/05-card-stone-feature.webp',
             caption: {
-              en: 'AKP 02 - Wood railing.',
-              no: 'AKP 02 - Trerekkverk.',
+              en: 'AKP 02 - Stone feature and geomembrane liner.',
+              no: 'AKP 02 - Steinelement og geomembran.',
             },
           },
           {
             src: '/projects/design-by-entropy/06-card-climbing-wall.webp',
             caption: {
-              en: 'AKP 03 - Stone feature and geomembrane liner.',
-              no: 'AKP 03 - Steinelement og geomembran.',
+              en: 'AKP 03 - Climbing wall.',
+              no: 'AKP 03 - Klatrevegg.',
             },
           },
           {
             src: '/projects/design-by-entropy/07-card-colored-benches.webp',
             caption: {
-              en: 'LAP 01 - Pergola.',
-              no: 'LAP 01 - Pergola.',
+              en: 'LAP 01 - Colored benches.',
+              no: 'LAP 01 - Fargede benker.',
             },
           },
           {
