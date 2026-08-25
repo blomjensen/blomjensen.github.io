@@ -5,16 +5,43 @@ interface InteractiveLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   previewSrc?: string;
   previewAlt?: string;
   previewHref?: string;
+  trackingEvent?: string;
+  trackingData?: Record<string, string>;
 }
 
-export function InteractiveLink({ children, previewSrc, previewAlt, previewHref, className = '', ...props }: InteractiveLinkProps) {
+type UmamiWindow = Window & {
+  umami?: {
+    track: (eventName: string, data?: Record<string, string>) => void;
+  };
+};
+
+function trackEvent(eventName: string | undefined, data: Record<string, string>) {
+  if (!eventName) return;
+  (window as UmamiWindow).umami?.track(eventName, data);
+}
+
+export function InteractiveLink({
+  children,
+  previewSrc,
+  previewAlt,
+  previewHref,
+  trackingEvent,
+  trackingData = {},
+  className = '',
+  ...props
+}: InteractiveLinkProps) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const resolvedPreviewHref = previewHref ?? props.href;
 
   const handlePrimaryClick = (event: MouseEvent<HTMLAnchorElement>) => {
     props.onClick?.(event);
-    if (event.defaultPrevented || !previewSrc || isPreviewOpen) return;
-    if (!window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+    if (event.defaultPrevented) return;
+
+    const opensPreview = previewSrc && !isPreviewOpen && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    if (!opensPreview) {
+      trackEvent(trackingEvent, { ...trackingData, trigger: 'text-link' });
+      return;
+    }
 
     event.preventDefault();
     setIsPreviewOpen(true);
@@ -34,6 +61,7 @@ export function InteractiveLink({ children, previewSrc, previewAlt, previewHref,
           aria-label={previewAlt ?? 'Open preview'}
           onClick={(event) => {
             event.stopPropagation();
+            trackEvent(trackingEvent, { ...trackingData, trigger: 'preview' });
             setIsPreviewOpen(false);
           }}
         >
