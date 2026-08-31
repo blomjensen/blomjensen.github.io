@@ -361,11 +361,12 @@ main {
 }
 
 .hero-title {
-  max-width: 12ch;
+  max-width: none;
   margin: 0 0 1.35rem;
   font-size: 4.8rem;
   font-weight: 520;
   line-height: 0.96;
+  white-space: nowrap;
 }
 
 .hero-lead {
@@ -571,10 +572,17 @@ dd {
 
 .hero-detail-link {
   display: inline-flex;
+  align-items: center;
+  gap: 0.28em;
+  max-width: 100%;
   color: inherit;
   text-decoration-color: color-mix(in srgb, currentColor 32%, transparent);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
+}
+
+.hero-detail-external-icon {
+  flex: 0 0 auto;
 }
 
 .hero-detail-link:hover {
@@ -2212,7 +2220,10 @@ dd {
     text-overflow: ellipsis;
   }
 
-  .hero-title,
+  .hero-title {
+    font-size: clamp(1.95rem, 9vw, 2.28rem);
+  }
+
   .section-title {
     font-size: 2.28rem;
   }

@@ -59,7 +59,7 @@ export const projects: Project[] = [
       { label: { en: 'Period', no: 'Periode' }, value: { en: 'Spring 2026', no: 'Vår 2026' } },
       {
         label: { en: 'Course', no: 'Kurs' },
-        value: { en: '12-803 Diploma Landscape Architecture', no: '12-803 Diplom landskapsarkitektur' },
+        value: { en: '12.803. Diploma Landscape Architecture', no: '12.803. Diplom landskapsarkitektur' },
       },
       {
         label: { en: 'Site', no: 'Sted' },
@@ -220,12 +220,12 @@ export const projects: Project[] = [
       no: 'Et parprosjekt om veisikring, terreng og bevegelse ved Lonavatnet langs Rv13.',
     },
     fullDescription: {
-      en: 'Developed in 60-540 The Road, the project treats roads and their material, ecological, and social systems as constructed landscapes. At Lonavatnet along Rv13, the pair project uses high-resolution site mapping and physical models to study a sequence of protective structures across a steep roadside condition. Developed with Trong Le.',
-      no: 'Prosjektet ble utviklet i 60-540 The Road og behandler veier og deres materielle, økologiske og sosiale systemer som konstruerte landskap. Ved Lonavatnet langs Rv13 bruker parprosjektet detaljert stedskartlegging og fysiske modeller til å undersøke en sekvens av sikringskonstruksjoner i en bratt veisituasjon. Utviklet med Trong Le.',
+      en: 'Developed in the course The Road (60.540), the project treats roads and their material, ecological, and social systems as constructed landscapes. At Lonavatnet along Rv13, the pair project uses high-resolution site mapping and physical models to study a sequence of protective structures across a steep roadside condition. Developed with Trong Le.',
+      no: 'Prosjektet ble utviklet i kurset The Road (60.540) og behandler veier og deres materielle, økologiske og sosiale systemer som konstruerte landskap. Ved Lonavatnet langs Rv13 bruker parprosjektet detaljert stedskartlegging og fysiske modeller til å undersøke en sekvens av sikringskonstruksjoner i en bratt veisituasjon. Utviklet med Trong Le.',
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: 'Autumn 2025', no: 'Høst 2025' } },
-      { label: { en: 'Course', no: 'Kurs' }, value: { en: '60-540 The Road', no: '60-540 The Road' } },
+      { label: { en: 'Course', no: 'Kurs' }, value: { en: '60.540. The Road', no: '60.540. The Road' } },
       { label: { en: 'Site', no: 'Sted' }, value: { en: 'Lonavatnet / Rv13, Norway', no: 'Lonavatnet / Rv13, Norge' } },
       { label: { en: 'Team', no: 'Team' }, value: { en: 'Pair project with Trong Le', no: 'Parprosjekt med Trong Le' } },
     ],
@@ -280,16 +280,16 @@ export const projects: Project[] = [
       no: 'En samarbeidsstudie av terreng, vann og hverdagsadkomst i Borgeskogen.',
     },
     fullDescription: {
-      en: 'Developed in 60-619 Systems: Hydropolis, the project moves between territorial reading and close-range spatial detail at Borgeskogen. Relief mapping, eye-level model studies, and a 1:50 construction section test how ground, vegetation, drainage, local stone, and movement meet at the site. Developed with Dimitra.',
-      no: 'Prosjektet ble utviklet i 60-619 Systemer: Hydropolis og beveger seg mellom territoriell lesning og nærgående romlig detalj i Borgeskogen. Relieffkartlegging, modellstudier i øyehøyde og et konstruksjonssnitt i 1:50 tester hvordan terreng, vegetasjon, drenering, lokal stein og bevegelse møtes på stedet. Utviklet med Dimitra.',
+      en: 'Developed in the course Systems: Hydropolis (60.619), the project moves between territorial reading and close-range spatial detail at Borgeskogen. Relief mapping, eye-level model studies, and a 1:50 construction section test how ground, vegetation, drainage, local stone, and movement meet at the site. Developed with Dimitra.',
+      no: 'Prosjektet ble utviklet i kurset Systemer: Hydropolis (60.619) og beveger seg mellom territoriell lesning og nærgående romlig detalj i Borgeskogen. Relieffkartlegging, modellstudier i øyehøyde og et konstruksjonssnitt i 1:50 tester hvordan terreng, vegetasjon, drenering, lokal stein og bevegelse møtes på stedet. Utviklet med Dimitra.',
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: '2025', no: '2025' } },
       {
         label: { en: 'Course', no: 'Kurs' },
         value: {
-          en: '60-619 Systems: Hydropolis',
-          no: '60-619 Systems: Hydropolis',
+          en: '60.619. Systems: Hydropolis',
+          no: '60.619. Systems: Hydropolis',
         },
       },
       { label: { en: 'Site', no: 'Sted' }, value: { en: 'Borgeskogen, Norway', no: 'Borgeskogen, Norge' } },
@@ -348,8 +348,8 @@ export const projects: Project[] = [
       no: 'En lagdelt lesning av Røstlandet, bebyggelsesstrukturen, steinmurene og kulturlandskapet.',
     },
     fullDescription: {
-      en: 'The project began in spring 2023 in 61 160 Commons – Place and territories in the north, where Group C worked on Røstlandet and the pressure on bird-cliff and cultural landscapes. Bjørn continued the project independently in spring 2024. Layered mapping compares orthophoto, relief, settlement, and registered stone walls across scales to read how existing boundaries and everyday movement are shaped by terrain and water.',
-      no: 'Prosjektet begynte våren 2023 i 61 160 Fellesrom – Sted og territorier i nord, der gruppe C arbeidet med Røstlandet og fuglefjellene og kulturlandskapet under press. Bjørn videreførte prosjektet selvstendig våren 2024. Lagdelt kartlegging sammenligner ortofoto, relieff, bebyggelse og registrerte steinmurer på tvers av skalaer for å lese hvordan eksisterende grenser og hverdagsbevegelse formes av terreng og vann.',
+      en: 'The project began in spring 2023 in the course Commons – Place and territories in the north (61.160), where Group C worked on Røstlandet and the pressure on bird-cliff and cultural landscapes. Bjørn continued the project independently in spring 2024. Layered mapping compares orthophoto, relief, settlement, and registered stone walls across scales to read how existing boundaries and everyday movement are shaped by terrain and water.',
+      no: 'Prosjektet begynte våren 2023 i kurset Fellesrom – Sted og territorier i nord (61.160), der gruppe C arbeidet med Røstlandet og fuglefjellene og kulturlandskapet under press. Bjørn videreførte prosjektet selvstendig våren 2024. Lagdelt kartlegging sammenligner ortofoto, relieff, bebyggelse og registrerte steinmurer på tvers av skalaer for å lese hvordan eksisterende grenser og hverdagsbevegelse formes av terreng og vann.',
     },
     facts: [
       {
@@ -359,8 +359,8 @@ export const projects: Project[] = [
       {
         label: { en: 'Course', no: 'Kurs' },
         value: {
-          en: '61 160 · Commons – Place and territories in the north',
-          no: '61 160 · Fellesrom – Sted og territorier i nord',
+          en: '61.160. Commons – Place and territories in the north',
+          no: '61.160. Fellesrom – Sted og territorier i nord',
         },
       },
       { label: { en: 'Site', no: 'Sted' }, value: { en: 'Røstlandet, Røst', no: 'Røstlandet, Røst' } },
@@ -408,6 +408,43 @@ export const projects: Project[] = [
         fit: 'contain',
       },
     ],
+    imageRows: [
+      {
+        naturalAspect: true,
+        images: [
+          {
+            src: '/projects/rost/09-settlement-change-analysis.webp',
+            caption: {
+              en: 'Settlement change is read as a sequence of named places along Røstlandet’s main route.',
+              no: 'Bosettingsendringen leses som en sekvens av navngitte steder langs Røstlandets hovedforbindelse.',
+            },
+            fit: 'contain',
+          },
+          {
+            src: '/projects/rost/10-site-plan-1-1000.webp',
+            caption: {
+              en: 'The 1:1000 site plan records buildings, terrain edges, paths, vegetation, and the coastal threshold at Hammer.',
+              no: 'Situasjonsplanen i 1:1000 registrerer bebyggelse, terrengkanter, stier, vegetasjon og møtet med kysten ved Hammer.',
+            },
+            fit: 'contain',
+          },
+          {
+            src: '/projects/rost/11-physical-model-overview.webp',
+            caption: {
+              en: 'The 1:1000 physical model translates subtle relief, settlement clusters, and cultivated ground into a shared terrain surface.',
+              no: 'Den fysiske modellen i 1:1000 oversetter svakt relieff, bebyggelsesklynger og dyrket mark til en sammenhengende terrengflate.',
+            },
+          },
+          {
+            src: '/projects/rost/12-physical-model-detail.webp',
+            caption: {
+              en: 'Close model studies make the relationship between buildings, farm mounds, drainage lines, and exposed ground tangible.',
+              no: 'Nærstudier av modellen synliggjør forholdet mellom bebyggelse, gårdshauger, dreneringslinjer og eksponert terreng.',
+            },
+          },
+        ],
+      },
+    ],
   },
 
   {
@@ -419,22 +456,22 @@ export const projects: Project[] = [
       no: 'Et blågrønt parksystem som kobler sammen skogkant, skjulte bekker og etterkrigsbebyggelse på Rødtvet.',
     },
     fullDescription: {
-      en: 'Developed in 60.526 - AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities, the project reads Rødtvet through its forest edge, former agricultural ground, waterways, and post-war housing structure. A connected sequence of rain paths, community gardens, planted edges, and social spaces makes hidden water systems visible while strengthening biodiversity and everyday use. Developed with Maria Olof Sigurdardottir.',
-      no: 'Prosjektet ble utviklet i 60.526 - AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities og leser Rødtvet gjennom skogkanten, tidligere jordbruksmark, vannløp og etterkrigstidens boligstruktur. En sammenhengende sekvens av regnveier, felleshager, plantede kanter og sosiale rom synliggjør skjulte vannsystemer og styrker biologisk mangfold og hverdagsbruk. Utviklet med Maria Olof Sigurdardottir.',
+      en: '“Structure Spaces of Tomorrow” reads Rødtvet as a neighbourhood shaped by three overlapping histories: agricultural land, post-war housing expansion, and a contemporary multicultural community. Fieldwork and aerial mapping trace how forest edges, waterways, housing types, schools, routes, and transport barriers structure everyday life. The project proposes a connected sequence of rain paths, community gardens, planted edges, and shared spaces that brings the area’s rural traces and hidden water systems into a new public landscape. Developed with Maria Ólöf Sigurðardsdóttir.',
+      no: '«Structure Spaces of Tomorrow» leser Rødtvet som et område formet av tre overlappende historier: jordbrukslandskapet, etterkrigstidens boligutbygging og dagens flerkulturelle nærmiljø. Feltarbeid og flyfotokartlegging følger hvordan skogkanter, vannløp, boligtyper, skoler, gangforbindelser og transportbarrierer strukturerer hverdagslivet. Prosjektet foreslår en sammenhengende sekvens av regnveier, felleshager, plantede kanter og felles møteplasser som kobler områdets landbruksspor og skjulte vannsystemer til et nytt offentlig landskap. Utviklet med Maria Ólöf Sigurðardsdóttir.',
     },
     facts: [
       { label: { en: 'Period', no: 'Periode' }, value: { en: 'Autumn 2024', no: 'Høst 2024' } },
       {
         label: { en: 'Course', no: 'Kurs' },
         value: {
-          en: '60.526 - AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities',
-          no: '60.526 - AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities',
+          en: '60.526. AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities',
+          no: '60.526. AHO 2024 Edge Landscape: Innovative Park Systems in Contemporary Cities',
         },
       },
       { label: { en: 'Site', no: 'Sted' }, value: { en: 'Rødtvet, Oslo', no: 'Rødtvet, Oslo' } },
       {
         label: { en: 'Team', no: 'Team' },
-        value: { en: 'With Maria Olof Sigurdardottir', no: 'Med Maria Olof Sigurdardottir' },
+        value: { en: 'With Maria Ólöf Sigurðardsdóttir', no: 'Med Maria Ólöf Sigurðardsdóttir' },
       },
     ],
     images: [
@@ -446,26 +483,10 @@ export const projects: Project[] = [
         },
       },
       {
-        src: '/projects/edge-landscape/03-landscape-section.webp',
-        caption: {
-          en: 'A long section tests vegetation structure, movement, and social spaces from the forest edge to the lower ground.',
-          no: 'Et langt snitt tester vegetasjonsstruktur, bevegelse og sosiale rom fra skogkanten til det lavereliggende terrenget.',
-        },
-        fit: 'contain',
-      },
-      {
         src: '/projects/edge-landscape/04-community-garden.webp',
         caption: {
           en: 'A community garden connects everyday cultivation, open ground, and the surrounding housing landscape.',
           no: 'En felleshage kobler hverdagslig dyrking, åpent terreng og det omkringliggende boliglandskapet.',
-        },
-        fit: 'contain',
-      },
-      {
-        src: '/projects/edge-landscape/04-terrain-model.webp',
-        caption: {
-          en: 'The layered terrain model clarifies the steep forest edge, valleys, and connections across Rødtvet.',
-          no: 'Den lagdelte terrengmodellen tydeliggjør den bratte skogkanten, daldragene og forbindelsene på tvers av Rødtvet.',
         },
         fit: 'contain',
       },
@@ -507,6 +528,54 @@ export const projects: Project[] = [
           },
         ],
       },
+      {
+        naturalAspect: true,
+        images: [
+          {
+            src: '/projects/edge-landscape/09-site-overview-research.webp',
+            caption: {
+              en: 'Site overview and research situate Rødtvet between Lillomarka, the housing landscape, and regional transport infrastructure.',
+              no: 'Stedsoversikten plasserer Rødtvet mellom Lillomarka, boliglandskapet og den regionale transportinfrastrukturen.',
+            },
+            fit: 'contain',
+          },
+          {
+            src: '/projects/edge-landscape/10-annotated-site-reading.webp',
+            caption: {
+              en: 'The annotated aerial photograph traces Vestveitbekken, local destinations, barriers, and everyday routes.',
+              no: 'Det annoterte flyfotoet følger Vestveitbekken, lokale målpunkt, barrierer og hverdagsruter.',
+            },
+          },
+          {
+            src: '/projects/edge-landscape/11-settlement-structure.webp',
+            caption: {
+              en: 'A settlement reading distinguishes detached housing, small-house areas, and post-war apartment blocks.',
+              no: 'Bebyggelsesanalysen skiller mellom eneboligområder, småhusbebyggelse og etterkrigstidens boligblokker.',
+            },
+          },
+          {
+            src: '/projects/edge-landscape/12-routes-community-structure.webp',
+            caption: {
+              en: 'Walking routes and schools reveal a connected social structure across the neighbourhood.',
+              no: 'Ganglinjer og skoler synliggjør en sammenhengende sosial struktur på tvers av nærmiljøet.',
+            },
+          },
+          {
+            src: '/projects/edge-landscape/13-barriers-connections.webp',
+            caption: {
+              en: 'A barrier study identifies how vegetation, roads, and level changes limit visual and physical connections.',
+              no: 'Barrierestudien viser hvordan vegetasjon, veier og nivåforskjeller begrenser visuelle og fysiske forbindelser.',
+            },
+          },
+          {
+            src: '/projects/edge-landscape/14-future-landscape-structure.webp',
+            caption: {
+              en: 'A conceptual overlay tests a continuous landscape structure across forest, housing, and the road edge.',
+              no: 'Et konseptuelt lag tester en sammenhengende landskapsstruktur mellom skogen, boligområdene og veikanten.',
+            },
+          },
+        ],
+      },
     ],
   },
 
@@ -527,8 +596,8 @@ export const projects: Project[] = [
       {
         label: { en: 'Course', no: 'Kurs' },
         value: {
-          en: '60-701 Pre-diploma for Urbanism and Landscape Architecture',
-          no: '60-701 Prediplom for urbanisme og landskapsarkitektur',
+          en: '60.701. Pre-diploma for Urbanism and Landscape Architecture',
+          no: '60.701. Prediplom for urbanisme og landskapsarkitektur',
         },
       },
       {

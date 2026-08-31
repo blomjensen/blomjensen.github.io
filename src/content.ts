@@ -71,11 +71,11 @@ export const content = {
     about: {
       title: 'About',
       p1:
-        'I am a newly graduated landscape architect from AHO, working across terrain, infrastructure landscapes, climate adaptation, and digital workflows.',
+        'I am a landscape architect educated at AHO, and I am particularly curious about how digital tools and new technology can be used to understand sites, develop ideas, and communicate landscape projects.',
       p2:
-        'My work combines site reading, mapping, modelling, and visual storytelling, with a particular interest in how landscape systems are built, maintained, and transformed over time.',
+        'I work with an analytical and exploratory approach, from site reading and mapping to modelling, visualization, and detailing. At the same time, I care that what is designed works in practice, has aesthetic qualities, and can be built and maintained.',
       p3:
-        'I am looking for a landscape architecture role in Norway or internationally, and I am open to selected collaborations in mapping, visualization, and design research.',
+        'I am now looking to join a practice where I can contribute both landscape expertise and digital ways of working, learn from others, and develop good solutions collaboratively.',
     },
     contact: {
       title: 'Get in touch',
@@ -164,11 +164,11 @@ export const content = {
     about: {
       title: 'Om meg',
       p1:
-        'Jeg er nyutdannet landskapsarkitekt fra AHO og arbeider med terreng, infrastrukturlandskap, klimatilpasning og digitale arbeidsflyter.',
+        'Jeg er utdannet landskapsarkitekt fra AHO og er særlig nysgjerrig på hvordan digitale verktøy og ny teknologi kan brukes til å forstå steder, utvikle ideer og formidle landskapsprosjekter.',
       p2:
-        'Arbeidet mitt kombinerer stedslesning, kartlegging, modellering og visuell fortelling, med særlig interesse for hvordan landskapssystemer bygges, driftes og endrer seg over tid.',
+        'Jeg arbeider analytisk og utforskende, fra stedslesning og kartlegging til modellering, visualisering og detaljering. Samtidig er jeg opptatt av at det som tegnes skal fungere i praksis, ha estetiske kvaliteter og være mulig å bygge og vedlikeholde.',
       p3:
-        'Jeg søker en stilling innen landskapsarkitektur i Norge eller internasjonalt og er også åpen for utvalgte samarbeid innen kartlegging, visualisering og designbasert forskning.',
+        'Nå ønsker jeg å bli en del av et fagmiljø der jeg kan bidra med både landskapsfaglig forståelse og digitale arbeidsmåter, lære av andre og utvikle gode løsninger i samarbeid.',
     },
     contact: {
       title: 'Ta kontakt',

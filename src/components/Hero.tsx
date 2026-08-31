@@ -1,5 +1,5 @@
 import { content } from '../content';
-import { ChartNetwork, Cuboid, Map, PencilRuler, Ruler, ScanLine } from 'lucide-react';
+import { Blocks, ChartNetwork, Cuboid, ExternalLink, Map, Ruler, ScanLine } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import heroImage from '../assets/hero-666aaa-1116.webp';
 import { InteractiveLink } from './InteractiveLink';
@@ -11,9 +11,9 @@ interface HeroProps {
 const heroCopy = {
   en: {
     kicker: 'Portfolio',
-    title: 'Landscape architecture for terrain in change.',
+    title: 'Bjørn Blom-Jensen',
     lead:
-      'I am a landscape architect from AHO, working with terrain, infrastructure, maintenance, and the systems that shape places over time.',
+      'Here you will find selected work from AHO and independent studies of terrain, infrastructure, mapping, physical models, and landscape systems.',
     viewWork: 'View selected work',
     contact: 'Contact',
     imageAlt: 'Portrait of Bjørn Blom-Jensen',
@@ -21,10 +21,10 @@ const heroCopy = {
     metadataLabel: 'Portfolio metadata',
     capabilitiesLabel: 'Capabilities',
     capabilities: [
-      { label: 'Landscape design', Icon: PencilRuler },
       { label: 'Detailing', Icon: Ruler },
       { label: 'Site analysis', Icon: ChartNetwork },
       { label: 'Mapping', Icon: Map },
+      { label: 'Physical model', Icon: Blocks },
       { label: '3D studies', Icon: Cuboid },
       { label: 'Aerial survey', Icon: ScanLine },
     ],
@@ -34,13 +34,18 @@ const heroCopy = {
       { label: 'Email', value: 'bjorn@blom-jensen.no', href: 'mailto:bjorn@blom-jensen.no' },
       { label: 'Phone', value: '+47 906 40 381', href: 'tel:+4790640381' },
       { label: 'CV', value: 'CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },
+      {
+        label: 'Diploma project, AHO 2026',
+        value: 'Impermanence & Maintenance',
+        href: 'https://www.aho.no/english/student-projects/landscape-architecture/2026/impermanence-and-maintenance.html/',
+      },
     ],
   },
   no: {
     kicker: 'Portefølje',
-    title: 'Landskapsarkitektur for terreng i endring.',
+    title: 'Bjørn Blom-Jensen',
     lead:
-      'Jeg er landskapsarkitekt fra AHO og arbeider med terreng, infrastruktur, drift og systemene som former steder over tid.',
+      'Her finner du utvalgte arbeider fra AHO og egne studier innen terreng, infrastruktur, kartlegging, fysiske modeller og landskapssystemer.',
     viewWork: 'Se utvalgte arbeider',
     contact: 'Kontakt',
     imageAlt: 'Portrett av Bjørn Blom-Jensen',
@@ -48,10 +53,10 @@ const heroCopy = {
     metadataLabel: 'Porteføljeinformasjon',
     capabilitiesLabel: 'Kompetanse',
     capabilities: [
-      { label: 'Landskapsdesign', Icon: PencilRuler },
       { label: 'Detaljering', Icon: Ruler },
       { label: 'Stedsanalyse', Icon: ChartNetwork },
       { label: 'Kartlegging', Icon: Map },
+      { label: 'Fysisk modell', Icon: Blocks },
       { label: '3D-studier', Icon: Cuboid },
       { label: 'Drone', Icon: ScanLine },
     ],
@@ -61,6 +66,11 @@ const heroCopy = {
       { label: 'E-post', value: 'bjorn@blom-jensen.no', href: 'mailto:bjorn@blom-jensen.no' },
       { label: 'Telefon', value: '+47 906 40 381', href: 'tel:+4790640381' },
       { label: 'CV', value: 'CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },
+      {
+        label: 'Diplomoppgave AHO 2026',
+        value: 'Impermanence & Maintenance',
+        href: 'https://www.aho.no/english/student-projects/landscape-architecture/2026/impermanence-and-maintenance.html/',
+      },
     ],
   },
 } as const;
@@ -109,8 +119,13 @@ export function Hero({ onExploreClick }: HeroProps) {
                   <InteractiveLink
                     className="hero-detail-link"
                     href={detail.href}
-                    target={detail.href.endsWith('.pdf') ? '_blank' : undefined}
-                    rel={detail.href.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                    target={detail.href.endsWith('.pdf') || detail.href.startsWith('http') ? '_blank' : undefined}
+                    rel={detail.href.endsWith('.pdf') || detail.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    aria-label={
+                      detail.href.startsWith('http')
+                        ? `${detail.value} (${language === 'no' ? 'åpnes i ny fane' : 'opens in a new tab'})`
+                        : undefined
+                    }
                     trackingEvent={detail.href.endsWith('.pdf') ? 'cv-download' : undefined}
                     trackingData={detail.href.endsWith('.pdf') ? { document: 'cv-2026' } : undefined}
                     previewSrc={detail.href.endsWith('.pdf') ? '/files/previews/bjorn-blom-jensen-cv-2026.png' : undefined}
@@ -118,6 +133,9 @@ export function Hero({ onExploreClick }: HeroProps) {
                     previewHref={detail.href.endsWith('.pdf') ? detail.href : undefined}
                   >
                     {detail.value}
+                    {detail.href.startsWith('http') && (
+                      <ExternalLink className="hero-detail-external-icon" size={14} strokeWidth={1.7} aria-hidden="true" />
+                    )}
                   </InteractiveLink>
                 ) : (
                   detail.value
