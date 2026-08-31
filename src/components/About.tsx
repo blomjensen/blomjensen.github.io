@@ -7,13 +7,15 @@ const aboutMeta = {
     ['Profile', 'Landscape architect, AHO 2026'],
     ['Location', 'Oslo, Norway'],
     ['Focus', 'Terrain, infrastructure, maintenance, climate adaptation'],
-    ['Tools', 'QGIS, Rhino, Adobe CC, model making, writing'],
+    ['Tools', 'Adobe CC, AerialOD, Blender, CloudCompare, Rhino 3D, QGIS'],
+    ['Qualities', 'Calm, analytical, curious'],
   ],
   no: [
     ['Profil', 'Landskapsarkitekt, AHO 2026'],
     ['Sted', 'Oslo, Norge'],
     ['Fokus', 'Terreng, infrastruktur, drift, klimatilpasning'],
-    ['Verktøy', 'QGIS, Rhino, Adobe CC, modellarbeid, tekst'],
+    ['Verktøy', 'Adobe CC, AerialOD, Blender, CloudCompare, Rhino 3D, QGIS'],
+    ['Egenskaper', 'Rolig, analytisk, nysgjerrig'],
   ],
 } as const;
 
