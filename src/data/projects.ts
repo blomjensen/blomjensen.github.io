@@ -28,6 +28,12 @@ export type ProjectVideo = {
   caption?: LocalizedText;
 };
 
+export type ProjectModelViewer = {
+  modelSrc: string;
+  title: LocalizedText;
+  caption?: LocalizedText;
+};
+
 export type ProjectFact = {
   label: LocalizedText;
   value: LocalizedText;
@@ -42,6 +48,7 @@ export type Project = {
   facts: ProjectFact[];
   images: ProjectImage[];
   video?: ProjectVideo;
+  modelViewers?: ProjectModelViewer[];
   processImages?: ProjectImage[];
   imageRows?: ProjectImageRow[];
 };
@@ -80,14 +87,31 @@ export const projects: Project[] = [
         no: 'Arbeidsmodell i 1:200',
       },
     },
-    images: [
+    modelViewers: [
       {
-        src: '/projects/impermanence-maintenance/00-point-cloud-aho.webp',
+        modelSrc: '/tests/diplom-modell-test.glb',
+        title: {
+          en: 'Interactive diploma model',
+          no: 'Interaktiv diplommodell',
+        },
         caption: {
-          en: 'Point-cloud study to read and understand the landscape.',
-          no: 'Punktskystudie for å lese og forstå landskapet.',
+          en: 'A navigable RealityCapture model of the final diploma study.',
+          no: 'En navigerbar RealityCapture-modell av det ferdige diplomstudiet.',
         },
       },
+      {
+        modelSrc: '/tests/nederste-del-test.glb',
+        title: {
+          en: 'Interactive lower model',
+          no: 'Interaktiv modell av nederste del',
+        },
+        caption: {
+          en: 'A navigable RealityCapture model of the lower part of the diploma study.',
+          no: 'En navigerbar RealityCapture-modell av den nederste delen av diplomstudiet.',
+        },
+      },
+    ],
+    images: [
       {
         src: '/projects/impermanence-maintenance/10-plan-aho.webp',
         caption: {
@@ -95,6 +119,13 @@ export const projects: Project[] = [
           no: 'Planen utvikler en kalibrert sekvens av rassikring langs kanten av Esefjorden.',
         },
         fit: 'wide',
+      },
+      {
+        src: '/projects/impermanence-maintenance/00-point-cloud-aho.webp',
+        caption: {
+          en: 'Point-cloud study to read and understand the landscape.',
+          no: 'Punktskystudie for å lese og forstå landskapet.',
+        },
       },
       {
         src: '/projects/impermanence-maintenance/11-model-bw-aho.webp',

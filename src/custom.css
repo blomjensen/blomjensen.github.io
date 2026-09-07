@@ -861,6 +861,32 @@ dd {
   background: var(--soft);
 }
 
+.project-model-viewer {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.project-model-viewer-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 2px;
+  background: transparent;
+}
+
+.project-model-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.project-model-viewer figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.8rem;
+  align-items: baseline;
+}
+
 .project-image-media {
   position: relative;
 }

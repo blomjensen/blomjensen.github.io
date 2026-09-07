@@ -10,6 +10,7 @@ import {
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 import { projects, type Project, type ProjectImage, type ProjectVideo } from '../data/projects';
+import { ProjectModelViewer } from './ProjectModelViewer';
 import './ProjectVideo.css';
 
 const labels = {
@@ -27,6 +28,7 @@ const labels = {
     previousImages: 'Show previous images',
     nextImages: 'Show next images',
     supporting: 'Supporting material',
+    interactiveModel: 'Interactive model',
     playVideo: 'Play video',
     pauseVideo: 'Pause video',
     playImages: 'Play image sequence',
@@ -46,6 +48,7 @@ const labels = {
     previousImages: 'Vis forrige bilder',
     nextImages: 'Vis neste bilder',
     supporting: 'Støttemateriale',
+    interactiveModel: 'Interaktiv modell',
     playVideo: 'Spill av video',
     pauseVideo: 'Pause video',
     playImages: 'Spill av bildesekvens',
@@ -594,6 +597,21 @@ export function Portfolio() {
                       ))}
                     </dl>
                   </div>
+
+                  {project.modelViewers?.map((modelViewer) => (
+                    <figure className="project-model-viewer" key={modelViewer.modelSrc}>
+                      <div className="project-model-viewer-frame">
+                        <ProjectModelViewer
+                          src={modelViewer.modelSrc}
+                          title={modelViewer.title[language]}
+                        />
+                      </div>
+                      <figcaption>
+                        <span className="detail-label">{copy.interactiveModel}</span>
+                        {modelViewer.caption?.[language] ?? modelViewer.title[language]}
+                      </figcaption>
+                    </figure>
+                  ))}
 
                   {secondaryImages.length > 0 && (
                     <div className={secondaryIsCarousel ? 'image-carousel' : 'image-row'}>
