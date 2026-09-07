@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
-import { projects, type Project, type ProjectVideo } from '../data/projects';
+import { projects, type Project, type ProjectImage, type ProjectVideo } from '../data/projects';
 import './ProjectVideo.css';
 
 const labels = {
@@ -29,6 +29,8 @@ const labels = {
     supporting: 'Supporting material',
     playVideo: 'Play video',
     pauseVideo: 'Pause video',
+    playImages: 'Play image sequence',
+    stillImage: 'Show still image',
   },
   no: {
     kicker: 'Prosjektoversikt',
@@ -46,6 +48,8 @@ const labels = {
     supporting: 'Støttemateriale',
     playVideo: 'Spill av video',
     pauseVideo: 'Pause video',
+    playImages: 'Spill av bildesekvens',
+    stillImage: 'Vis stillbilde',
   },
 } as const;
 
@@ -154,6 +158,8 @@ export function Portfolio() {
   const copy = labels[language];
   const [expandedProjectId, setExpandedProjectId] = useState<number | null>(null);
   const [gallery, setGallery] = useState<{ projectId: number; imageIndex: number } | null>(null);
+  const [autoplayImages] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [imagePlayback, setImagePlayback] = useState<Record<string, boolean>>({});
   const projectRefs = useRef<Record<number, HTMLElement | null>>({});
   const positionLockRef = useRef<{ projectId: number; top: number } | null>(null);
   const galleryTouchStartX = useRef<number | null>(null);
@@ -166,6 +172,27 @@ export function Portfolio() {
   const galleryProject = gallery ? projects.find((project) => project.id === gallery.projectId) : null;
   const galleryImages = galleryProject ? getProjectImages(galleryProject) : [];
   const galleryImage = gallery ? galleryImages[gallery.imageIndex] : null;
+
+  const isImagePlaying = (image: ProjectImage) => Boolean(image.animationSrc && (imagePlayback[image.src] ?? autoplayImages));
+  const imageSource = (image: ProjectImage) => (isImagePlaying(image) ? image.animationSrc! : image.src);
+  const renderImagePlayback = (image: ProjectImage) => {
+    if (!image.animationSrc) return null;
+    const playing = isImagePlaying(image);
+    const label = `${playing ? copy.stillImage : copy.playImages}: ${image.caption?.[language] ?? ''}`;
+
+    return (
+      <button
+        type="button"
+        className="project-image-playback"
+        aria-label={label}
+        aria-pressed={playing}
+        title={playing ? copy.stillImage : copy.playImages}
+        onClick={() => setImagePlayback((current) => ({ ...current, [image.src]: !playing }))}
+      >
+        {playing ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
+      </button>
+    );
+  };
 
   const updateCarouselIndicator = useCallback((carouselId: string, node: HTMLDivElement) => {
     const maximum = Math.max(node.scrollWidth - node.clientWidth, 0);
@@ -549,7 +576,8 @@ export function Portfolio() {
                               key={`${project.id}-${image.src}`}
                             >
                               <div className="project-image-media">
-                                <img src={image.src} alt={getAlt(project, language, caption)} loading="eager" />
+                                <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="eager" />
+                                {renderImagePlayback(image)}
                                 <button
                                   type="button"
                                   className="project-image-zoom"
@@ -576,67 +604,82 @@ export function Portfolio() {
 
                     return (
                       <div className={rowIsCarousel ? 'image-carousel' : 'image-row'} key={rowCarouselId}>
-                        <div
-                          className={[
-                            'supporting-images',
-                            rowIsCarousel ? 'is-carousel' : '',
-                            row.columns === 1 ? 'is-one-column' : '',
-                            row.columns === 3 ? 'is-three-column' : '',
-                            row.columns === 4 ? 'is-four-column' : '',
-                            row.compact ? 'is-compact-carousel' : '',
-                            row.naturalAspect ? 'uses-natural-aspect' : '',
-                            row.matchHorizontalHeight ? 'uses-matched-horizontal-height' : '',
-                            row.uniformAspect === 'portrait' ? 'uses-portrait-crop' : '',
-                          ]
-                            .filter(Boolean)
-                            .join(' ')}
-                          aria-label={copy.supporting}
-                          role={rowIsCarousel ? 'region' : undefined}
-                          tabIndex={rowIsCarousel ? 0 : undefined}
-                          ref={(node) => {
-                            carouselRefs.current[rowCarouselId] = node;
-                          }}
-                          onScroll={(event) => updateCarouselIndicator(rowCarouselId, event.currentTarget)}
-                          onWheel={handleCarouselWheel}
-                        >
-                          {row.images.map((image, imageIndex) => {
-                            const caption = image.caption?.[language];
-                            const previousRowImageCount = (project.imageRows ?? [])
-                              .slice(0, rowIndex)
-                              .reduce((count, previousRow) => count + previousRow.images.length, 0);
+                        {row.title && (
+                          <div className="project-image-row-heading">
+                            <h3>{row.title[language]}</h3>
+                            {row.subtitle && <p>{row.subtitle[language]}</p>}
+                          </div>
+                        )}
+                        {row.quote && (
+                          <blockquote className="project-field-quote">
+                            <p>«{row.quote.text[language]}»</p>
+                            <footer>{row.quote.attribution[language]}</footer>
+                          </blockquote>
+                        )}
+                        <div className="project-image-row-media">
+                          <div
+                            className={[
+                              'supporting-images',
+                              rowIsCarousel ? 'is-carousel' : '',
+                              row.columns === 1 ? 'is-one-column' : '',
+                              row.columns === 3 ? 'is-three-column' : '',
+                              row.columns === 4 ? 'is-four-column' : '',
+                              row.compact ? 'is-compact-carousel' : '',
+                              row.naturalAspect ? 'uses-natural-aspect' : '',
+                              row.matchHorizontalHeight ? 'uses-matched-horizontal-height' : '',
+                              row.uniformAspect === 'portrait' ? 'uses-portrait-crop' : '',
+                            ]
+                              .filter(Boolean)
+                              .join(' ')}
+                            aria-label={row.title?.[language] ?? copy.supporting}
+                            role={rowIsCarousel ? 'region' : undefined}
+                            tabIndex={rowIsCarousel ? 0 : undefined}
+                            ref={(node) => {
+                              carouselRefs.current[rowCarouselId] = node;
+                            }}
+                            onScroll={(event) => updateCarouselIndicator(rowCarouselId, event.currentTarget)}
+                            onWheel={handleCarouselWheel}
+                          >
+                            {row.images.map((image, imageIndex) => {
+                              const caption = image.caption?.[language];
+                              const previousRowImageCount = (project.imageRows ?? [])
+                                .slice(0, rowIndex)
+                                .reduce((count, previousRow) => count + previousRow.images.length, 0);
 
-                            return (
-                              <figure
-                                className={
-                                  image.fit === 'contain'
-                                    ? 'is-contained'
-                                    : image.fit === 'dark-contain'
-                                      ? 'is-dark-contained'
-                                      : undefined
-                                }
-                                key={`${project.id}-${rowIndex}-${image.src}`}
-                              >
-                                <div className="project-image-media">
-                                  <img src={image.src} alt={getAlt(project, language, caption)} loading="eager" />
-                                  <button
-                                    type="button"
-                                    className="project-image-zoom"
-                                    aria-label={`${copy.zoomImage}: ${project.title[language]}`}
-                                    data-umami-event="project-image-open"
-                                    data-umami-event-project={project.title.en}
-                                    onClick={() =>
-                                      showGalleryImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex)
-                                    }
-                                  >
-                                    <Maximize2 size={18} aria-hidden="true" />
-                                  </button>
-                                </div>
-                                {caption && <figcaption>{caption}</figcaption>}
-                              </figure>
-                            );
-                          })}
+                              return (
+                                <figure
+                                  className={
+                                    image.fit === 'contain'
+                                      ? 'is-contained'
+                                      : image.fit === 'dark-contain'
+                                        ? 'is-dark-contained'
+                                        : undefined
+                                  }
+                                  key={`${project.id}-${rowIndex}-${image.src}`}
+                                >
+                                  <div className="project-image-media">
+                                    <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="eager" />
+                                    {renderImagePlayback(image)}
+                                    <button
+                                      type="button"
+                                      className="project-image-zoom"
+                                      aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                                      data-umami-event="project-image-open"
+                                      data-umami-event-project={project.title.en}
+                                      onClick={() =>
+                                        showGalleryImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex)
+                                      }
+                                    >
+                                      <Maximize2 size={18} aria-hidden="true" />
+                                    </button>
+                                  </div>
+                                  {caption && <figcaption>{caption}</figcaption>}
+                                </figure>
+                              );
+                            })}
+                          </div>
+                          {rowIsCarousel && renderCarouselControls(rowCarouselId)}
                         </div>
-                        {rowIsCarousel && renderCarouselControls(rowCarouselId)}
                       </div>
                     );
                   })}
@@ -673,11 +716,13 @@ export function Portfolio() {
             }}
           >
             <img
-              src={galleryImage.src}
+              src={imageSource(galleryImage)}
               alt={getAlt(galleryProject, language, galleryImage.caption?.[language])}
               decoding="async"
             />
           </button>
+
+          {renderImagePlayback(galleryImage)}
 
           {galleryImages.length > 1 && (
             <>

@@ -5,11 +5,15 @@ export type LocalizedText = {
 
 export type ProjectImage = {
   src: string;
+  animationSrc?: string;
   caption?: LocalizedText;
   fit?: 'cover' | 'contain' | 'dark-contain';
 };
 
 export type ProjectImageRow = {
+  title?: LocalizedText;
+  subtitle?: LocalizedText;
+  quote?: { text: LocalizedText; attribution: LocalizedText };
   columns?: 1 | 2 | 3 | 4;
   compact?: boolean;
   naturalAspect?: boolean;
@@ -338,7 +342,10 @@ export const projects: Project[] = [
 
   {
     id: 4,
-    title: { en: 'Røst', no: 'Røst' },
+    title: {
+      en: 'Røst',
+      no: 'Røst',
+    },
     category: {
       en: 'AHO studio, Spring 2023',
       no: 'AHO-studio, vår 2023',
@@ -353,20 +360,44 @@ export const projects: Project[] = [
     },
     facts: [
       {
-        label: { en: 'Period', no: 'Periode' },
-        value: { en: 'Spring 2023 / continued spring 2024', no: 'Vår 2023 / videreført vår 2024' },
+        label: {
+          en: 'Period',
+          no: 'Periode',
+        },
+        value: {
+          en: 'Spring 2023 / continued spring 2024',
+          no: 'Vår 2023 / videreført vår 2024',
+        },
       },
       {
-        label: { en: 'Course', no: 'Kurs' },
+        label: {
+          en: 'Course',
+          no: 'Kurs',
+        },
         value: {
           en: '61.160. Commons – Place and territories in the north',
           no: '61.160. Fellesrom – Sted og territorier i nord',
         },
       },
-      { label: { en: 'Site', no: 'Sted' }, value: { en: 'Røstlandet, Røst', no: 'Røstlandet, Røst' } },
       {
-        label: { en: 'Format', no: 'Format' },
-        value: { en: 'Group C / independent continuation', no: 'Gruppe C / selvstendig videreføring' },
+        label: {
+          en: 'Site',
+          no: 'Sted',
+        },
+        value: {
+          en: 'Røstlandet, Røst',
+          no: 'Røstlandet, Røst',
+        },
+      },
+      {
+        label: {
+          en: 'Format',
+          no: 'Format',
+        },
+        value: {
+          en: 'Group C / independent continuation',
+          no: 'Gruppe C / selvstendig videreføring',
+        },
       },
     ],
     images: [
@@ -377,41 +408,43 @@ export const projects: Project[] = [
           no: 'Et værslitt hus står i Røstlandets lave kystterreng og åpne horisont.',
         },
       },
-      {
-        src: '/projects/rost/05-settlement-stone-walls.webp',
-        caption: {
-          en: 'Dry-stone walls structure the cultivated ground between Røst church and the surrounding settlement.',
-          no: 'Tørrmurer strukturerer kulturlandskapet mellom Røst kirke og den omkringliggende bebyggelsen.',
-        },
-      },
-      {
-        src: '/projects/rost/06-stone-causeway.webp',
-        caption: {
-          en: 'A local stone causeway crosses shallow water and records an everyday landscape construction.',
-          no: 'En lokal steinbygd spong krysser grunt vann og dokumenterer en hverdagslig landskapskonstruksjon.',
-        },
-      },
-      {
-        src: '/projects/rost/07-spatial-drawing.webp',
-        caption: {
-          en: 'A spatial drawing connects Røst church, wet ground, stone boundaries, and the low settlement horizon.',
-          no: 'En romlig tegning kobler Røst kirke, våtmark, steingrenser og den lave bebyggelseshorisonten.',
-        },
-        fit: 'contain',
-      },
-      {
-        src: '/projects/rost/08-terrain-model.webp',
-        caption: {
-          en: 'The terrain model makes the subtle relief, building clusters, and exposed coastal ground legible as one landscape.',
-          no: 'Terrengmodellen gjør det svake relieffet, bygningsklyngene og det eksponerte kystterrenget lesbart som ett landskap.',
-        },
-        fit: 'contain',
-      },
     ],
     imageRows: [
       {
+        title: {
+          en: 'Cartography',
+          no: 'Kartografi',
+        },
+        subtitle: {
+          en: 'Module 4 · Maps and territorial studies',
+          no: 'Modul 4 · Kart og territorielle studier',
+        },
         naturalAspect: true,
         images: [
+          {
+            src: '/projects/rost/10-site-plan-1-1000.webp',
+            caption: {
+              en: 'Site plan 1:1000',
+              no: 'Situasjonsplan 1:1000',
+            },
+            fit: 'contain',
+          },
+          {
+            src: '/projects/rost/13-cartography-settlement.webp',
+            caption: {
+              en: 'Røstlandet – settlement and landscape',
+              no: 'Røstlandet – bebyggelse og landskap',
+            },
+            fit: 'contain',
+          },
+          {
+            src: '/projects/rost/14-cartography-relief.webp',
+            caption: {
+              en: 'Relief and settlement',
+              no: 'Relieff og bebyggelse',
+            },
+            fit: 'contain',
+          },
           {
             src: '/projects/rost/09-settlement-change-analysis.webp',
             caption: {
@@ -421,13 +454,50 @@ export const projects: Project[] = [
             fit: 'contain',
           },
           {
-            src: '/projects/rost/10-site-plan-1-1000.webp',
+            src: '/projects/rost/15-storm-surge-baseline.webp',
             caption: {
-              en: 'The 1:1000 site plan records buildings, terrain edges, paths, vegetation, and the coastal threshold at Hammer.',
-              no: 'Situasjonsplanen i 1:1000 registrerer bebyggelse, terrengkanter, stier, vegetasjon og møtet med kysten ved Hammer.',
+              en: 'Baseline and 200-year storm surge. Map study from 2023, switching every two seconds.',
+              no: 'Utgangspunkt og 200-års stormflo. Kartstudie fra 2023, med to sekunder mellom visningene.',
+            },
+            fit: 'contain',
+            animationSrc: '/projects/rost/15-storm-surge-comparison.gif',
+          },
+          {
+            src: '/projects/rost/17-grav-territorial-context.webp',
+            caption: {
+              en: 'Grav within Røstlandet’s settlement structure',
+              no: 'Grav i Røstlandets bebyggelsesstruktur',
             },
             fit: 'contain',
           },
+        ],
+      },
+      {
+        title: {
+          en: 'Grav – site and terrain',
+          no: 'Grav – sted og terreng',
+        },
+        images: [
+          {
+            src: '/projects/rost/18-grav-study.webp',
+            caption: {
+              en: 'Grav – closer study',
+              no: 'Grav – nærstudie',
+            },
+            fit: 'contain',
+          },
+          {
+            src: '/projects/rost/08-terrain-model.webp',
+            caption: {
+              en: 'The terrain model makes the subtle relief, building clusters, and exposed coastal ground legible as one landscape.',
+              no: 'Terrengmodellen gjør det svake relieffet, bygningsklyngene og det eksponerte kystterrenget lesbart som ett landskap.',
+            },
+            fit: 'contain',
+          },
+        ],
+      },
+      {
+        images: [
           {
             src: '/projects/rost/11-physical-model-overview.webp',
             caption: {
@@ -440,6 +510,126 @@ export const projects: Project[] = [
             caption: {
               en: 'Close model studies make the relationship between buildings, farm mounds, drainage lines, and exposed ground tangible.',
               no: 'Nærstudier av modellen synliggjør forholdet mellom bebyggelse, gårdshauger, dreneringslinjer og eksponert terreng.',
+            },
+          },
+        ],
+      },
+      {
+        title: {
+          en: 'A hidden cultural landscape',
+          no: 'Et gjemt kulturlandskap',
+        },
+        subtitle: {
+          en: 'The story of Røstlandet · Charcoal drawings and photographs',
+          no: 'Røstlandets beretning · Kulltegninger og fotografier',
+        },
+        naturalAspect: true,
+        images: [
+          {
+            src: '/projects/rost/19-charcoal-01.webp',
+            caption: {
+              en: 'Grav towards Hammer – charcoal drawing',
+              no: 'Grav mot Hammer – kulltegning',
+            },
+            fit: 'contain',
+          },
+          {
+            src: '/projects/rost/19-charcoal-02.webp',
+            caption: {
+              en: 'By the school and Querinihallen – charcoal drawing',
+              no: 'Ved skolen og Querinihallen – kulltegning',
+            },
+            fit: 'contain',
+          },
+          {
+            src: '/projects/rost/19-charcoal-03.webp',
+            caption: {
+              en: 'The causeway by Klippen chapel – charcoal drawing',
+              no: 'Spongen ved Klippen bedehus – kulltegning',
+            },
+            fit: 'contain',
+          },
+          {
+            src: '/projects/rost/20-causeway-01.webp',
+            caption: {
+              en: 'Traces in the grass',
+              no: 'Spor i gresset',
+            },
+          },
+          {
+            src: '/projects/rost/20-causeway-02.webp',
+            caption: {
+              en: 'The causeway extending into the water',
+              no: 'Spongen ut i vannet',
+            },
+          },
+          {
+            src: '/projects/rost/06-stone-causeway.webp',
+            caption: {
+              en: 'A local stone causeway crosses shallow water and records an everyday landscape construction.',
+              no: 'En lokal steinbygd spong krysser grunt vann og dokumenterer en hverdagslig landskapskonstruksjon.',
+            },
+          },
+          {
+            src: '/projects/rost/20-causeway-04.webp',
+            caption: {
+              en: 'Stone, lichen and grass',
+              no: 'Stein, lav og gress',
+            },
+          },
+          {
+            src: '/projects/rost/07-spatial-drawing.webp',
+            caption: {
+              en: 'A spatial drawing connects Røst church, wet ground, stone boundaries, and the low settlement horizon.',
+              no: 'En romlig tegning kobler Røst kirke, våtmark, steingrenser og den lave bebyggelseshorisonten.',
+            },
+            fit: 'contain',
+          },
+        ],
+      },
+      {
+        title: {
+          en: 'Field photographs',
+          no: 'Feltfotografier',
+        },
+        quote: {
+          text: {
+            en: 'It’s a hell of a life, that’s why it’s dying out',
+            no: 'Det er jo et hælvettes liv, det er derfor det dør ut',
+          },
+          attribution: {
+            en: 'Roy, fisherman on Røst',
+            no: 'Roy, fisker på Røst',
+          },
+        },
+        naturalAspect: true,
+        images: [
+          {
+            src: '/projects/rost/21-roy-finn.webp',
+            caption: {
+              en: 'Roy and Finn baiting fishing lines. Photo: Kamil Benon Rød',
+              no: 'Roy og Finn på snurra. Foto: Kamil Benon Rød',
+            },
+          },
+          {
+            src: '/projects/rost/05-settlement-stone-walls.webp',
+            caption: {
+              en: 'Dry-stone walls structure the cultivated ground between Røst church and the surrounding settlement.',
+              no: 'Tørrmurer strukturerer kulturlandskapet mellom Røst kirke og den omkringliggende bebyggelsen.',
+            },
+          },
+          {
+            src: '/projects/rost/22-field-atmosphere.webp',
+            caption: {
+              en: 'Light over Røstlandet',
+              no: 'Lys over Røstlandet',
+            },
+          },
+          {
+            src: '/projects/rost/23-coastal-horizon.webp',
+            caption: {
+              en: 'Water, islets and a low horizon',
+              no: 'Vann, holmer og lav horisont',
             },
           },
         ],
@@ -485,17 +675,13 @@ export const projects: Project[] = [
       {
         src: '/projects/edge-landscape/04-community-garden.webp',
         caption: {
-          en: 'A community garden connects everyday cultivation, open ground, and the surrounding housing landscape.',
-          no: 'En felleshage kobler hverdagslig dyrking, åpent terreng og det omkringliggende boliglandskapet.',
+          en: 'Community Garden - Collage',
+          no: 'Felleshagen - Collage',
         },
         fit: 'contain',
       },
       {
         src: '/projects/edge-landscape/05-existing-proposed-section.webp',
-        caption: {
-          en: 'The section tests how new paths and planted ground can mediate between housing, garages, and the slope.',
-          no: 'Snittet tester hvordan nye stier og plantet terreng kan formidle mellom boligbebyggelse, garasjer og skråningen.',
-        },
         fit: 'contain',
       },
     ],
@@ -531,14 +717,6 @@ export const projects: Project[] = [
       {
         naturalAspect: true,
         images: [
-          {
-            src: '/projects/edge-landscape/09-site-overview-research.webp',
-            caption: {
-              en: 'Site overview and research situate Rødtvet between Lillomarka, the housing landscape, and regional transport infrastructure.',
-              no: 'Stedsoversikten plasserer Rødtvet mellom Lillomarka, boliglandskapet og den regionale transportinfrastrukturen.',
-            },
-            fit: 'contain',
-          },
           {
             src: '/projects/edge-landscape/10-annotated-site-reading.webp',
             caption: {
