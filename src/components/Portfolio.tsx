@@ -490,10 +490,14 @@ export function Portfolio() {
           const actionLabel = `${isOpen ? copy.close : copy.open}: ${project.title[language]}`;
           const primaryImage = project.images[0];
           const primaryCaption = primaryImage?.caption?.[language];
-          const secondaryImages = [...project.images.slice(1), ...(project.processImages ?? [])];
+          const secondaryImages = [
+            ...(project.video ? project.images : project.images.slice(1)),
+            ...(project.processImages ?? []),
+          ];
           const secondaryIsCarousel = secondaryImages.length >= 3;
           const secondaryCarouselId = `project-${project.id}-secondary`;
-          const imageRowStartIndex = 1 + secondaryImages.length;
+          const secondaryImageStartIndex = project.video ? 0 : 1;
+          const imageRowStartIndex = secondaryImageStartIndex + secondaryImages.length;
 
           return (
             <article
@@ -558,7 +562,7 @@ export function Portfolio() {
                     />
                   )}
 
-                  {primaryImage && (
+                  {primaryImage && !project.video && (
                     <figure className={`project-main-image${primaryImage.fit === 'dark-contain' ? ' is-dark-contained' : ''}`}>
                       <div className="project-image-media">
                         <button
@@ -604,6 +608,10 @@ export function Portfolio() {
                         <ProjectModelViewer
                           src={modelViewer.modelSrc}
                           title={modelViewer.title[language]}
+                          annotations={modelViewer.annotations?.map((annotation) => ({
+                            label: annotation.label[language],
+                            position: annotation.position,
+                          }))}
                         />
                       </div>
                       <figcaption>
@@ -653,7 +661,7 @@ export function Portfolio() {
                                   aria-label={`${copy.zoomImage}: ${project.title[language]}`}
                                   data-umami-event="project-image-open"
                                   data-umami-event-project={project.title.en}
-                                  onClick={() => openCarouselImage(project.id, imageIndex + 1)}
+                                  onClick={() => openCarouselImage(project.id, secondaryImageStartIndex + imageIndex)}
                                 >
                                   <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="eager" />
                                 </button>
@@ -666,7 +674,7 @@ export function Portfolio() {
                                   data-umami-event-project={project.title.en}
                                   onClick={(event) => {
                                     event.stopPropagation();
-                                    openCarouselImage(project.id, imageIndex + 1);
+                                    openCarouselImage(project.id, secondaryImageStartIndex + imageIndex);
                                   }}
                                 >
                                   <Maximize2 size={18} aria-hidden="true" />

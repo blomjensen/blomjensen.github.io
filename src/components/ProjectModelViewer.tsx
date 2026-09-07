@@ -3,8 +3,17 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 
-export function ProjectModelViewer({ src, title }: { src: string; title: string }) {
+export function ProjectModelViewer({
+  src,
+  title,
+  annotations = [],
+}: {
+  src: string;
+  title: string;
+  annotations?: Array<{ label: string; position: [number, number, number] }>;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,6 +32,11 @@ export function ProjectModelViewer({ src, title }: { src: string; title: string 
     renderer.domElement.style.height = '100%';
     container.appendChild(renderer.domElement);
 
+    const labelRenderer = new CSS2DRenderer();
+    labelRenderer.domElement.className = 'project-model-labels';
+    labelRenderer.domElement.setAttribute('aria-hidden', 'true');
+    container.appendChild(labelRenderer.domElement);
+
     scene.add(new THREE.HemisphereLight(0xf5efe4, 0x302b25, 2.4));
     const keyLight = new THREE.DirectionalLight(0xffffff, 3.5);
     keyLight.position.set(4, 8, 6);
@@ -39,6 +53,7 @@ export function ProjectModelViewer({ src, title }: { src: string; title: string 
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height, false);
+      labelRenderer.setSize(width, height);
     };
 
     const resizeObserver = new ResizeObserver(resize);
@@ -61,6 +76,18 @@ export function ProjectModelViewer({ src, title }: { src: string; title: string 
       const size = box.getSize(new THREE.Vector3());
       const radius = Math.max(size.x, size.y, size.z) * 0.5;
       model.position.sub(center);
+      annotations.forEach((annotation) => {
+        const label = document.createElement('span');
+        label.className = 'project-model-annotation';
+        label.textContent = annotation.label;
+        const object = new CSS2DObject(label);
+        object.position.set(
+          annotation.position[0] * size.x * 0.5,
+          annotation.position[1] * size.y * 0.5,
+          annotation.position[2] * size.z * 0.5,
+        );
+        model.add(object);
+      });
       camera.position.set(radius * 1.8, radius * 1.1, radius * 1.8);
       camera.near = Math.max(radius / 1000, 0.001);
       camera.far = Math.max(radius * 20, 100);
@@ -74,6 +101,7 @@ export function ProjectModelViewer({ src, title }: { src: string; title: string 
     renderer.setAnimationLoop(() => {
       controls.update();
       renderer.render(scene, camera);
+      labelRenderer.render(scene, camera);
     });
 
     return () => {
@@ -95,9 +123,10 @@ export function ProjectModelViewer({ src, title }: { src: string; title: string 
         });
       });
       renderer.dispose();
+      labelRenderer.domElement.remove();
       renderer.domElement.remove();
     };
-  }, [src, title]);
+  }, [annotations, src, title]);
 
   return <div ref={containerRef} className="project-model-canvas" role="img" aria-label={title} />;
 }
