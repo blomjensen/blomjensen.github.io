@@ -141,14 +141,6 @@ export const projects: Project[] = [
         },
         fit: 'contain',
       },
-      {
-        src: '/projects/impermanence-maintenance/process-02-terrain-reading.webp',
-        caption: {
-          en: 'A wide terrain study uses elevation data to read how road infrastructure follows steep fjord topography.',
-          no: 'En bred terrengstudie bruker høydedata til å lese hvordan veiinfrastrukturen følger den bratte fjordtopografien.',
-        },
-        fit: 'contain',
-      },
     ],
     imageRows: [
       {

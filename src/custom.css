@@ -922,7 +922,15 @@ dd {
   outline-offset: 3px;
 }
 
-.is-contained .project-image-zoom,
+.is-contained .project-image-zoom {
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 0;
+  color: #20231f;
+  background: transparent;
+}
+
 .project-image-playback {
   width: 2.75rem;
   height: 2.75rem;
@@ -933,14 +941,17 @@ dd {
 }
 
 .is-contained .project-image-zoom:hover,
-.is-contained .project-image-zoom:focus-visible,
+.is-contained .project-image-zoom:focus-visible {
+  color: #000;
+  background: transparent;
+}
+
 .project-image-playback:hover,
 .project-image-playback:focus-visible {
   color: #000;
   background: #fff;
 }
 
-.is-contained .project-image-zoom:focus-visible,
 .project-image-playback:focus-visible {
   outline: 2px solid #20231f;
   outline-offset: 3px;
