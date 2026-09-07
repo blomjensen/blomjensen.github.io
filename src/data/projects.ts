@@ -430,6 +430,14 @@ export const projects: Project[] = [
             fit: 'contain',
           },
           {
+            src: '/projects/rost/16-settlement-section.webp',
+            caption: {
+              en: 'Settlement section',
+              no: 'Bebyggelsessnitt',
+            },
+            fit: 'contain',
+          },
+          {
             src: '/projects/rost/13-cartography-settlement.webp',
             caption: {
               en: 'Røstlandet – settlement and landscape',

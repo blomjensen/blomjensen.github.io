@@ -21,6 +21,7 @@ Page numbers below refer to PDF pages, including two-page spreads where present.
 | `13-cartography-settlement.webp` | PresentasjonReduced.pdf, PDF page 5 | 2400 × 1350 | 519426 |
 | `14-cartography-relief.webp` | PresentasjonReduced.pdf, PDF page 6 | 2400 × 1350 | 766066 |
 | `15-storm-surge-baseline.webp` | PresentasjonReduced.pdf, PDF page 8 | 2400 × 1350 | 522552 |
+| `16-settlement-section.webp` | User-provided screenshot, 2026-09-07 | 1940 × 590 | 64364 |
 | `17-grav-territorial-context.webp` | PresentasjonReduced.pdf, PDF page 13 | 2400 × 1350 | 519656 |
 | `18-grav-study.webp` | PresentasjonReduced.pdf, PDF page 14; crop of map and its Grav label | 1170 × 1710 | 166450 |
 | `19-charcoal-01.webp` | Supplering Portfolio_Compressed.pdf, PDF page 26; extracted image illustrations-26_1.png | 2162 × 1322 | 144452 |
