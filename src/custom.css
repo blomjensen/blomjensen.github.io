@@ -865,6 +865,20 @@ dd {
   position: relative;
 }
 
+.project-carousel-image-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.project-carousel-image-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
 .project-main-image-button {
   display: block;
   width: 100%;

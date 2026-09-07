@@ -164,7 +164,8 @@ export function Portfolio() {
   const positionLockRef = useRef<{ projectId: number; top: number } | null>(null);
   const galleryTouchStartX = useRef<number | null>(null);
   const galleryHasSwiped = useRef(false);
-  const carouselTouchStart = useRef<{ x: number; y: number } | null>(null);
+  const carouselTouchStart = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+  const suppressCarouselImageOpen = useRef(false);
   const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [carouselIndicators, setCarouselIndicators] = useState<
     Record<string, { progress: number; thumb: number; isScrollable: boolean }>
@@ -188,7 +189,10 @@ export function Portfolio() {
         aria-label={label}
         aria-pressed={playing}
         title={playing ? copy.stillImage : copy.playImages}
-        onClick={() => setImagePlayback((current) => ({ ...current, [image.src]: !playing }))}
+        onClick={(event) => {
+          event.stopPropagation();
+          setImagePlayback((current) => ({ ...current, [image.src]: !playing }));
+        }}
       >
         {playing ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
       </button>
@@ -283,7 +287,8 @@ export function Portfolio() {
     const touch = event.touches[0];
     if (!touch) return;
 
-    carouselTouchStart.current = { x: touch.clientX, y: touch.clientY };
+    carouselTouchStart.current = { x: touch.clientX, y: touch.clientY, moved: false };
+    suppressCarouselImageOpen.current = false;
   };
 
   const handleCarouselTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
@@ -293,6 +298,11 @@ export function Portfolio() {
 
     const horizontalDistance = touch.clientX - start.x;
     const verticalDistance = touch.clientY - start.y;
+    if (Math.hypot(horizontalDistance, verticalDistance) > 8) {
+      start.moved = true;
+      suppressCarouselImageOpen.current = true;
+    }
+
     if (Math.abs(horizontalDistance) < 4 || Math.abs(horizontalDistance) <= Math.abs(verticalDistance)) return;
 
     const carousel = event.currentTarget;
@@ -305,6 +315,14 @@ export function Portfolio() {
 
   const handleCarouselTouchEnd = () => {
     carouselTouchStart.current = null;
+    window.setTimeout(() => {
+      suppressCarouselImageOpen.current = false;
+    }, 0);
+  };
+
+  const openCarouselImage = (projectId: number, imageIndex: number) => {
+    if (suppressCarouselImageOpen.current) return;
+    showGalleryImage(projectId, imageIndex);
   };
 
   const renderCarouselControls = (carouselId: string) => {
@@ -611,7 +629,16 @@ export function Portfolio() {
                               key={`${project.id}-${image.src}`}
                             >
                               <div className="project-image-media">
-                                <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="eager" />
+                                <button
+                                  type="button"
+                                  className="project-carousel-image-button"
+                                  aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                                  data-umami-event="project-image-open"
+                                  data-umami-event-project={project.title.en}
+                                  onClick={() => openCarouselImage(project.id, imageIndex + 1)}
+                                >
+                                  <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="eager" />
+                                </button>
                                 {renderImagePlayback(image)}
                                 <button
                                   type="button"
@@ -619,7 +646,10 @@ export function Portfolio() {
                                   aria-label={`${copy.zoomImage}: ${project.title[language]}`}
                                   data-umami-event="project-image-open"
                                   data-umami-event-project={project.title.en}
-                                  onClick={() => showGalleryImage(project.id, imageIndex + 1)}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    openCarouselImage(project.id, imageIndex + 1);
+                                  }}
                                 >
                                   <Maximize2 size={18} aria-hidden="true" />
                                 </button>
@@ -699,7 +729,18 @@ export function Portfolio() {
                                   key={`${project.id}-${rowIndex}-${image.src}`}
                                 >
                                   <div className="project-image-media">
-                                    <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="eager" />
+                                    <button
+                                      type="button"
+                                      className="project-carousel-image-button"
+                                      aria-label={`${copy.zoomImage}: ${project.title[language]}`}
+                                      data-umami-event="project-image-open"
+                                      data-umami-event-project={project.title.en}
+                                      onClick={() =>
+                                        openCarouselImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex)
+                                      }
+                                    >
+                                      <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="eager" />
+                                    </button>
                                     {renderImagePlayback(image)}
                                     <button
                                       type="button"
@@ -707,9 +748,10 @@ export function Portfolio() {
                                       aria-label={`${copy.zoomImage}: ${project.title[language]}`}
                                       data-umami-event="project-image-open"
                                       data-umami-event-project={project.title.en}
-                                      onClick={() =>
-                                        showGalleryImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex)
-                                      }
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        openCarouselImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex);
+                                      }}
                                     >
                                       <Maximize2 size={18} aria-hidden="true" />
                                     </button>
