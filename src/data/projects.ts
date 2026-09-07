@@ -7,7 +7,7 @@ export type ProjectImage = {
   src: string;
   animationSrc?: string;
   caption?: LocalizedText;
-  fit?: 'cover' | 'contain' | 'dark-contain';
+  fit?: 'cover' | 'contain' | 'dark-contain' | 'wide';
 };
 
 export type ProjectImageRow = {
@@ -76,16 +76,16 @@ export const projects: Project[] = [
       src: '/projects/impermanence-maintenance/aho-models/working-model.mp4',
       poster: '/projects/impermanence-maintenance/aho-models/working-model-poster.webp',
       caption: {
-        en: 'Working model in 1:200 tests the relationship between terrain, protection, and material movement.',
-        no: 'Arbeidsmodell i 1:200 tester forholdet mellom terreng, sikring og materialbevegelse.',
+        en: 'Working model in 1:200',
+        no: 'Arbeidsmodell i 1:200',
       },
     },
     images: [
       {
         src: '/projects/impermanence-maintenance/00-point-cloud-aho.webp',
         caption: {
-          en: 'Point-cloud terrain study reads the avalanche path, road, and fjord edge as one exposed threshold.',
-          no: 'Punktsky-studien leser skredløpet, veien og fjordkanten som én eksponert terskel.',
+          en: 'Point-cloud study to read and understand the landscape.',
+          no: 'Punktskystudie for å lese og forstå landskapet.',
         },
       },
       {
@@ -94,7 +94,7 @@ export const projects: Project[] = [
           en: 'Plan drawing develops a calibrated sequence of road protection along the edge of Esefjorden.',
           no: 'Planen utvikler en kalibrert sekvens av rassikring langs kanten av Esefjorden.',
         },
-        fit: 'contain',
+        fit: 'wide',
       },
       {
         src: '/projects/impermanence-maintenance/11-model-bw-aho.webp',
@@ -185,29 +185,29 @@ export const projects: Project[] = [
           {
             src: '/projects/impermanence-maintenance/aho-models/model-detail.webp',
             caption: {
-              en: 'Close study of the gallery structure and its repeated supports.',
-              no: 'Nærstudie av gallerikonstruksjonen og de gjentatte støttene.',
+              en: 'Gallery and gallery portal',
+              no: 'Galleri og galleriportal',
             },
           },
           {
             src: '/projects/impermanence-maintenance/aho-models/model-wide.webp',
             caption: {
-              en: 'The road edge is tested as a continuous protective landscape.',
-              no: 'Veikanten testes som et sammenhengende beskyttende landskap.',
+              en: 'Working model in 1:200',
+              no: 'Arbeidsmodell i 1:200',
             },
           },
           {
             src: '/projects/impermanence-maintenance/aho-models/model-aerial.webp',
             caption: {
-              en: 'Aerial model view reads the intervention across slope and shoreline.',
-              no: 'Et oversiktsbilde av modellen leser inngrepet på tvers av skråning og strandlinje.',
+              en: 'Working model 1:200',
+              no: 'Arbeidsmodell 1:200',
             },
           },
           {
             src: '/projects/impermanence-maintenance/aho-models/model-outside.webp',
             caption: {
-              en: 'The model places the infrastructure between the studio and the fjord landscape.',
-              no: 'Modellen plasserer infrastrukturen mellom studioet og fjordlandskapet.',
+              en: 'Working model 1:200',
+              no: 'Arbeidsmodell 1:200',
             },
           },
         ],
@@ -312,18 +312,18 @@ export const projects: Project[] = [
         },
       },
       {
-        src: '/projects/borgeskogen/02_scapemap.webp',
-        caption: {
-          en: 'Relief-based scapemap makes the larger terrain structure and gradients legible.',
-          no: 'Det relieffbaserte scapemapet synliggjør den større terrengstrukturen og gradientene.',
-        },
-        fit: 'contain',
-      },
-      {
         src: '/projects/borgeskogen/03_detail_section.webp',
         caption: {
           en: 'The 1:50 section coordinates local red granite, drainage layers, and birch, poplar, and rowan planting.',
           no: 'Snittet i 1:50 samordner lokal rød granitt, drenerende lag og planting av bjørk, poppel og rogn.',
+        },
+        fit: 'contain',
+      },
+      {
+        src: '/projects/borgeskogen/02_scapemap.webp',
+        caption: {
+          en: 'Relief-based scapemap makes the larger terrain structure and gradients legible.',
+          no: 'Det relieffbaserte scapemapet synliggjør den større terrengstrukturen og gradientene.',
         },
         fit: 'contain',
       },

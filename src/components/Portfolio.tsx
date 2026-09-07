@@ -164,6 +164,7 @@ export function Portfolio() {
   const positionLockRef = useRef<{ projectId: number; top: number } | null>(null);
   const galleryTouchStartX = useRef<number | null>(null);
   const galleryHasSwiped = useRef(false);
+  const carouselTouchStart = useRef<{ x: number; y: number } | null>(null);
   const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [carouselIndicators, setCarouselIndicators] = useState<
     Record<string, { progress: number; thumb: number; isScrollable: boolean }>
@@ -276,6 +277,34 @@ export function Portfolio() {
     const leavingAtEnd = event.deltaX > 0 && carousel.scrollLeft >= maximum;
 
     if (leavingAtStart || leavingAtEnd) event.preventDefault();
+  };
+
+  const handleCarouselTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    carouselTouchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleCarouselTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    const start = carouselTouchStart.current;
+    const touch = event.touches[0];
+    if (!start || !touch) return;
+
+    const horizontalDistance = touch.clientX - start.x;
+    const verticalDistance = touch.clientY - start.y;
+    if (Math.abs(horizontalDistance) < 4 || Math.abs(horizontalDistance) <= Math.abs(verticalDistance)) return;
+
+    const carousel = event.currentTarget;
+    const maximum = carousel.scrollWidth - carousel.clientWidth;
+    const pullingPastStart = horizontalDistance > 0 && carousel.scrollLeft <= 1;
+    const pullingPastEnd = horizontalDistance < 0 && carousel.scrollLeft >= maximum - 1;
+
+    if (pullingPastStart || pullingPastEnd) event.preventDefault();
+  };
+
+  const handleCarouselTouchEnd = () => {
+    carouselTouchStart.current = null;
   };
 
   const renderCarouselControls = (carouselId: string) => {
@@ -560,6 +589,10 @@ export function Portfolio() {
                         }}
                         onScroll={(event) => updateCarouselIndicator(secondaryCarouselId, event.currentTarget)}
                         onWheel={handleCarouselWheel}
+                        onTouchStart={handleCarouselTouchStart}
+                        onTouchMove={handleCarouselTouchMove}
+                        onTouchEnd={handleCarouselTouchEnd}
+                        onTouchCancel={handleCarouselTouchEnd}
                       >
                         {secondaryImages.map((image, imageIndex) => {
                           const caption = image.caption?.[language];
@@ -569,6 +602,8 @@ export function Portfolio() {
                               className={
                                 image.fit === 'contain'
                                   ? 'is-contained'
+                                  : image.fit === 'wide'
+                                    ? 'is-wide'
                                   : image.fit === 'dark-contain'
                                     ? 'is-dark-contained'
                                     : undefined
@@ -639,6 +674,10 @@ export function Portfolio() {
                             }}
                             onScroll={(event) => updateCarouselIndicator(rowCarouselId, event.currentTarget)}
                             onWheel={handleCarouselWheel}
+                            onTouchStart={handleCarouselTouchStart}
+                            onTouchMove={handleCarouselTouchMove}
+                            onTouchEnd={handleCarouselTouchEnd}
+                            onTouchCancel={handleCarouselTouchEnd}
                           >
                             {row.images.map((image, imageIndex) => {
                               const caption = image.caption?.[language];
@@ -651,7 +690,9 @@ export function Portfolio() {
                                   className={
                                     image.fit === 'contain'
                                       ? 'is-contained'
-                                      : image.fit === 'dark-contain'
+                                      : image.fit === 'wide'
+                                        ? 'is-wide'
+                                        : image.fit === 'dark-contain'
                                         ? 'is-dark-contained'
                                         : undefined
                                   }

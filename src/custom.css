@@ -1079,9 +1079,10 @@ dd {
   gap: 1rem;
   padding-bottom: 0.7rem;
   overflow-x: auto;
-  overscroll-behavior-x: none;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto;
+  scroll-snap-type: x proximity;
   scrollbar-color: var(--line) transparent;
   scrollbar-width: none;
 }
@@ -1099,7 +1100,18 @@ dd {
   flex: 0 0 calc(var(--carousel-media-height) * 1.6);
   min-width: 0;
   scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-stop: normal;
+}
+
+.supporting-images.is-carousel figure.is-wide {
+  flex-basis: calc(var(--carousel-media-height) * 2.7907);
+}
+
+.supporting-images.is-carousel figure.is-wide img {
+  width: auto;
+  height: var(--carousel-media-height);
+  max-width: none;
+  object-fit: contain;
 }
 
 .supporting-images.is-carousel::after {
