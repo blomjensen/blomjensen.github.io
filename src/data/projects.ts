@@ -720,36 +720,36 @@ export const projects: Project[] = [
           {
             src: '/projects/edge-landscape/10-annotated-site-reading.webp',
             caption: {
-              en: 'The annotated aerial photograph traces Vestveitbekken, local destinations, barriers, and everyday routes.',
-              no: 'Det annoterte flyfotoet følger Vestveitbekken, lokale målpunkt, barrierer og hverdagsruter.',
+              en: 'Site analysis - Rødtvet',
+              no: 'Stedsanalyse - Rødtvet',
             },
           },
           {
             src: '/projects/edge-landscape/11-settlement-structure.webp',
             caption: {
-              en: 'A settlement reading distinguishes detached housing, small-house areas, and post-war apartment blocks.',
-              no: 'Bebyggelsesanalysen skiller mellom eneboligområder, småhusbebyggelse og etterkrigstidens boligblokker.',
+              en: 'Settlement structure',
+              no: 'Bebyggelsesstruktur',
             },
           },
           {
             src: '/projects/edge-landscape/12-routes-community-structure.webp',
             caption: {
-              en: 'Walking routes and schools reveal a connected social structure across the neighbourhood.',
-              no: 'Ganglinjer og skoler synliggjør en sammenhengende sosial struktur på tvers av nærmiljøet.',
+              en: 'Routes and community',
+              no: 'Ruter og fellesskap',
             },
           },
           {
             src: '/projects/edge-landscape/13-barriers-connections.webp',
             caption: {
-              en: 'A barrier study identifies how vegetation, roads, and level changes limit visual and physical connections.',
-              no: 'Barrierestudien viser hvordan vegetasjon, veier og nivåforskjeller begrenser visuelle og fysiske forbindelser.',
+              en: 'Barriers and connections',
+              no: 'Barrierer og forbindelser',
             },
           },
           {
             src: '/projects/edge-landscape/14-future-landscape-structure.webp',
             caption: {
-              en: 'A conceptual overlay tests a continuous landscape structure across forest, housing, and the road edge.',
-              no: 'Et konseptuelt lag tester en sammenhengende landskapsstruktur mellom skogen, boligområdene og veikanten.',
+              en: 'Landscape structure',
+              no: 'Landskapsstruktur',
             },
           },
         ],
