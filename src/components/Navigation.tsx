@@ -79,7 +79,7 @@ export function Navigation({
         {labels.home}
       </button>
 
-      <nav className="nav-links" aria-label="Primary navigation">
+      <nav className="nav-links" aria-label={labels.primaryNav}>
         {items.map((item) => (
           <button
             type="button"
@@ -98,8 +98,8 @@ export function Navigation({
           type="button"
           className="nav-link nav-theme"
           onClick={onThemeToggle}
-          aria-label={theme === 'light' ? 'Aktiver mørkmodus' : 'Aktiver lysmodus'}
-          title={theme === 'light' ? 'Mørkmodus' : 'Lysmodus'}
+          aria-label={theme === 'light' ? labels.darkMode : labels.lightMode}
+          title={theme === 'light' ? labels.darkMode : labels.lightMode}
         >
           {theme === 'light' ? <Moon size={16} strokeWidth={1.8} aria-hidden="true" /> : <Sun size={17} strokeWidth={1.8} aria-hidden="true" />}
         </button>
@@ -121,7 +121,7 @@ export function Navigation({
       </button>
 
       {isMenuOpen && (
-        <nav id="mobile-navigation" className="mobile-menu" aria-label="Mobile navigation">
+        <nav id="mobile-navigation" className="mobile-menu" aria-label={labels.mobileNav}>
           <button type="button" onClick={goHome} aria-current={page === 'portfolio' && activeSection === 'home' ? 'true' : undefined}>
             {labels.home}
           </button>
@@ -131,7 +131,7 @@ export function Navigation({
             </button>
           ))}
           <button type="button" onClick={toggleLanguage}>{language === 'en' ? 'Norsk' : 'English'}</button>
-          <button type="button" onClick={onThemeToggle}>{theme === 'light' ? 'Mørkmodus' : 'Lysmodus'}</button>
+          <button type="button" onClick={onThemeToggle}>{theme === 'light' ? labels.darkMode : labels.lightMode}</button>
         </nav>
       )}
     </header>

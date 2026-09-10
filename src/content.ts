@@ -12,6 +12,10 @@ export const content = {
       about: 'About',
       contact: 'Contact',
       menu: 'Menu',
+      darkMode: 'Dark mode',
+      lightMode: 'Light mode',
+      primaryNav: 'Primary navigation',
+      mobileNav: 'Mobile navigation',
     },
     hero: {
       ariaScroll: 'Scroll to portfolio',
@@ -144,6 +148,10 @@ export const content = {
       about: 'Om',
       contact: 'Kontakt',
       menu: 'Meny',
+      darkMode: 'Mørkmodus',
+      lightMode: 'Lysmodus',
+      primaryNav: 'Hovednavigasjon',
+      mobileNav: 'Mobilnavigasjon',
     },
     hero: {
       ariaScroll: 'Scroll til portefølje',
