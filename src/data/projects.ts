@@ -32,12 +32,6 @@ export type ProjectModelViewer = {
   modelSrc: string;
   title: LocalizedText;
   caption?: LocalizedText;
-  annotations?: ProjectModelAnnotation[];
-};
-
-export type ProjectModelAnnotation = {
-  label: LocalizedText;
-  position: [number, number, number];
 };
 
 export type ProjectFact = {
@@ -104,11 +98,6 @@ export const projects: Project[] = [
           en: 'A navigable RealityCapture model of the final diploma study.',
           no: 'En navigerbar RealityCapture-modell av det ferdige diplomstudiet.',
         },
-        annotations: [
-          { label: { en: 'Gallery', no: 'Galleri' }, position: [0.48, 0.42, 0.16] },
-          { label: { en: 'Moving slope', no: 'Bevegelig skråning' }, position: [-0.38, 0.28, 0.22] },
-          { label: { en: 'Road edge', no: 'Veikant' }, position: [0.2, -0.24, 0.42] },
-        ],
       },
     ],
     images: [

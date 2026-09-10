@@ -5,6 +5,8 @@ interface InteractiveLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   previewSrc?: string;
   previewAlt?: string;
   previewHref?: string;
+  previewContent?: ReactNode;
+  previewClassName?: string;
   trackingEvent?: string;
   trackingData?: Record<string, string>;
 }
@@ -25,6 +27,8 @@ export function InteractiveLink({
   previewSrc,
   previewAlt,
   previewHref,
+  previewContent,
+  previewClassName,
   trackingEvent,
   trackingData = {},
   className = '',
@@ -32,12 +36,13 @@ export function InteractiveLink({
 }: InteractiveLinkProps) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const resolvedPreviewHref = previewHref ?? props.href;
+  const hasPreview = Boolean(previewSrc || previewContent);
 
   const handlePrimaryClick = (event: MouseEvent<HTMLAnchorElement>) => {
     props.onClick?.(event);
     if (event.defaultPrevented) return;
 
-    const opensPreview = previewSrc && !isPreviewOpen && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    const opensPreview = hasPreview && !isPreviewOpen && window.matchMedia('(hover: none), (pointer: coarse)').matches;
     if (!opensPreview) {
       trackEvent(trackingEvent, { ...trackingData, trigger: 'text-link' });
       return;
@@ -48,16 +53,16 @@ export function InteractiveLink({
   };
 
   return (
-    <span className={`interactive-link-wrap${previewSrc ? ' has-preview' : ''}${isPreviewOpen ? ' is-preview-open' : ''}`}>
+    <span className={`interactive-link-wrap${hasPreview ? ' has-preview' : ''}${isPreviewOpen ? ' is-preview-open' : ''}`}>
       <a {...props} className={`interactive-text ${className}`.trim()} onClick={handlePrimaryClick}>
         {children}
       </a>
-      {previewSrc && resolvedPreviewHref && (
+      {hasPreview && resolvedPreviewHref && (
         <a
           href={resolvedPreviewHref}
           target={props.target}
           rel={props.rel}
-          className="interactive-link-preview"
+          className={`interactive-link-preview${previewClassName ? ` ${previewClassName}` : ''}`}
           aria-label={previewAlt ?? 'Open preview'}
           onClick={(event) => {
             event.stopPropagation();
@@ -65,7 +70,7 @@ export function InteractiveLink({
             setIsPreviewOpen(false);
           }}
         >
-          <img src={previewSrc} alt={previewAlt ?? ''} loading="lazy" />
+          {previewContent ?? <img src={previewSrc} alt={previewAlt ?? ''} loading="lazy" />}
         </a>
       )}
     </span>

@@ -546,7 +546,6 @@ export function Portfolio() {
                 </span>
 
                 <span className="project-toggle">
-                  <span>{isOpen ? copy.close : copy.open}</span>
                   {isOpen ? <Minus size={18} aria-hidden="true" /> : <Plus size={18} aria-hidden="true" />}
                 </span>
               </button>
@@ -608,10 +607,6 @@ export function Portfolio() {
                         <ProjectModelViewer
                           src={modelViewer.modelSrc}
                           title={modelViewer.title[language]}
-                          annotations={modelViewer.annotations?.map((annotation) => ({
-                            label: annotation.label[language],
-                            position: annotation.position,
-                          }))}
                         />
                       </div>
                       <figcaption>

@@ -3,18 +3,20 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
+import * as SunCalc from 'suncalc';
 
-export function ProjectModelViewer({
-  src,
-  title,
-  annotations = [],
-}: {
-  src: string;
-  title: string;
-  annotations?: Array<{ label: string; position: [number, number, number] }>;
-}) {
+// Kjenesskreda, Esefjorden / FV55.
+const SITE_LATITUDE = 61.22328;
+const SITE_LONGITUDE = 6.48036;
+const SUN_DATE = '2026-06-21';
+// Rotation of the RealityCapture model relative to the north-up reference image.
+const MODEL_NORTH_OFFSET = (5 * Math.PI) / 6;
+
+export function ProjectModelViewer({ src, title }: { src: string; title: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  const timeInputRef = useRef<HTMLInputElement>(null);
+  const timeOutputRef = useRef<HTMLOutputElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -32,15 +34,20 @@ export function ProjectModelViewer({
     renderer.domElement.style.height = '100%';
     container.appendChild(renderer.domElement);
 
-    const labelRenderer = new CSS2DRenderer();
-    labelRenderer.domElement.className = 'project-model-labels';
-    labelRenderer.domElement.setAttribute('aria-hidden', 'true');
-    container.appendChild(labelRenderer.domElement);
-
     scene.add(new THREE.HemisphereLight(0xf5efe4, 0x302b25, 2.4));
     const keyLight = new THREE.DirectionalLight(0xffffff, 3.5);
     keyLight.position.set(4, 8, 6);
     scene.add(keyLight);
+
+    const sun = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 16, 12),
+      new THREE.MeshBasicMaterial({ color: 0xf2b544 }),
+    );
+    const sunPath = new THREE.Line(
+      new THREE.BufferGeometry(),
+      new THREE.LineBasicMaterial({ color: 0xd29a54, transparent: true, opacity: 0.78 }),
+    );
+    scene.add(sun, sunPath);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -53,7 +60,6 @@ export function ProjectModelViewer({
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height, false);
-      labelRenderer.setSize(width, height);
     };
 
     const resizeObserver = new ResizeObserver(resize);
@@ -67,6 +73,63 @@ export function ProjectModelViewer({
     let model: THREE.Object3D | null = null;
     let disposed = false;
 
+    const parseLocalDate = () => {
+      const value = dateInputRef.current?.value || SUN_DATE;
+      const [year, month, day] = value.split('-').map(Number);
+      return new Date(year, month - 1, day, 12, 0, 0, 0);
+    };
+
+    const formatTime = (hours: number) => {
+      const hour = Math.floor(hours) % 24;
+      const minutes = Math.round((hours - Math.floor(hours)) * 60);
+      return `${String(hour).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    };
+
+    let modelRadius = 1;
+    const updateSun = () => {
+      const date = parseLocalDate();
+      const time = Number(timeInputRef.current?.value ?? 12);
+      date.setHours(Math.floor(time), Math.round((time % 1) * 60), 0, 0);
+      const position = SunCalc.getPosition(date, SITE_LATITUDE, SITE_LONGITUDE);
+      const azimuth = (position.azimuth * Math.PI) / 180 + MODEL_NORTH_OFFSET;
+      const altitude = (position.altitude * Math.PI) / 180;
+      const distance = modelRadius * 2.1;
+      const horizontal = Math.cos(altitude) * distance;
+      sun.position.set(Math.sin(azimuth) * horizontal, Math.sin(altitude) * distance, -Math.cos(azimuth) * horizontal);
+      sun.visible = altitude > 0;
+      keyLight.position.copy(sun.position);
+      keyLight.target.position.set(0, 0, 0);
+      if (timeOutputRef.current) timeOutputRef.current.value = formatTime(time);
+    };
+
+    const updateSunPath = () => {
+      const date = parseLocalDate();
+      const times = SunCalc.getTimes(date, SITE_LATITUDE, SITE_LONGITUDE);
+      const sunrise = times.sunrise ?? new Date(date.setHours(5, 0, 0, 0));
+      const sunset = times.sunset ?? new Date(date.setHours(22, 0, 0, 0));
+      const points = [];
+      const steps = 48;
+      const duration = sunset.getTime() - sunrise.getTime();
+      for (let index = 0; index <= steps; index += 1) {
+        const sample = new Date(sunrise.getTime() + (duration * index) / steps);
+        const position = SunCalc.getPosition(sample, SITE_LATITUDE, SITE_LONGITUDE);
+        const azimuth = (position.azimuth * Math.PI) / 180 + MODEL_NORTH_OFFSET;
+        const altitude = (position.altitude * Math.PI) / 180;
+        const distance = modelRadius * 2.1;
+        const horizontal = Math.cos(altitude) * distance;
+        points.push(
+          new THREE.Vector3(
+            Math.sin(azimuth) * horizontal,
+            Math.max(Math.sin(altitude) * distance, 0),
+            -Math.cos(azimuth) * horizontal,
+          ),
+        );
+      }
+      sunPath.geometry.dispose();
+      sunPath.geometry = new THREE.BufferGeometry().setFromPoints(points);
+      updateSun();
+    };
+
     loader.load(src, (gltf) => {
       if (disposed) return;
       model = gltf.scene;
@@ -75,19 +138,8 @@ export function ProjectModelViewer({
       const center = box.getCenter(new THREE.Vector3());
       const size = box.getSize(new THREE.Vector3());
       const radius = Math.max(size.x, size.y, size.z) * 0.5;
+      modelRadius = radius;
       model.position.sub(center);
-      annotations.forEach((annotation) => {
-        const label = document.createElement('span');
-        label.className = 'project-model-annotation';
-        label.textContent = annotation.label;
-        const object = new CSS2DObject(label);
-        object.position.set(
-          annotation.position[0] * size.x * 0.5,
-          annotation.position[1] * size.y * 0.5,
-          annotation.position[2] * size.z * 0.5,
-        );
-        model.add(object);
-      });
       camera.position.set(radius * 1.8, radius * 1.1, radius * 1.8);
       camera.near = Math.max(radius / 1000, 0.001);
       camera.far = Math.max(radius * 20, 100);
@@ -96,12 +148,17 @@ export function ProjectModelViewer({
       controls.maxDistance = radius * 8;
       controls.minDistance = Math.max(radius * 0.2, 0.05);
       controls.update();
+      updateSunPath();
     });
+
+    const dateInput = dateInputRef.current;
+    const timeInput = timeInputRef.current;
+    dateInput?.addEventListener('input', updateSunPath);
+    timeInput?.addEventListener('input', updateSun);
 
     renderer.setAnimationLoop(() => {
       controls.update();
       renderer.render(scene, camera);
-      labelRenderer.render(scene, camera);
     });
 
     return () => {
@@ -110,6 +167,12 @@ export function ProjectModelViewer({
       renderer.setAnimationLoop(null);
       controls.dispose();
       dracoLoader.dispose();
+      dateInput?.removeEventListener('input', updateSunPath);
+      timeInput?.removeEventListener('input', updateSun);
+      sun.geometry.dispose();
+      (sun.material as THREE.Material).dispose();
+      sunPath.geometry.dispose();
+      (sunPath.material as THREE.Material).dispose();
       model?.traverse((object) => {
         const mesh = object as THREE.Mesh;
         mesh.geometry?.dispose();
@@ -123,10 +186,23 @@ export function ProjectModelViewer({
         });
       });
       renderer.dispose();
-      labelRenderer.domElement.remove();
       renderer.domElement.remove();
     };
-  }, [annotations, src, title]);
+  }, [src, title]);
 
-  return <div ref={containerRef} className="project-model-canvas" role="img" aria-label={title} />;
+  return (
+    <div ref={containerRef} className="project-model-canvas" role="img" aria-label={title}>
+      <div className="project-sun-controls" aria-label="Solbane">
+        <label>
+          Dato
+          <input ref={dateInputRef} type="date" defaultValue={SUN_DATE} />
+        </label>
+        <label className="project-sun-time">
+          <span>Klokkeslett</span>
+          <input ref={timeInputRef} type="range" min="0" max="23.75" step="0.25" defaultValue="12" />
+          <output ref={timeOutputRef}>12:00</output>
+        </label>
+      </div>
+    </div>
+  );
 }

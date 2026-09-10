@@ -1,133 +1,133 @@
-import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Moon, Sun } from 'lucide-react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 
-interface NavigationProps {
+export type SitePage = 'portfolio' | 'lab';
+
+type NavigationProps = {
   activeSection: string;
-  onNavigate: (section: string) => void;
-}
+  onNavigate: (sectionId: string) => void;
+  onPageChange?: (page: SitePage, sectionId?: string) => void;
+  page?: SitePage;
+  theme: 'light' | 'dark';
+  onThemeToggle: () => void;
+};
 
-export function Navigation({ activeSection, onNavigate }: NavigationProps) {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+export function Navigation({
+  activeSection,
+  onNavigate,
+  onPageChange,
+  page = 'portfolio',
+  theme,
+  onThemeToggle,
+}: NavigationProps) {
   const { language, toggleLanguage } = useLanguage();
-  const c = content[language];
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isOverLightSection, setIsOverLightSection] = useState(false);
+  const labels = content[language].nav;
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 24);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    if (!isMobileMenuOpen) return;
-
-    const previousBodyOverflow = document.body.style.overflow;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsMobileMenuOpen(false);
-    };
-
-    document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousBodyOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isMobileMenuOpen]);
-
-  const navItems = [
-    { id: 'portfolio', label: c.nav.portfolio },
-    { id: 'studies', label: c.nav.studies },
-    { id: 'about', label: c.nav.about },
-    { id: 'contact', label: c.nav.contact },
+  const items = [
+    { id: 'portfolio', label: labels.portfolio, page: 'portfolio' as const, section: 'portfolio' },
+    { id: 'lab', label: labels.lab, page: 'lab' as const },
+    { id: 'studies', label: labels.studies, page: 'portfolio' as const, section: 'studies' },
+    { id: 'about', label: labels.about, page: 'portfolio' as const, section: 'about' },
+    { id: 'contact', label: labels.contact, page: 'portfolio' as const, section: 'contact' },
   ];
 
-  const handleNavClick = (id: string) => {
-    onNavigate(id);
-    setIsMobileMenuOpen(false);
+  useEffect(() => {
+    const panel = document.querySelector<HTMLElement>(
+      page === 'lab' ? '.page-panel--lab' : '.page-panel--portfolio',
+    );
+    if (!panel) return;
+
+    const updateScrolled = () => {
+      setIsScrolled(panel.scrollTop > 24);
+
+      const labWork = panel.querySelector<HTMLElement>('.lab-work');
+      setIsOverLightSection(
+        page === 'lab' && theme === 'light' && Boolean(labWork && panel.scrollTop + 24 >= labWork.offsetTop),
+      );
+    };
+    panel.addEventListener('scroll', updateScrolled, { passive: true });
+    updateScrolled();
+    return () => panel.removeEventListener('scroll', updateScrolled);
+  }, [page, theme]);
+
+  const activate = (item: (typeof items)[number]) => {
+    setIsMenuOpen(false);
+    if (item.page !== page) {
+      onPageChange?.(item.page, item.section);
+      return;
+    }
+    if (item.section) onNavigate(item.section);
   };
 
-  const handleLanguageToggle = () => {
-    toggleLanguage();
-    setIsMobileMenuOpen(false);
+  const goHome = () => {
+    setIsMenuOpen(false);
+    if (page === 'portfolio') onNavigate('home');
+    else onPageChange?.('portfolio', 'home');
   };
 
-  const nextLanguageLabel = language === 'en' ? 'Switch to Norwegian' : 'Bytt til engelsk';
-  const mainNavigationLabel = language === 'en' ? 'Main navigation' : 'Hovednavigasjon';
-  const mobileNavigationLabel = language === 'en' ? 'Mobile navigation' : 'Mobilnavigasjon';
-  const menuButtonLabel = isMobileMenuOpen
-    ? language === 'en'
-      ? 'Close menu'
-      : 'Lukk meny'
-    : language === 'en'
-      ? 'Open menu'
-      : 'Åpne meny';
+  const isCurrent = (item: (typeof items)[number]) =>
+    page === 'lab' ? item.id === 'lab' : item.section === activeSection;
 
   return (
-    <header className={`editorial-nav ${isScrolled ? 'is-scrolled' : ''}`}>
-      <button
-        className="nav-mark"
-        type="button"
-        aria-current={activeSection === 'home' ? 'true' : undefined}
-        onClick={() => handleNavClick('home')}
-      >
-        Bjørn Blom-Jensen
+    <header className={`editorial-nav${page === 'lab' ? ' is-lab-page' : ''}${isScrolled ? ' is-scrolled' : ''}${isOverLightSection ? ' is-on-light-surface' : ''}`}>
+      <button type="button" className="nav-mark" onClick={goHome} aria-label={labels.home}>
+        {labels.home}
       </button>
 
-      <nav className="nav-links" aria-label={mainNavigationLabel}>
-        {navItems.map((item) => (
+      <nav className="nav-links" aria-label="Primary navigation">
+        {items.map((item) => (
           <button
-            key={item.id}
             type="button"
-            onClick={() => handleNavClick(item.id)}
-            className="nav-link"
-            aria-current={activeSection === item.id ? 'true' : undefined}
+            className={`nav-link${(page === 'lab' ? item.id !== 'lab' : item.id === 'lab') ? ' is-elevated' : ''}`}
+            key={item.id}
+            onClick={() => activate(item)}
+            aria-current={isCurrent(item) ? 'true' : undefined}
           >
             {item.label}
           </button>
         ))}
-        <button className="nav-link nav-language" type="button" onClick={handleLanguageToggle} aria-label={nextLanguageLabel}>
+        <button type="button" className="nav-link nav-language" onClick={toggleLanguage}>
           {language === 'en' ? 'NO' : 'EN'}
+        </button>
+        <button
+          type="button"
+          className="nav-link nav-theme"
+          onClick={onThemeToggle}
+          aria-label={theme === 'light' ? 'Aktiver mørkmodus' : 'Aktiver lysmodus'}
+          title={theme === 'light' ? 'Mørkmodus' : 'Lysmodus'}
+        >
+          {theme === 'light' ? <Moon size={16} strokeWidth={1.8} aria-hidden="true" /> : <Sun size={17} strokeWidth={1.8} aria-hidden="true" />}
         </button>
       </nav>
 
       <button
-        className="nav-menu-button"
         type="button"
-        aria-label={menuButtonLabel}
-        aria-expanded={isMobileMenuOpen}
-        aria-controls="mobile-menu"
-        onClick={() => setIsMobileMenuOpen((open) => !open)}
+        className="nav-menu-button"
+        aria-expanded={isMenuOpen}
+        aria-controls="mobile-navigation"
+        onClick={() => setIsMenuOpen((open) => !open)}
       >
-        {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        <span className="sr-only">Menu</span>
+        {isMenuOpen ? '×' : 'Menu'}
       </button>
 
-      {isMobileMenuOpen && (
-        <nav className="mobile-menu" id="mobile-menu" aria-label={mobileNavigationLabel}>
-          <button
-            type="button"
-            aria-current={activeSection === 'home' ? 'true' : undefined}
-            onClick={() => handleNavClick('home')}
-          >
-            {c.nav.home}
+      {isMenuOpen && (
+        <nav id="mobile-navigation" className="mobile-menu" aria-label="Mobile navigation">
+          <button type="button" onClick={goHome} aria-current={page === 'portfolio' && activeSection === 'home' ? 'true' : undefined}>
+            {labels.home}
           </button>
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              aria-current={activeSection === item.id ? 'true' : undefined}
-              onClick={() => handleNavClick(item.id)}
-            >
+          {items.map((item) => (
+            <button type="button" key={item.id} onClick={() => activate(item)} aria-current={isCurrent(item) ? 'true' : undefined}>
               {item.label}
             </button>
           ))}
-          <button type="button" onClick={handleLanguageToggle} aria-label={nextLanguageLabel}>
-            {language === 'en' ? 'Norsk' : 'English'}
-          </button>
+          <button type="button" onClick={toggleLanguage}>{language === 'en' ? 'Norsk' : 'English'}</button>
+          <button type="button" onClick={onThemeToggle}>{theme === 'light' ? 'Mørkmodus' : 'Lysmodus'}</button>
         </nav>
       )}
     </header>

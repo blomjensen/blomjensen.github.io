@@ -21,6 +21,12 @@ export default defineConfig(({ command }) => ({
   build: {
     target: 'esnext',
     outDir: 'build',
+    rollupOptions: {
+      input: {
+        portfolio: path.resolve(__dirname, 'index.html'),
+        lab: path.resolve(__dirname, 'lab/index.html'),
+      },
+    },
   },
   server: {
     port: 3000,

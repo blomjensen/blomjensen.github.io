@@ -7,6 +7,7 @@ export const content = {
     nav: {
       home: 'Bjørn Blom-Jensen',
       portfolio: 'Portfolio',
+      lab: 'Lab',
       studies: 'Studies',
       about: 'About',
       contact: 'Contact',
@@ -31,6 +32,43 @@ export const content = {
         prev: 'Previous image',
         next: 'Next image',
       },
+    },
+    lab: {
+      kicker: 'Landscape / capture / model',
+      title: 'LAB',
+      intro:
+        'Experiments in how terrain can be captured, reconstructed, and experienced. The Lab extends the portfolio with unfinished technical studies and new ways of reading landscape.',
+      heroAlt: 'Point-cloud reconstruction of the terrain and vegetation at Kjenesskreda',
+      lenses: [
+        { label: 'Capture', value: 'Drone · image · scan' },
+        { label: 'Process', value: 'Cloud · mesh · terrain' },
+        { label: 'View', value: 'Web · model · sequence' },
+      ],
+      indexKicker: 'Field tests',
+      indexTitle: 'Ongoing experiments',
+      indexIntro: 'Small, focused trials built from real sites and project material.',
+      inDevelopment: 'Viewer in preparation',
+      note: 'Methods and limitations will be published with each experiment.',
+      experiments: [
+        {
+          number: '01',
+          meta: 'Kjenesskreda · photogrammetry · WebGPU',
+          title: 'Gaussian splat viewer',
+          description: 'A spatial reconstruction from drone and ground imagery, testing how a captured scene can communicate scale, material conditions, and field observations.',
+          image: '/projects/impermanence-maintenance/01-drone-overview-bw.webp',
+          alt: 'Drone view of the avalanche path at Kjenesskreda',
+          caption: 'Source capture · Kjenesskreda, 2025',
+        },
+        {
+          number: '02',
+          meta: 'Kjenesskreda · LiDAR · point cloud',
+          title: 'Terrain as points',
+          description: 'A point-based reading of slope, vegetation, and void. The test asks what becomes visible when the surface is treated as measured spatial information.',
+          image: '/projects/impermanence-maintenance/00-point-cloud-aho.webp',
+          alt: 'Monochrome point cloud showing the steep terrain at Kjenesskreda',
+          caption: 'Point-cloud study · Kjenesskreda, 2025',
+        },
+      ],
     },
     studies: {
       kicker: 'Fieldwork, material, and collective experiments',
@@ -100,6 +138,7 @@ export const content = {
     nav: {
       home: 'Bjørn Blom-Jensen',
       portfolio: 'Portefølje',
+      lab: 'Lab',
       studies: 'Studier',
       about: 'Om',
       contact: 'Kontakt',
@@ -124,6 +163,43 @@ export const content = {
         prev: 'Forrige bilde',
         next: 'Neste bilde',
       },
+    },
+    lab: {
+      kicker: 'Landskap / innsamling / modell',
+      title: 'LAB',
+      intro:
+        'Eksperimenter i hvordan terreng kan registreres, rekonstrueres og oppleves. Lab utvider porteføljen med uferdige tekniske studier og nye måter å lese landskap på.',
+      heroAlt: 'Punktskyrekonstruksjon av terreng og vegetasjon ved Kjenesskreda',
+      lenses: [
+        { label: 'Innsamling', value: 'Drone · bilde · skann' },
+        { label: 'Bearbeiding', value: 'Sky · mesh · terreng' },
+        { label: 'Visning', value: 'Web · modell · sekvens' },
+      ],
+      indexKicker: 'Felttester',
+      indexTitle: 'Pågående eksperimenter',
+      indexIntro: 'Små, fokuserte forsøk bygget på faktiske steder og prosjektmateriale.',
+      inDevelopment: 'Viewer forberedes',
+      note: 'Metode og begrensninger publiseres sammen med hvert eksperiment.',
+      experiments: [
+        {
+          number: '01',
+          meta: 'Kjenesskreda · fotogrammetri · WebGPU',
+          title: 'Gaussian splat-viewer',
+          description: 'En romlig rekonstruksjon fra drone- og bakkebilder som tester hvordan en registrert scene kan formidle skala, materielle forhold og feltobservasjoner.',
+          image: '/projects/impermanence-maintenance/01-drone-overview-bw.webp',
+          alt: 'Droneblikk over skredløpet ved Kjenesskreda',
+          caption: 'Kildemateriale · Kjenesskreda, 2025',
+        },
+        {
+          number: '02',
+          meta: 'Kjenesskreda · LiDAR · punktsky',
+          title: 'Terreng som punkter',
+          description: 'En punktbasert lesning av skråning, vegetasjon og tomrom. Forsøket undersøker hva som blir synlig når overflaten behandles som målt romlig informasjon.',
+          image: '/projects/impermanence-maintenance/00-point-cloud-aho.webp',
+          alt: 'Monokrom punktsky av det bratte terrenget ved Kjenesskreda',
+          caption: 'Punktskystudie · Kjenesskreda, 2025',
+        },
+      ],
     },
     studies: {
       kicker: 'Feltarbeid, materiale og kollektive eksperimenter',

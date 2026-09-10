@@ -1,7 +1,7 @@
 import { content } from '../content';
 import { Blocks, ChartNetwork, Cuboid, ExternalLink, Map, Ruler, ScanLine } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import heroImage from '../assets/hero-666aaa-1116.webp';
+import heroImage from '../assets/hero-cutout.png';
 import { InteractiveLink } from './InteractiveLink';
 
 interface HeroProps {
@@ -111,11 +111,15 @@ export function Hero({ onExploreClick }: HeroProps) {
 
       <div className="hero-lower">
         <dl className="hero-details" aria-label={copy.metadataLabel}>
-          {copy.details.map((detail) => (
-            <div key={detail.label}>
-              <dt>{detail.label}</dt>
-              <dd>
-                {detail.href ? (
+          {copy.details.map((detail) => {
+            const isCv = detail.href?.endsWith('.pdf');
+            const isAhoPage = detail.href?.includes('aho.no');
+
+            return (
+              <div key={detail.label}>
+                <dt>{detail.label}</dt>
+                <dd>
+                  {detail.href ? (
                   <InteractiveLink
                     className="hero-detail-link"
                     href={detail.href}
@@ -126,23 +130,44 @@ export function Hero({ onExploreClick }: HeroProps) {
                         ? `${detail.value} (${language === 'no' ? 'åpnes i ny fane' : 'opens in a new tab'})`
                         : undefined
                     }
-                    trackingEvent={detail.href.endsWith('.pdf') ? 'cv-download' : undefined}
-                    trackingData={detail.href.endsWith('.pdf') ? { document: 'cv-2026' } : undefined}
-                    previewSrc={detail.href.endsWith('.pdf') ? '/files/previews/bjorn-blom-jensen-cv-2026.png' : undefined}
-                    previewAlt={detail.href.endsWith('.pdf') ? 'First page of the CV' : undefined}
-                    previewHref={detail.href.endsWith('.pdf') ? detail.href : undefined}
+                    trackingEvent={isCv ? 'cv-download' : undefined}
+                    trackingData={isCv ? { document: 'cv-2026' } : undefined}
+                    previewSrc={isCv ? '/files/previews/bjorn-blom-jensen-cv-2026.png' : undefined}
+                    previewAlt={isCv ? 'First page of the CV' : isAhoPage ? 'Preview of the AHO diploma project page' : undefined}
+                    previewHref={isCv || isAhoPage ? detail.href : undefined}
+                    previewClassName={isAhoPage ? 'interactive-link-preview--aho' : undefined}
+                    previewContent={
+                      isAhoPage ? (
+                        <span className="aho-page-preview">
+                          <span className="aho-page-preview-header">
+                            <strong>AHO</strong>
+                            <span>Student projects</span>
+                          </span>
+                          <span className="aho-page-preview-copy">
+                            <strong>Impermanence and maintenance</strong>
+                            <span>By Bjørn Blom-Jensen, Trong Le</span>
+                          </span>
+                          <img
+                            src="/files/previews/aho-impermanence-and-maintenance.webp"
+                            alt=""
+                            loading="lazy"
+                          />
+                        </span>
+                      ) : undefined
+                    }
                   >
                     {detail.value}
-                    {detail.href.startsWith('http') && (
+                    {(detail.href.startsWith('http') || detail.href.endsWith('.pdf')) && (
                       <ExternalLink className="hero-detail-external-icon" size={14} strokeWidth={1.7} aria-hidden="true" />
                     )}
                   </InteractiveLink>
                 ) : (
                   detail.value
                 )}
-              </dd>
-            </div>
-          ))}
+                </dd>
+              </div>
+            );
+          })}
         </dl>
 
         <section className="hero-capabilities" aria-label={copy.capabilitiesLabel}>

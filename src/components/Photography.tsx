@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minus, Pause, Play, Plus } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -163,6 +163,7 @@ function SequenceFigure({
 export function Photography() {
   const { language } = useLanguage();
   const c = content[language].studies;
+  const [expandedStudy, setExpandedStudy] = useState<'transitions' | 'aquateket' | null>(null);
   const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [carouselProgress, setCarouselProgress] = useState<
     Record<string, { value: number; thumb: number; scrollable: boolean }>
@@ -248,6 +249,10 @@ export function Photography() {
     carousel.scrollTo({ left: target, behavior: 'smooth' });
   };
 
+  const toggleStudy = (study: 'transitions' | 'aquateket') => {
+    setExpandedStudy((current) => (current === study ? null : study));
+  };
+
   const renderCarouselControls = (carouselId: string) => {
     const indicator = carouselProgress[carouselId] ?? { value: 0, thumb: 1, scrollable: false };
     const left = indicator.value * (1 - indicator.thumb) * 100;
@@ -296,84 +301,102 @@ export function Photography() {
         <span>{c.workshopLabel}</span>
       </div>
 
-      <article className="study-entry" aria-labelledby="transitions-heading">
-        <header className="study-header">
-          <div>
-            <p className="project-category">{c.transitionsCategory}</p>
-            <h3 id="transitions-heading">{c.projectTitle}</h3>
-          </div>
-          <p>{c.description}</p>
-        </header>
-
-        <div className="study-carousel">
-          <div
-            className="study-sequences is-carousel"
-            aria-label={c.comparisonLabel}
-            role="region"
-            tabIndex={0}
-            ref={(node) => {
-              carouselRefs.current.transitions = node;
-            }}
-            onScroll={(event) => updateCarouselProgress('transitions', event.currentTarget)}
+      <div className="study-index">
+        <article className={`study-entry${expandedStudy === 'transitions' ? ' is-open' : ''}`}>
+          <button
+            type="button"
+            className="study-summary"
+            aria-expanded={expandedStudy === 'transitions'}
+            aria-controls="transitions-detail"
+            onClick={() => toggleStudy('transitions')}
           >
-            <SequenceFigure
-              videoSrc="/projects/transitions-portugal/transitions-0.5fps.mp4"
-              alt={c.slowAlt}
-              label={c.slowLabel}
-              detail={c.slowDetail}
-              playLabel={c.play}
-              pauseLabel={c.pause}
-            />
-            <SequenceFigure
-              videoSrc="/projects/transitions-portugal/transitions-2fps.mp4"
-              alt={c.fastAlt}
-              label={c.fastLabel}
-              detail={c.fastDetail}
-              playLabel={c.play}
-              pauseLabel={c.pause}
-            />
-          </div>
-          {renderCarouselControls('transitions')}
-        </div>
-      </article>
+            <span className="study-number">01</span>
+            <span className="study-thumb">
+              <video
+                src="/projects/transitions-portugal/transitions-2fps.mp4"
+                poster={posterSrc}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-hidden="true"
+              />
+            </span>
+            <span className="study-summary-copy">
+              <span className="project-category">{c.transitionsCategory}</span>
+              <strong id="transitions-heading">{c.projectTitle}</strong>
+              <span>{c.description}</span>
+            </span>
+            <span className="study-toggle">{expandedStudy === 'transitions' ? <Minus size={18} aria-hidden="true" /> : <Plus size={18} aria-hidden="true" />}</span>
+          </button>
 
-      <article className="study-entry aquateket-entry" aria-labelledby="aquateket-heading">
-        <header className="study-header">
-          <div>
-            <p className="project-category">{c.aquateketCategory}</p>
-            <h3 id="aquateket-heading">{c.aquateketTitle}</h3>
-          </div>
-          <p>{c.aquateketDescription}</p>
-        </header>
+          {expandedStudy === 'transitions' && (
+            <div id="transitions-detail" className="study-detail" aria-labelledby="transitions-heading">
+              <div className="study-carousel">
+                <div
+                  className="study-sequences is-carousel"
+                  aria-label={c.comparisonLabel}
+                  role="region"
+                  tabIndex={0}
+                  ref={(node) => { carouselRefs.current.transitions = node; }}
+                  onScroll={(event) => updateCarouselProgress('transitions', event.currentTarget)}
+                >
+                  <SequenceFigure videoSrc="/projects/transitions-portugal/transitions-0.5fps.mp4" alt={c.slowAlt} label={c.slowLabel} detail={c.slowDetail} playLabel={c.play} pauseLabel={c.pause} />
+                  <SequenceFigure videoSrc="/projects/transitions-portugal/transitions-2fps.mp4" alt={c.fastAlt} label={c.fastLabel} detail={c.fastDetail} playLabel={c.play} pauseLabel={c.pause} />
+                </div>
+                {renderCarouselControls('transitions')}
+              </div>
+            </div>
+          )}
+        </article>
 
-        <div className="study-carousel aquateket-carousel">
-          <div
-            className="aquateket-gallery"
-            role="region"
-            aria-label={language === 'en' ? 'Aquateket image carousel' : 'Aquateket bilderekke'}
-            tabIndex={0}
-            ref={(node) => {
-              carouselRefs.current.aquateket = node;
-            }}
-            onScroll={(event) => updateCarouselProgress('aquateket', event.currentTarget)}
+        <article className={`study-entry${expandedStudy === 'aquateket' ? ' is-open' : ''}`}>
+          <button
+            type="button"
+            className="study-summary"
+            aria-expanded={expandedStudy === 'aquateket'}
+            aria-controls="aquateket-detail"
+            onClick={() => toggleStudy('aquateket')}
           >
-            {aquateketImages.map((src, index) => {
-              const image = c.aquateketImages[index];
-              const [title, description] = image.label.split('\n');
-              return (
-                <figure key={src}>
-                  <img src={src} alt={image.alt} loading="lazy" decoding="async" />
-                  <figcaption>
-                    <span>{title}</span>
-                    {description && <span>{description}</span>}
-                  </figcaption>
-                </figure>
-              );
-            })}
-          </div>
-          {renderCarouselControls('aquateket')}
-        </div>
-      </article>
+            <span className="study-number">02</span>
+            <span className="study-thumb"><img src={aquateketImages[0]} alt="" loading="lazy" /></span>
+            <span className="study-summary-copy">
+              <span className="project-category">{c.aquateketCategory}</span>
+              <strong id="aquateket-heading">{c.aquateketTitle}</strong>
+              <span>{c.aquateketDescription}</span>
+            </span>
+            <span className="study-toggle">{expandedStudy === 'aquateket' ? <Minus size={18} aria-hidden="true" /> : <Plus size={18} aria-hidden="true" />}</span>
+          </button>
+
+          {expandedStudy === 'aquateket' && (
+            <div id="aquateket-detail" className="study-detail" aria-labelledby="aquateket-heading">
+              <div className="study-carousel aquateket-carousel">
+                <div
+                  className="aquateket-gallery"
+                  role="region"
+                  aria-label={language === 'en' ? 'Aquateket image carousel' : 'Aquateket bilderekke'}
+                  tabIndex={0}
+                  ref={(node) => { carouselRefs.current.aquateket = node; }}
+                  onScroll={(event) => updateCarouselProgress('aquateket', event.currentTarget)}
+                >
+                  {aquateketImages.map((src, index) => {
+                    const image = c.aquateketImages[index];
+                    const [title, description] = image.label.split('\n');
+                    return (
+                      <figure key={src}>
+                        <img src={src} alt={image.alt} loading="lazy" decoding="async" />
+                        <figcaption><span>{title}</span>{description && <span>{description}</span>}</figcaption>
+                      </figure>
+                    );
+                  })}
+                </div>
+                {renderCarouselControls('aquateket')}
+              </div>
+            </div>
+          )}
+        </article>
+      </div>
     </section>
   );
 }
