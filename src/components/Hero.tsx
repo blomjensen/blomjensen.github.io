@@ -1,7 +1,7 @@
 import { content } from '../content';
 import { Blocks, ChartNetwork, Cuboid, ExternalLink, Map, Ruler, ScanLine } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import heroImage from '../assets/hero-cutout.png';
+import heroImage from '../assets/hero-cutout.webp';
 import { InteractiveLink } from './InteractiveLink';
 
 interface HeroProps {
@@ -105,7 +105,7 @@ export function Hero({ onExploreClick }: HeroProps) {
         </div>
 
         <figure className="hero-figure">
-          <img src={heroImage} alt={copy.imageAlt} loading="eager" decoding="async" />
+          <img src={heroImage} alt={copy.imageAlt} width={1535} height={1024} loading="eager" decoding="async" />
         </figure>
       </div>
 
