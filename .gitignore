@@ -5,3 +5,9 @@ dist
 .env
 .env.local
 src/data/*.bak.*
+
+# Vendored agent skill toolkit (see EXTERNAL_SKILLS_LOCK.md)
+.agents/
+
+# Raw photo sidecar metadata - not for the web
+*.xmp
