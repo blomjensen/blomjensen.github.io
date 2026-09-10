@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Moon, Sun } from 'lucide-react';
+import { Menu as MenuIcon, Moon, Sun, X } from 'lucide-react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -112,8 +112,12 @@ export function Navigation({
         aria-controls="mobile-navigation"
         onClick={() => setIsMenuOpen((open) => !open)}
       >
-        <span className="sr-only">Menu</span>
-        <span aria-hidden="true">{isMenuOpen ? '×' : 'Menu'}</span>
+        <span className="sr-only">{labels.menu}</span>
+        {isMenuOpen ? (
+          <X size={18} strokeWidth={1.8} aria-hidden="true" />
+        ) : (
+          <MenuIcon size={18} strokeWidth={1.8} aria-hidden="true" />
+        )}
       </button>
 
       {isMenuOpen && (

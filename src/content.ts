@@ -11,6 +11,7 @@ export const content = {
       studies: 'Studies',
       about: 'About',
       contact: 'Contact',
+      menu: 'Menu',
     },
     hero: {
       ariaScroll: 'Scroll to portfolio',
@@ -142,6 +143,7 @@ export const content = {
       studies: 'Studier',
       about: 'Om',
       contact: 'Kontakt',
+      menu: 'Meny',
     },
     hero: {
       ariaScroll: 'Scroll til portefølje',
