@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { About } from './components/About';
 import { Contact } from './components/Contact';
 import { Hero } from './components/Hero';
@@ -10,6 +11,7 @@ import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
 const sections = ['home', 'portfolio', 'studies', 'about', 'contact'];
 const mobileLayoutQuery = '(max-width: 860px)';
+const pageTransitionDuration = 820;
 
 function usesDocumentScroll() {
   return window.matchMedia(mobileLayoutQuery).matches;
@@ -103,77 +105,22 @@ function useScrollStopClickGuard(panelRef: React.RefObject<HTMLElement>, isActiv
   }, [isActive, panelRef]);
 }
 
-function CursorTrail({ count = 6 }: { count?: number }) {
-  const trailRef = useRef<HTMLDivElement>(null);
-  const dots = useRef<Array<HTMLSpanElement | null>>([]);
-  const points = useRef(Array.from({ length: count }, () => ({ x: 0, y: 0 })));
-  const target = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    let frameId = 0;
-
-    const tick = () => {
-      let lead = target.current;
-      points.current.forEach((point, index) => {
-        point.x += (lead.x - point.x) * 0.35;
-        point.y += (lead.y - point.y) * 0.35;
-        dots.current[index]?.style.setProperty('transform', `translate3d(${point.x}px, ${point.y}px, 0)`);
-        lead = point;
-      });
-      frameId = window.requestAnimationFrame(tick);
-    };
-
-    const handlePointerMove = (event: PointerEvent) => {
-      const targetElement = event.target instanceof Element ? event.target : null;
-      if (targetElement?.closest('.study-media')) {
-        trailRef.current?.classList.remove('is-active');
-        return;
-      }
-
-      target.current = { x: event.clientX, y: event.clientY };
-      trailRef.current?.classList.add('is-active');
-    };
-
-    const handlePointerOut = (event: PointerEvent) => {
-      if (!event.relatedTarget) trailRef.current?.classList.remove('is-active');
-    };
-
-    window.addEventListener('pointermove', handlePointerMove, { passive: true });
-    window.addEventListener('pointerout', handlePointerOut, { passive: true });
-    frameId = window.requestAnimationFrame(tick);
-
-    return () => {
-      window.cancelAnimationFrame(frameId);
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerout', handlePointerOut);
-    };
-  }, []);
-
-  return (
-    <div ref={trailRef} className="cursor-trail" aria-hidden="true">
-      {Array.from({ length: count }, (_, index) => (
-        <span
-          key={index}
-          ref={(element) => {
-            dots.current[index] = element;
-          }}
-          className="cursor-trail-dot"
-        />
-      ))}
-    </div>
-  );
-}
-
 function AppContent() {
   const [activeSection, setActiveSection] = useState('home');
   const [activePage, setActivePage] = useState<'portfolio' | 'lab'>(() =>
     window.location.pathname.endsWith('/lab/') ? 'lab' : 'portfolio',
   );
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(() =>
     window.localStorage.getItem('theme') === 'dark' ? 'dark' : 'light',
   );
   const { language } = useLanguage();
   const portfolioPanelRef = useRef<HTMLElement>(null);
+  const pageTransitionTimerRef = useRef<number | null>(null);
+  const mobilePageEntryRef = useRef<{
+    panel: HTMLElement;
+    targetScrollY: number;
+  } | null>(null);
   const portfolioInertProps = activePage !== 'portfolio' ? ({ inert: '' } as const) : {};
 
   useScrollStopClickGuard(portfolioPanelRef, activePage === 'portfolio');
@@ -183,22 +130,94 @@ function AppContent() {
     portfolioPanelRef.current?.querySelector<HTMLElement>(`#${sectionId}`)?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const getPagePanel = (page: 'portfolio' | 'lab') =>
+    document.querySelector<HTMLElement>(
+      page === 'lab' ? '.page-panel--lab' : '.page-panel--portfolio',
+    );
+
+  const getPageTarget = (
+    panel: HTMLElement,
+    page: 'portfolio' | 'lab',
+    sectionId?: string,
+  ) =>
+    page === 'portfolio' && sectionId
+      ? panel.querySelector<HTMLElement>(`#${sectionId}`) ?? panel
+      : panel;
+
+  const setWindowScrollInstantly = (top: number) => {
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    const scrollContainer = document.scrollingElement;
+    if (scrollContainer) scrollContainer.scrollTop = top;
+    else window.scrollTo(0, top);
+    root.style.scrollBehavior = previousScrollBehavior;
+  };
+
+  const finishPageTransition = () => {
+    const mobileEntry = mobilePageEntryRef.current;
+    if (mobileEntry) {
+      flushSync(() => setIsPageTransitioning(false));
+      mobileEntry.panel.classList.remove('is-page-entry-aligned');
+      mobileEntry.panel.style.removeProperty('--page-entry-offset-y');
+      setWindowScrollInstantly(mobileEntry.targetScrollY);
+      mobilePageEntryRef.current = null;
+    } else {
+      setIsPageTransitioning(false);
+    }
+
+    pageTransitionTimerRef.current = null;
+  };
+
+  const preparePageDestination = (
+    page: 'portfolio' | 'lab',
+    sectionId?: string,
+  ) => {
+    const panel = getPagePanel(page);
+    if (!panel) return;
+    const target = getPageTarget(panel, page, sectionId);
+
+    if (usesDocumentScroll()) {
+      const currentScrollY = window.scrollY;
+      setWindowScrollInstantly(currentScrollY);
+      const targetScrollY = Math.max(0, currentScrollY + target.getBoundingClientRect().top);
+      const entryOffset = currentScrollY - targetScrollY;
+      panel.style.setProperty('--page-entry-offset-y', `${entryOffset}px`);
+      panel.classList.add('is-page-entry-aligned');
+      mobilePageEntryRef.current = { panel, targetScrollY };
+      return;
+    }
+
+    const panelBounds = panel.getBoundingClientRect();
+    const targetScrollTop = Math.max(
+      0,
+      panel.scrollTop + target.getBoundingClientRect().top - panelBounds.top,
+    );
+    panel.scrollTo({ top: targetScrollTop, left: 0, behavior: 'auto' });
+  };
+
   const changePage = (page: 'portfolio' | 'lab', sectionId?: string) => {
     const base = import.meta.env.BASE_URL;
     const target = page === 'lab' ? `${base}lab/` : `${base}${sectionId ? `#${sectionId}` : ''}`;
+
+    if (pageTransitionTimerRef.current !== null) {
+      window.clearTimeout(pageTransitionTimerRef.current);
+      finishPageTransition();
+    }
+
+    preparePageDestination(page, sectionId);
+    setIsPageTransitioning(true);
     setActivePage(page);
     window.history.pushState({}, '', target);
+    if (page === 'portfolio' && sectionId) setActiveSection(sectionId);
 
-    window.setTimeout(() => {
-      if (page === 'portfolio') {
-        if (sectionId) scrollToSection(sectionId);
-        else if (usesDocumentScroll()) window.scrollTo({ top: 0, behavior: 'smooth' });
-        else portfolioPanelRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        if (usesDocumentScroll()) window.scrollTo({ top: 0, behavior: 'smooth' });
-        else document.querySelector<HTMLElement>('.page-panel--lab')?.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, 60);
+    const transitionDelay = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 0
+      : pageTransitionDuration;
+    pageTransitionTimerRef.current = window.setTimeout(
+      finishPageTransition,
+      transitionDelay,
+    );
   };
 
   const toggleTheme = () => {
@@ -208,6 +227,16 @@ function AppContent() {
   useEffect(() => {
     window.localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => () => {
+    if (pageTransitionTimerRef.current !== null) {
+      window.clearTimeout(pageTransitionTimerRef.current);
+    }
+    const mobileEntry = mobilePageEntryRef.current;
+    if (!mobileEntry) return;
+    mobileEntry.panel.classList.remove('is-page-entry-aligned');
+    mobileEntry.panel.style.removeProperty('--page-entry-offset-y');
+  }, []);
 
   useEffect(() => {
     document.title =
@@ -277,7 +306,7 @@ function AppContent() {
   }, [activePage]);
 
   return (
-    <div className={`site-root site-root--canvas is-${activePage} theme-${theme}`}>
+    <div className={`site-root site-root--canvas is-${activePage} theme-${theme}${isPageTransitioning ? ' is-page-transitioning' : ''}`}>
       <Navigation
         activeSection={activePage === 'lab' ? 'lab' : activeSection}
         onNavigate={scrollToSection}
@@ -293,7 +322,6 @@ function AppContent() {
           aria-hidden={activePage !== 'portfolio'}
           {...portfolioInertProps}
         >
-          <CursorTrail />
           <main>
             <Hero onExploreClick={() => scrollToSection('portfolio')} />
             <Portfolio />

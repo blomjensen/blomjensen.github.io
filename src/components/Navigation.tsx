@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Languages, Menu as MenuIcon, Moon, Sun, X } from 'lucide-react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Menu as MenuIcon, Moon, Sun, X } from 'lucide-react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -26,14 +26,12 @@ export function Navigation({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOverLightSection, setIsOverLightSection] = useState(false);
-  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
-  const [displayedPage, setDisplayedPage] = useState(page);
+  const headerRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const pageTransitionTimerRef = useRef<number | null>(null);
   const labels = content[language].nav;
 
   const items = [
-    { id: 'portfolio', label: labels.portfolio, page: 'portfolio' as const, section: 'portfolio' },
+    { id: 'portfolio', label: content[language].portfolio.title, page: 'portfolio' as const, section: 'portfolio' },
     { id: 'lab', label: labels.lab, page: 'lab' as const },
     { id: 'studies', label: labels.studies, page: 'portfolio' as const, section: 'studies' },
     { id: 'about', label: labels.about, page: 'portfolio' as const, section: 'about' },
@@ -85,33 +83,65 @@ export function Navigation({
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, [isMenuOpen]);
 
-  useEffect(() => () => {
-    if (pageTransitionTimerRef.current !== null) {
-      window.clearTimeout(pageTransitionTimerRef.current);
-    }
-  }, []);
+  useLayoutEffect(() => {
+    const header = headerRef.current;
+    const canvas = document.querySelector<HTMLElement>('.site-canvas');
+    const labPanel = document.querySelector<HTMLElement>('.page-panel--lab');
+    if (!header || !canvas || !labPanel) return;
 
-  const beginPageTransition = (nextPage: SitePage) => {
-    if (pageTransitionTimerRef.current !== null) {
-      window.clearTimeout(pageTransitionTimerRef.current);
-    }
-    setIsPageTransitioning(true);
-    pageTransitionTimerRef.current = window.setTimeout(() => {
-      setDisplayedPage(nextPage);
-      setIsPageTransitioning(false);
-      pageTransitionTimerRef.current = null;
-    }, 820);
-  };
+    const surfaceElements = Array.from(
+      header.querySelectorAll<HTMLElement>('[data-nav-surface]'),
+    );
+    let frameId = 0;
+    let hasStopped = false;
 
-  useEffect(() => {
-    if (page === displayedPage) return;
-    beginPageTransition(page);
-  }, [displayedPage, page]);
+    const syncSurfaceStyles = () => {
+      const labBoundary = labPanel.getBoundingClientRect().left;
+      const elementsOverLab = surfaceElements.map((element) => {
+        const bounds = element.getBoundingClientRect();
+        return bounds.left + bounds.width / 2 >= labBoundary;
+      });
+
+      surfaceElements.forEach((element, index) => {
+        element.toggleAttribute('data-nav-over-lab', elementsOverLab[index]);
+      });
+    };
+
+    const stopTracking = () => {
+      if (hasStopped) return;
+      hasStopped = true;
+      window.cancelAnimationFrame(frameId);
+      syncSurfaceStyles();
+    };
+
+    const trackBoundary = () => {
+      syncSurfaceStyles();
+      frameId = window.requestAnimationFrame(trackBoundary);
+    };
+
+    syncSurfaceStyles();
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const handleTransitionEnd = (event: TransitionEvent) => {
+      if (event.target === canvas && event.propertyName === 'transform') stopTracking();
+    };
+
+    canvas.addEventListener('transitionend', handleTransitionEnd);
+    frameId = window.requestAnimationFrame(trackBoundary);
+    const fallbackTimer = window.setTimeout(stopTracking, 900);
+
+    return () => {
+      hasStopped = true;
+      window.cancelAnimationFrame(frameId);
+      window.clearTimeout(fallbackTimer);
+      canvas.removeEventListener('transitionend', handleTransitionEnd);
+    };
+  }, [language, page]);
 
   const activate = (item: (typeof items)[number]) => {
     setIsMenuOpen(false);
     if (item.page !== page) {
-      beginPageTransition(item.page);
       onPageChange?.(item.page, item.section);
       return;
     }
@@ -122,7 +152,6 @@ export function Navigation({
     setIsMenuOpen(false);
     if (page === 'portfolio') onNavigate('home');
     else {
-      beginPageTransition('portfolio');
       onPageChange?.('portfolio', 'home');
     }
   };
@@ -140,7 +169,6 @@ export function Navigation({
   const switchPrimaryPage = () => {
     setIsMenuOpen(false);
     const nextPage = page === 'lab' ? 'portfolio' : 'lab';
-    beginPageTransition(nextPage);
     if (nextPage === 'portfolio') onPageChange?.('portfolio', 'home');
     else onPageChange?.('lab');
   };
@@ -149,8 +177,8 @@ export function Navigation({
     page === 'lab' ? item.id === 'lab' : item.section === activeSection;
 
   return (
-    <header className={`editorial-nav${displayedPage === 'lab' ? ' is-lab-page' : ''}${isScrolled ? ' is-scrolled' : ''}${isOverLightSection ? ' is-on-light-surface' : ''}${isPageTransitioning ? ' is-page-transitioning' : ''}`}>
-      <button type="button" className="nav-mark" onClick={goHome} aria-label={labels.home}>
+    <header ref={headerRef} className={`editorial-nav${page === 'lab' ? ' is-lab-page' : ''}${isScrolled ? ' is-scrolled' : ''}${isOverLightSection ? ' is-on-light-surface' : ''}`}>
+      <button type="button" className="nav-mark" data-nav-surface onClick={goHome} aria-label={labels.home}>
         {labels.home}
       </button>
 
@@ -158,7 +186,8 @@ export function Navigation({
         {items.map((item) => (
           <button
             type="button"
-            className={`nav-link${(displayedPage === 'lab' ? item.id !== 'lab' : item.id === 'lab') ? ' is-elevated' : ''}`}
+            className={`nav-link${(page === 'lab' ? item.id !== 'lab' : item.id === 'lab') ? ' is-elevated' : ''}`}
+            data-nav-surface
             key={item.id}
             onClick={() => activate(item)}
             aria-current={isCurrent(item) ? 'true' : undefined}
@@ -166,12 +195,13 @@ export function Navigation({
             {item.label}
           </button>
         ))}
-        <button type="button" className="nav-link nav-language" onClick={toggleLanguageAndClose}>
+        <button type="button" className="nav-link nav-language" data-nav-surface onClick={toggleLanguageAndClose}>
           {language === 'en' ? 'NO' : 'EN'}
         </button>
         <button
           type="button"
           className="nav-link nav-theme"
+          data-nav-surface
           onClick={toggleThemeAndClose}
           aria-label={theme === 'light' ? labels.darkMode : labels.lightMode}
           title={theme === 'light' ? labels.darkMode : labels.lightMode}
@@ -180,23 +210,37 @@ export function Navigation({
         </button>
       </nav>
 
-      <button type="button" className="nav-page-switch" onClick={switchPrimaryPage}>
-        {displayedPage === 'lab' ? labels.portfolio : labels.lab}
-      </button>
+      <div className="nav-page-menu">
+        <button type="button" className="nav-page-switch" data-nav-surface onClick={switchPrimaryPage}>
+          {page === 'lab' ? labels.portfolio : labels.lab}
+        </button>
+
+        {isMenuOpen && (
+          <nav id="mobile-navigation" className="mobile-menu" aria-label={labels.mobileNav}>
+            {items.filter((item) => item.id !== 'lab').map((item) => (
+              <button type="button" key={item.id} onClick={() => activate(item)} aria-current={isCurrent(item) ? 'true' : undefined}>
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        )}
+      </div>
 
       <div className="nav-mobile-controls" aria-label={language === 'en' ? 'Display settings' : 'Visningsvalg'}>
         <button
           type="button"
-          className="nav-mobile-icon"
+          className="nav-mobile-icon nav-mobile-language"
+          data-nav-surface
           onClick={toggleLanguageAndClose}
           aria-label={language === 'en' ? 'Bytt til norsk' : 'Switch to English'}
           title={language === 'en' ? 'Norsk' : 'English'}
         >
-          <Languages size={18} strokeWidth={1.8} aria-hidden="true" />
+          {language === 'en' ? 'NO' : 'EN'}
         </button>
         <button
           type="button"
           className="nav-mobile-icon"
+          data-nav-surface
           onClick={toggleThemeAndClose}
           aria-label={theme === 'light' ? labels.darkMode : labels.lightMode}
           title={theme === 'light' ? labels.darkMode : labels.lightMode}
@@ -209,6 +253,7 @@ export function Navigation({
         ref={menuButtonRef}
         type="button"
         className="nav-menu-button"
+        data-nav-surface
         aria-expanded={isMenuOpen}
         aria-controls="mobile-navigation"
         onClick={() => setIsMenuOpen((open) => !open)}
@@ -223,15 +268,6 @@ export function Navigation({
         )}
       </button>
 
-      {isMenuOpen && (
-        <nav id="mobile-navigation" className="mobile-menu" aria-label={labels.mobileNav}>
-          {items.filter((item) => item.id !== displayedPage).map((item) => (
-            <button type="button" key={item.id} onClick={() => activate(item)} aria-current={isCurrent(item) ? 'true' : undefined}>
-              {item.label}
-            </button>
-          ))}
-        </nav>
-      )}
     </header>
   );
 }
