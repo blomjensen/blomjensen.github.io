@@ -2021,6 +2021,10 @@ dd {
   place-items: center;
   padding: 3rem 6rem 4rem;
   background: rgb(10 10 10 / 0.96);
+  /* Hindrer at nettleseren tolker et horisontalt to-finger-sveip som
+     tilbake-navigasjon, og at scroll lekker til siden bak. */
+  overscroll-behavior: contain;
+  overscroll-behavior-x: none;
 }
 
 .project-gallery-close {

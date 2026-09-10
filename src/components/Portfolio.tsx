@@ -168,6 +168,9 @@ export function Portfolio() {
   const positionLockRef = useRef<{ projectId: number; top: number } | null>(null);
   const galleryTouchStartX = useRef<number | null>(null);
   const galleryHasSwiped = useRef(false);
+  const galleryWheelDelta = useRef(0);
+  const galleryWheelLocked = useRef(false);
+  const galleryWheelIdle = useRef<number | null>(null);
   const carouselTouchStart = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const suppressCarouselImageOpen = useRef(false);
   const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -389,6 +392,10 @@ export function Portfolio() {
     window.addEventListener('keydown', onKeyDown);
     return () => {
       if (panel) panel.style.overflow = previousOverflow;
+      if (galleryWheelIdle.current !== null) window.clearTimeout(galleryWheelIdle.current);
+      galleryWheelIdle.current = null;
+      galleryWheelLocked.current = false;
+      galleryWheelDelta.current = 0;
       window.removeEventListener('keydown', onKeyDown);
     };
   }, [gallery, galleryImages.length]);
@@ -473,6 +480,30 @@ export function Portfolio() {
 
     galleryHasSwiped.current = true;
     moveGallery(delta < 0 ? 1 : -1);
+  };
+
+  // To fingre pa en styreflate sender wheel-events, ikke touch, sa sveip
+  // fungerte bare pa skjerm. Vi teller opp horisontal delta og bytter bilde
+  // en gang per gest - uten det ville en enkelt sveip hoppet mange bilder.
+  // Ingen preventDefault her: React fester wheel passivt, og det er
+  // overscroll-behavior-x i CSS som hindrer nettleserens tilbake-gest.
+  const handleGalleryWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+
+    if (galleryWheelIdle.current !== null) window.clearTimeout(galleryWheelIdle.current);
+    galleryWheelIdle.current = window.setTimeout(() => {
+      galleryWheelLocked.current = false;
+      galleryWheelDelta.current = 0;
+    }, 220);
+
+    if (galleryWheelLocked.current) return;
+
+    galleryWheelDelta.current += event.deltaX;
+    if (Math.abs(galleryWheelDelta.current) < 60) return;
+
+    moveGallery(galleryWheelDelta.current > 0 ? 1 : -1);
+    galleryWheelLocked.current = true;
+    galleryWheelDelta.current = 0;
   };
 
   return (
@@ -812,6 +843,7 @@ export function Portfolio() {
           aria-label={galleryProject.title[language]}
           onTouchStart={handleGalleryTouchStart}
           onTouchEnd={handleGalleryTouchEnd}
+          onWheel={handleGalleryWheel}
         >
           <button type="button" className="project-gallery-close" onClick={() => setGallery(null)} aria-label={copy.closeGallery}>
             <X size={22} aria-hidden="true" />
