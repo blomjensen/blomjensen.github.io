@@ -113,7 +113,7 @@ export function Navigation({
         onClick={() => setIsMenuOpen((open) => !open)}
       >
         <span className="sr-only">Menu</span>
-        {isMenuOpen ? '×' : 'Menu'}
+        <span aria-hidden="true">{isMenuOpen ? '×' : 'Menu'}</span>
       </button>
 
       {isMenuOpen && (
