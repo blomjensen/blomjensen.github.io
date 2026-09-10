@@ -29,8 +29,10 @@ const heroCopy = {
       { label: 'Aerial survey', Icon: ScanLine },
     ],
     details: [
-      { label: 'Base', value: 'Oslo, Norway' },
-      { label: 'Profile', value: 'Landscape architect, AHO 2026' },
+      // href: undefined holder unionstypen ensartet under `as const`, slik at
+      // detail.href kan leses på alle oppføringene. Ingen runtime-effekt.
+      { label: 'Base', value: 'Oslo, Norway', href: undefined },
+      { label: 'Profile', value: 'Landscape architect, AHO 2026', href: undefined },
       { label: 'Email', value: 'bjorn@blom-jensen.no', href: 'mailto:bjorn@blom-jensen.no' },
       { label: 'Phone', value: '+47 906 40 381', href: 'tel:+4790640381' },
       { label: 'CV', value: 'CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },
@@ -61,8 +63,8 @@ const heroCopy = {
       { label: 'Drone', Icon: ScanLine },
     ],
     details: [
-      { label: 'Base', value: 'Oslo, Norge' },
-      { label: 'Profil', value: 'Landskapsarkitekt, AHO 2026' },
+      { label: 'Base', value: 'Oslo, Norge', href: undefined },
+      { label: 'Profil', value: 'Landskapsarkitekt, AHO 2026', href: undefined },
       { label: 'E-post', value: 'bjorn@blom-jensen.no', href: 'mailto:bjorn@blom-jensen.no' },
       { label: 'Telefon', value: '+47 906 40 381', href: 'tel:+4790640381' },
       { label: 'CV', value: 'CV (PDF)', href: '/files/bjorn-blom-jensen-cv-2026.pdf' },

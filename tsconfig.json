@@ -23,7 +23,8 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
 
-    "types": ["vite/client"],
+    // "node" trengs for vite.config.ts (path, process, __dirname).
+    "types": ["vite/client", "node"],
     // TS 7 fjernet dette feltet; paths loeses relativt til denne fila.
     "paths": { "@/*": ["./src/*"] }
   },
