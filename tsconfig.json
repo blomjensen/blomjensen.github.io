@@ -1,0 +1,31 @@
+{
+  // Type checking only - Vite/SWC strips types at build time and never checks
+  // them. Run `npm run typecheck` (or `npx tsc --noEmit`) to actually see errors.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    // main.tsx imports "./App.tsx" with the extension, so this must stay on.
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "useDefineForClassFields": true,
+    "skipLibCheck": true,
+
+    "strict": true,
+    // Deliberately off for the first pass: unused-symbol errors would drown out
+    // the real type errors. Turn them on once the codebase is clean.
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["src", "vite.config.ts"]
+}
