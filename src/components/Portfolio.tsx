@@ -13,7 +13,7 @@ import { createPortal } from 'react-dom';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 import { projects, type Project, type ProjectImage, type ProjectVideo } from '../data/projects';
-import { ViewportVideoPreview } from './ViewportVideoPreview';
+import { ViewportVideoPreview, type VideoPlaybackPosition } from './ViewportVideoPreview';
 import './ProjectVideo.css';
 
 const ProjectModelViewer = lazy(() =>
@@ -70,29 +70,47 @@ function ProjectVideoFigure({
   language,
   playLabel,
   pauseLabel,
+  playbackPosition,
 }: {
   video: ProjectVideo;
   language: 'en' | 'no';
   playLabel: string;
   pauseLabel: string;
+  playbackPosition: VideoPlaybackPosition;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const caption = video.caption?.[language];
 
+  const restorePosition = useCallback(() => {
+    const element = videoRef.current;
+    if (!element || !Number.isFinite(playbackPosition.current) || playbackPosition.current <= 0) return;
+
+    const latestValidTime = Number.isFinite(element.duration)
+      ? Math.max(element.duration - 0.05, 0)
+      : playbackPosition.current;
+    const nextTime = Math.min(playbackPosition.current, latestValidTime);
+    if (Math.abs(element.currentTime - nextTime) > 0.35) element.currentTime = nextTime;
+  }, [playbackPosition]);
+
   const attemptPlayback = useCallback(() => {
     const element = videoRef.current;
     if (!element || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    restorePosition();
     element.muted = true;
     element.defaultMuted = true;
     element.playsInline = true;
     void element.play().catch(() => setIsPlaying(false));
-  }, []);
+  }, [restorePosition]);
 
   useEffect(() => {
     attemptPlayback();
-  }, [attemptPlayback]);
+    return () => {
+      const element = videoRef.current;
+      if (element) playbackPosition.current = element.currentTime;
+    };
+  }, [attemptPlayback, playbackPosition]);
 
   const handleToggle = () => {
     const element = videoRef.current;
@@ -121,10 +139,17 @@ function ProjectVideoFigure({
           preload="auto"
           disablePictureInPicture
           aria-label={caption}
+          onLoadedMetadata={restorePosition}
           onLoadedData={attemptPlayback}
           onCanPlay={attemptPlayback}
           onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
+          onPause={(event) => {
+            playbackPosition.current = event.currentTarget.currentTime;
+            setIsPlaying(false);
+          }}
+          onTimeUpdate={(event) => {
+            playbackPosition.current = event.currentTarget.currentTime;
+          }}
         />
         <button
           type="button"
@@ -174,14 +199,22 @@ export function Portfolio() {
   const [imagePlayback, setImagePlayback] = useState<Record<string, boolean>>({});
   const projectRefs = useRef<Record<number, HTMLElement | null>>({});
   const positionLockRef = useRef<{ projectId: number; top: number } | null>(null);
+  const pendingProjectFocusRef = useRef<number | null>(null);
+  const videoPlaybackPositions = useRef<Record<string, VideoPlaybackPosition>>({});
   const galleryTouchStartX = useRef<number | null>(null);
   const galleryHasSwiped = useRef(false);
   const galleryWheelDelta = useRef(0);
   const galleryWheelLocked = useRef(false);
   const galleryWheelIdle = useRef<number | null>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const galleryTouchStart = useRef<{ x: number; y: number } | null>(null);
+  const suppressGalleryCloseUntil = useRef(0);
   const carouselTouchStart = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const suppressCarouselImageOpen = useRef(false);
   const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [isCompactViewport, setIsCompactViewport] = useState(() =>
+    window.matchMedia('(max-width: 860px)').matches,
+  );
   const [carouselIndicators, setCarouselIndicators] = useState<
     Record<string, { progress: number; thumb: number; isScrollable: boolean }>
   >({});
@@ -241,6 +274,13 @@ export function Portfolio() {
       if (node) updateCarouselIndicator(carouselId, node);
     });
   }, [updateCarouselIndicator]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 860px)');
+    const updateViewport = () => setIsCompactViewport(mediaQuery.matches);
+    mediaQuery.addEventListener('change', updateViewport);
+    return () => mediaQuery.removeEventListener('change', updateViewport);
+  }, []);
 
   useEffect(() => {
     if (expandedProjectId === null) return;
@@ -384,6 +424,11 @@ export function Portfolio() {
     // gjorde ingenting.
     const panel = document.querySelector<HTMLElement>('.page-panel--portfolio');
     const previousOverflow = panel?.style.overflow ?? '';
+    const previousBodyOverflow = document.body.style.overflow;
+    const usesDocumentScroll = window.matchMedia('(max-width: 860px)').matches;
+    const preventBrowserNavigation = (event: TouchEvent) => {
+      if (event.touches.length === 1) event.preventDefault();
+    };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setGallery(null);
       if (event.key === 'ArrowLeft') {
@@ -396,10 +441,16 @@ export function Portfolio() {
       }
     };
 
+    const galleryNode = galleryRef.current;
+
     if (panel) panel.style.overflow = 'hidden';
+    if (usesDocumentScroll) document.body.style.overflow = 'hidden';
+    galleryNode?.addEventListener('touchmove', preventBrowserNavigation, { passive: false });
     window.addEventListener('keydown', onKeyDown);
     return () => {
       if (panel) panel.style.overflow = previousOverflow;
+      if (usesDocumentScroll) document.body.style.overflow = previousBodyOverflow;
+      galleryNode?.removeEventListener('touchmove', preventBrowserNavigation);
       if (galleryWheelIdle.current !== null) window.clearTimeout(galleryWheelIdle.current);
       galleryWheelIdle.current = null;
       galleryWheelLocked.current = false;
@@ -410,20 +461,44 @@ export function Portfolio() {
 
   useLayoutEffect(() => {
     const positionLock = positionLockRef.current;
-    if (!positionLock) return;
+    if (positionLock) {
+      const target = projectRefs.current[positionLock.projectId];
+      positionLockRef.current = null;
 
-    const target = projectRefs.current[positionLock.projectId];
-    positionLockRef.current = null;
-    if (!target) return;
+      if (target) {
+        const offset = target.getBoundingClientRect().top - positionLock.top;
+        if (Math.abs(offset) >= 1) {
+          const panel = document.querySelector<HTMLElement>('.page-panel--portfolio');
+          const root = document.documentElement;
+          const previousScrollBehavior = root.style.scrollBehavior;
+          root.style.scrollBehavior = 'auto';
+          if (window.matchMedia('(max-width: 860px)').matches) window.scrollBy(0, offset);
+          else panel?.scrollBy({ top: offset, behavior: 'auto' });
+          root.style.scrollBehavior = previousScrollBehavior;
+        }
+      }
+    }
 
-    const offset = target.getBoundingClientRect().top - positionLock.top;
-    if (Math.abs(offset) < 1) return;
+    const focusProjectId = pendingProjectFocusRef.current;
+    if (focusProjectId === null) return;
+    pendingProjectFocusRef.current = null;
 
-    const root = document.documentElement;
-    const previousScrollBehavior = root.style.scrollBehavior;
-    root.style.scrollBehavior = 'auto';
-    window.scrollBy(0, offset);
-    root.style.scrollBehavior = previousScrollBehavior;
+    const animationFrame = window.requestAnimationFrame(() => {
+      const project = projectRefs.current[focusProjectId];
+      if (!project) return;
+
+      const compactViewport = window.matchMedia('(max-width: 860px)').matches;
+      const media = compactViewport
+        ? project.querySelector<HTMLElement>('.project-thumb')
+        : project.querySelector<HTMLElement>('.project-video, .project-main-image') ??
+          project.querySelector<HTMLElement>('.project-thumb');
+      const behavior: ScrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth';
+      media?.scrollIntoView({ behavior, block: 'start' });
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
   }, [expandedProjectId]);
 
   const scrollProjectIntoView = (projectId: number, behavior: ScrollBehavior) => {
@@ -442,8 +517,8 @@ export function Portfolio() {
     }
 
     if (currentProjectId === null) {
+      pendingProjectFocusRef.current = projectId;
       setExpandedProjectId(projectId);
-      window.requestAnimationFrame(() => scrollProjectIntoView(projectId, scrollBehavior));
       return;
     }
 
@@ -455,8 +530,8 @@ export function Portfolio() {
       };
     }
 
+    pendingProjectFocusRef.current = projectId;
     setExpandedProjectId(projectId);
-    window.requestAnimationFrame(() => scrollProjectIntoView(projectId, scrollBehavior));
   };
 
   const showGalleryImage = (projectId: number, imageIndex: number) => {
@@ -472,14 +547,27 @@ export function Portfolio() {
   };
 
   const handleGalleryTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    galleryTouchStartX.current = event.touches[0]?.clientX ?? null;
+    const touch = event.touches[0];
+    galleryTouchStartX.current = touch?.clientX ?? null;
+    galleryTouchStart.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
     galleryHasSwiped.current = false;
+  };
+
+  const handleGalleryTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    const start = galleryTouchStart.current;
+    const touch = event.touches[0];
+    if (!start || !touch) return;
+
+    if (Math.hypot(touch.clientX - start.x, touch.clientY - start.y) > 8) {
+      suppressGalleryCloseUntil.current = performance.now() + 500;
+    }
   };
 
   const handleGalleryTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
     const startX = galleryTouchStartX.current;
     const endX = event.changedTouches[0]?.clientX;
     galleryTouchStartX.current = null;
+    galleryTouchStart.current = null;
 
     if (startX === null || endX === undefined) return;
 
@@ -487,6 +575,7 @@ export function Portfolio() {
     if (Math.abs(delta) < 42) return;
 
     galleryHasSwiped.current = true;
+    suppressGalleryCloseUntil.current = performance.now() + 500;
     moveGallery(delta < 0 ? 1 : -1);
   };
 
@@ -541,6 +630,15 @@ export function Portfolio() {
           const secondaryCarouselId = `project-${project.id}-secondary`;
           const secondaryImageStartIndex = project.video ? 0 : 1;
           const imageRowStartIndex = secondaryImageStartIndex + secondaryImages.length;
+          let videoPlaybackPosition: VideoPlaybackPosition | undefined;
+
+          if (project.video) {
+            videoPlaybackPosition = videoPlaybackPositions.current[project.video.src];
+            if (!videoPlaybackPosition) {
+              videoPlaybackPosition = { current: 0 };
+              videoPlaybackPositions.current[project.video.src] = videoPlaybackPosition;
+            }
+          }
 
           return (
             <article
@@ -568,6 +666,7 @@ export function Portfolio() {
                     <ViewportVideoPreview
                       src={project.video.src}
                       poster={project.video.poster}
+                      playbackPosition={videoPlaybackPosition}
                     />
                   </span>
                 ) : primaryImage ? (
@@ -589,16 +688,17 @@ export function Portfolio() {
 
               {isOpen && (
                 <div className="project-detail" id={`project-${project.id}-detail`}>
-                  {project.video && (
+                  {project.video && !isCompactViewport && (
                     <ProjectVideoFigure
                       video={project.video}
                       language={language}
                       playLabel={copy.playVideo}
                       pauseLabel={copy.pauseVideo}
+                      playbackPosition={videoPlaybackPosition!}
                     />
                   )}
 
-                  {primaryImage && !project.video && (
+                  {primaryImage && !project.video && !isCompactViewport && (
                     <figure className={`project-main-image${primaryImage.fit === 'dark-contain' ? ' is-dark-contained' : ''}`}>
                       <div className="project-image-media">
                         <button
@@ -697,7 +797,7 @@ export function Portfolio() {
                                   data-umami-event-project={project.title.en}
                                   onClick={() => openCarouselImage(project.id, secondaryImageStartIndex + imageIndex)}
                                 >
-                                  <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="eager" />
+                                  <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="lazy" />
                                 </button>
                                 {renderImagePlayback(image)}
                                 <button
@@ -724,7 +824,7 @@ export function Portfolio() {
                   )}
 
                   {project.imageRows?.map((row, rowIndex) => {
-                    const rowIsCarousel = row.images.length >= 3;
+                    const rowIsCarousel = row.carousel ?? row.images.length >= 3;
                     const rowCarouselId = `project-${project.id}-row-${rowIndex}`;
 
                     return (
@@ -799,7 +899,7 @@ export function Portfolio() {
                                         openCarouselImage(project.id, imageRowStartIndex + previousRowImageCount + imageIndex)
                                       }
                                     >
-                                      <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="eager" />
+                                      <img src={imageSource(image)} alt={getAlt(project, language, caption)} loading="lazy" />
                                     </button>
                                     {renderImagePlayback(image)}
                                     <button
@@ -841,11 +941,13 @@ export function Portfolio() {
         // Inne i den ble inset:0 lik canvasets bredde - 200 % av viewporten.
         createPortal(
         <div
+          ref={galleryRef}
           className="project-gallery"
           role="dialog"
           aria-modal="true"
           aria-label={galleryProject.title[language]}
           onTouchStart={handleGalleryTouchStart}
+          onTouchMove={handleGalleryTouchMove}
           onTouchEnd={handleGalleryTouchEnd}
           onWheel={handleGalleryWheel}
         >
@@ -857,7 +959,7 @@ export function Portfolio() {
             className="project-gallery-image"
             aria-label={copy.closeGallery}
             onClick={() => {
-              if (galleryHasSwiped.current) {
+              if (galleryHasSwiped.current || performance.now() < suppressGalleryCloseUntil.current) {
                 galleryHasSwiped.current = false;
                 return;
               }

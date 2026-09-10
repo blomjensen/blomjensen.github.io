@@ -9,6 +9,99 @@ import { Portfolio } from './components/Portfolio';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
 const sections = ['home', 'portfolio', 'studies', 'about', 'contact'];
+const mobileLayoutQuery = '(max-width: 860px)';
+
+function usesDocumentScroll() {
+  return window.matchMedia(mobileLayoutQuery).matches;
+}
+
+function useScrollStopClickGuard(panelRef: React.RefObject<HTMLElement>, isActive: boolean) {
+  const gestureRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    panelScrollTop: number;
+    windowScrollY: number;
+    suppress: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (!panel || !isActive) return;
+
+    let lastScrollAt = -Infinity;
+    let suppressClickUntil = 0;
+
+    const markScroll = () => {
+      lastScrollAt = performance.now();
+      if (gestureRef.current) gestureRef.current.suppress = true;
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch') return;
+
+      gestureRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        panelScrollTop: panel.scrollTop,
+        windowScrollY: window.scrollY,
+        suppress: performance.now() - lastScrollAt < 220,
+      };
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      const gesture = gestureRef.current;
+      if (!gesture || gesture.pointerId !== event.pointerId) return;
+
+      if (Math.hypot(event.clientX - gesture.startX, event.clientY - gesture.startY) > 8) {
+        gesture.suppress = true;
+      }
+    };
+
+    const finishPointer = (event: PointerEvent) => {
+      const gesture = gestureRef.current;
+      if (!gesture || gesture.pointerId !== event.pointerId) return;
+
+      const shouldSuppress =
+        gesture.suppress ||
+        Math.abs(panel.scrollTop - gesture.panelScrollTop) > 2 ||
+        Math.abs(window.scrollY - gesture.windowScrollY) > 2;
+      suppressClickUntil = shouldSuppress ? performance.now() + 500 : 0;
+      gestureRef.current = null;
+    };
+
+    const cancelPointer = () => {
+      gestureRef.current = null;
+      suppressClickUntil = performance.now() + 500;
+    };
+
+    const suppressScrollStopClick = (event: MouseEvent) => {
+      if (performance.now() >= suppressClickUntil) return;
+      suppressClickUntil = 0;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    };
+
+    panel.addEventListener('scroll', markScroll, { passive: true });
+    window.addEventListener('scroll', markScroll, { passive: true });
+    panel.addEventListener('pointerdown', onPointerDown, { passive: true });
+    panel.addEventListener('pointermove', onPointerMove, { passive: true });
+    panel.addEventListener('pointerup', finishPointer, { passive: true });
+    panel.addEventListener('pointercancel', cancelPointer, { passive: true });
+    panel.addEventListener('click', suppressScrollStopClick, true);
+
+    return () => {
+      panel.removeEventListener('scroll', markScroll);
+      window.removeEventListener('scroll', markScroll);
+      panel.removeEventListener('pointerdown', onPointerDown);
+      panel.removeEventListener('pointermove', onPointerMove);
+      panel.removeEventListener('pointerup', finishPointer);
+      panel.removeEventListener('pointercancel', cancelPointer);
+      panel.removeEventListener('click', suppressScrollStopClick, true);
+    };
+  }, [isActive, panelRef]);
+}
 
 function CursorTrail({ count = 6 }: { count?: number }) {
   const trailRef = useRef<HTMLDivElement>(null);
@@ -83,6 +176,8 @@ function AppContent() {
   const portfolioPanelRef = useRef<HTMLElement>(null);
   const portfolioInertProps = activePage !== 'portfolio' ? ({ inert: '' } as const) : {};
 
+  useScrollStopClickGuard(portfolioPanelRef, activePage === 'portfolio');
+
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
     portfolioPanelRef.current?.querySelector<HTMLElement>(`#${sectionId}`)?.scrollIntoView({ behavior: 'smooth' });
@@ -97,9 +192,11 @@ function AppContent() {
     window.setTimeout(() => {
       if (page === 'portfolio') {
         if (sectionId) scrollToSection(sectionId);
+        else if (usesDocumentScroll()) window.scrollTo({ top: 0, behavior: 'smooth' });
         else portfolioPanelRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        document.querySelector<HTMLElement>('.page-panel--lab')?.scrollTo({ top: 0, behavior: 'smooth' });
+        if (usesDocumentScroll()) window.scrollTo({ top: 0, behavior: 'smooth' });
+        else document.querySelector<HTMLElement>('.page-panel--lab')?.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }, 60);
   };
@@ -125,14 +222,14 @@ function AppContent() {
     const handleScroll = () => {
       const panel = portfolioPanelRef.current;
       if (!panel) return;
-      const scrollPosition = panel.scrollTop + panel.clientHeight * 0.32;
+      const activationLine = (usesDocumentScroll() ? window.innerHeight : panel.clientHeight) * 0.32;
 
       for (const sectionId of sections) {
         const element = panel.querySelector<HTMLElement>(`#${sectionId}`);
         if (!element) continue;
 
-        const { offsetTop, offsetHeight } = element;
-        if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+        const bounds = element.getBoundingClientRect();
+        if (bounds.top <= activationLine && bounds.bottom > activationLine) {
           setActiveSection(sectionId);
           break;
         }
@@ -142,9 +239,13 @@ function AppContent() {
     const panel = portfolioPanelRef.current;
     if (!panel) return;
     panel.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
-    return () => panel.removeEventListener('scroll', handleScroll);
+    return () => {
+      panel.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   useEffect(() => {

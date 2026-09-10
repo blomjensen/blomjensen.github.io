@@ -19,6 +19,7 @@ export type ProjectImageRow = {
   naturalAspect?: boolean;
   matchHorizontalHeight?: boolean;
   uniformAspect?: 'portrait';
+  carousel?: boolean;
   images: ProjectImage[];
 };
 
@@ -497,6 +498,7 @@ export const projects: Project[] = [
           en: 'Grav – site and terrain',
           no: 'Grav – sted og terreng',
         },
+        carousel: true,
         images: [
           {
             src: '/projects/rost/18-grav-study.webp',

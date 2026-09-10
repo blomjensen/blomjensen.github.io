@@ -1,11 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 
+export type VideoPlaybackPosition = {
+  current: number;
+};
+
 type ViewportVideoPreviewProps = {
   src: string;
   poster?: string;
+  playbackPosition?: VideoPlaybackPosition;
 };
 
-export function ViewportVideoPreview({ src, poster }: ViewportVideoPreviewProps) {
+function restorePlaybackPosition(video: HTMLVideoElement, playbackPosition?: VideoPlaybackPosition) {
+  if (!playbackPosition || !Number.isFinite(playbackPosition.current) || playbackPosition.current <= 0) return;
+
+  const latestValidTime = Number.isFinite(video.duration) ? Math.max(video.duration - 0.05, 0) : playbackPosition.current;
+  const nextTime = Math.min(playbackPosition.current, latestValidTime);
+  if (Math.abs(video.currentTime - nextTime) > 0.35) video.currentTime = nextTime;
+}
+
+export function ViewportVideoPreview({ src, poster, playbackPosition }: ViewportVideoPreviewProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasLoadedRef = useRef(false);
   const [shouldLoad, setShouldLoad] = useState(false);
@@ -30,6 +43,7 @@ export function ViewportVideoPreview({ src, poster }: ViewportVideoPreviewProps)
             hasLoadedRef.current = true;
             setShouldLoad(true);
           } else {
+            restorePlaybackPosition(video, playbackPosition);
             void video.play().catch(() => undefined);
           }
           return;
@@ -42,7 +56,7 @@ export function ViewportVideoPreview({ src, poster }: ViewportVideoPreviewProps)
 
     observer.observe(video);
     return () => observer.disconnect();
-  }, []);
+  }, [playbackPosition]);
 
   return (
     <video
@@ -55,6 +69,13 @@ export function ViewportVideoPreview({ src, poster }: ViewportVideoPreviewProps)
       playsInline
       preload={shouldLoad ? 'metadata' : 'none'}
       aria-hidden="true"
+      onLoadedMetadata={(event) => restorePlaybackPosition(event.currentTarget, playbackPosition)}
+      onTimeUpdate={(event) => {
+        if (playbackPosition) playbackPosition.current = event.currentTarget.currentTime;
+      }}
+      onPause={(event) => {
+        if (playbackPosition) playbackPosition.current = event.currentTarget.currentTime;
+      }}
     />
   );
 }

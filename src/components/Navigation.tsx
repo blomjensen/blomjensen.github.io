@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Menu as MenuIcon, Moon, Sun, X } from 'lucide-react';
+import { Languages, Menu as MenuIcon, Moon, Sun, X } from 'lucide-react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -27,6 +27,7 @@ export function Navigation({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOverLightSection, setIsOverLightSection] = useState(false);
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const [displayedPage, setDisplayedPage] = useState(page);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const pageTransitionTimerRef = useRef<number | null>(null);
   const labels = content[language].nav;
@@ -46,16 +47,29 @@ export function Navigation({
     if (!panel) return;
 
     const updateScrolled = () => {
-      setIsScrolled(panel.scrollTop > 24);
+      const documentScroll = window.matchMedia('(max-width: 860px)').matches;
+      const scrollTop = documentScroll ? window.scrollY : panel.scrollTop;
+      setIsScrolled(scrollTop > 24);
 
       const labWork = panel.querySelector<HTMLElement>('.lab-work');
       setIsOverLightSection(
-        page === 'lab' && theme === 'light' && Boolean(labWork && panel.scrollTop + 24 >= labWork.offsetTop),
+        page === 'lab' &&
+          theme === 'light' &&
+          Boolean(
+            labWork &&
+              (documentScroll
+                ? labWork.getBoundingClientRect().top <= 24
+                : panel.scrollTop + 24 >= labWork.offsetTop),
+          ),
       );
     };
     panel.addEventListener('scroll', updateScrolled, { passive: true });
+    window.addEventListener('scroll', updateScrolled, { passive: true });
     updateScrolled();
-    return () => panel.removeEventListener('scroll', updateScrolled);
+    return () => {
+      panel.removeEventListener('scroll', updateScrolled);
+      window.removeEventListener('scroll', updateScrolled);
+    };
   }, [page, theme]);
 
   useEffect(() => {
@@ -77,21 +91,27 @@ export function Navigation({
     }
   }, []);
 
-  const beginPageTransition = () => {
+  const beginPageTransition = (nextPage: SitePage) => {
     if (pageTransitionTimerRef.current !== null) {
       window.clearTimeout(pageTransitionTimerRef.current);
     }
     setIsPageTransitioning(true);
     pageTransitionTimerRef.current = window.setTimeout(() => {
+      setDisplayedPage(nextPage);
       setIsPageTransitioning(false);
       pageTransitionTimerRef.current = null;
     }, 820);
   };
 
+  useEffect(() => {
+    if (page === displayedPage) return;
+    beginPageTransition(page);
+  }, [displayedPage, page]);
+
   const activate = (item: (typeof items)[number]) => {
     setIsMenuOpen(false);
     if (item.page !== page) {
-      beginPageTransition();
+      beginPageTransition(item.page);
       onPageChange?.(item.page, item.section);
       return;
     }
@@ -102,7 +122,7 @@ export function Navigation({
     setIsMenuOpen(false);
     if (page === 'portfolio') onNavigate('home');
     else {
-      beginPageTransition();
+      beginPageTransition('portfolio');
       onPageChange?.('portfolio', 'home');
     }
   };
@@ -119,8 +139,9 @@ export function Navigation({
 
   const switchPrimaryPage = () => {
     setIsMenuOpen(false);
-    beginPageTransition();
-    if (page === 'lab') onPageChange?.('portfolio', 'home');
+    const nextPage = page === 'lab' ? 'portfolio' : 'lab';
+    beginPageTransition(nextPage);
+    if (nextPage === 'portfolio') onPageChange?.('portfolio', 'home');
     else onPageChange?.('lab');
   };
 
@@ -128,7 +149,7 @@ export function Navigation({
     page === 'lab' ? item.id === 'lab' : item.section === activeSection;
 
   return (
-    <header className={`editorial-nav${page === 'lab' ? ' is-lab-page' : ''}${isScrolled ? ' is-scrolled' : ''}${isOverLightSection ? ' is-on-light-surface' : ''}${isPageTransitioning ? ' is-page-transitioning' : ''}`}>
+    <header className={`editorial-nav${displayedPage === 'lab' ? ' is-lab-page' : ''}${isScrolled ? ' is-scrolled' : ''}${isOverLightSection ? ' is-on-light-surface' : ''}${isPageTransitioning ? ' is-page-transitioning' : ''}`}>
       <button type="button" className="nav-mark" onClick={goHome} aria-label={labels.home}>
         {labels.home}
       </button>
@@ -137,7 +158,7 @@ export function Navigation({
         {items.map((item) => (
           <button
             type="button"
-            className={`nav-link${(page === 'lab' ? item.id !== 'lab' : item.id === 'lab') ? ' is-elevated' : ''}`}
+            className={`nav-link${(displayedPage === 'lab' ? item.id !== 'lab' : item.id === 'lab') ? ' is-elevated' : ''}`}
             key={item.id}
             onClick={() => activate(item)}
             aria-current={isCurrent(item) ? 'true' : undefined}
@@ -160,8 +181,29 @@ export function Navigation({
       </nav>
 
       <button type="button" className="nav-page-switch" onClick={switchPrimaryPage}>
-        {page === 'lab' ? labels.portfolio : labels.lab}
+        {displayedPage === 'lab' ? labels.portfolio : labels.lab}
       </button>
+
+      <div className="nav-mobile-controls" aria-label={language === 'en' ? 'Display settings' : 'Visningsvalg'}>
+        <button
+          type="button"
+          className="nav-mobile-icon"
+          onClick={toggleLanguageAndClose}
+          aria-label={language === 'en' ? 'Bytt til norsk' : 'Switch to English'}
+          title={language === 'en' ? 'Norsk' : 'English'}
+        >
+          <Languages size={18} strokeWidth={1.8} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="nav-mobile-icon"
+          onClick={toggleThemeAndClose}
+          aria-label={theme === 'light' ? labels.darkMode : labels.lightMode}
+          title={theme === 'light' ? labels.darkMode : labels.lightMode}
+        >
+          {theme === 'light' ? <Moon size={17} strokeWidth={1.8} aria-hidden="true" /> : <Sun size={18} strokeWidth={1.8} aria-hidden="true" />}
+        </button>
+      </div>
 
       <button
         ref={menuButtonRef}
@@ -183,16 +225,11 @@ export function Navigation({
 
       {isMenuOpen && (
         <nav id="mobile-navigation" className="mobile-menu" aria-label={labels.mobileNav}>
-          <button type="button" onClick={goHome} aria-current={page === 'portfolio' && activeSection === 'home' ? 'true' : undefined}>
-            {labels.home}
-          </button>
-          {items.map((item) => (
+          {items.filter((item) => item.id !== displayedPage).map((item) => (
             <button type="button" key={item.id} onClick={() => activate(item)} aria-current={isCurrent(item) ? 'true' : undefined}>
               {item.label}
             </button>
           ))}
-          <button type="button" onClick={toggleLanguageAndClose}>{language === 'en' ? 'Norsk' : 'English'}</button>
-          <button type="button" onClick={toggleThemeAndClose}>{theme === 'light' ? labels.darkMode : labels.lightMode}</button>
         </nav>
       )}
     </header>
