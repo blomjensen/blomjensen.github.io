@@ -81,6 +81,7 @@ function AppContent() {
   );
   const { language } = useLanguage();
   const portfolioPanelRef = useRef<HTMLElement>(null);
+  const portfolioInertProps = activePage !== 'portfolio' ? ({ inert: '' } as const) : {};
 
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -110,6 +111,15 @@ function AppContent() {
   useEffect(() => {
     window.localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    document.title =
+      activePage === 'lab'
+        ? 'Lab — Bjørn Blom-Jensen'
+        : language === 'en'
+          ? 'Bjørn Blom-Jensen | Landscape Architect in Oslo'
+          : 'Bjørn Blom-Jensen | Landskapsarkitekt i Oslo';
+  }, [activePage, language]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -176,7 +186,12 @@ function AppContent() {
         onThemeToggle={toggleTheme}
       />
       <div className="site-canvas">
-        <section ref={portfolioPanelRef} className="page-panel page-panel--portfolio">
+        <section
+          ref={portfolioPanelRef}
+          className="page-panel page-panel--portfolio"
+          aria-hidden={activePage !== 'portfolio'}
+          {...portfolioInertProps}
+        >
           <CursorTrail />
           <main>
             <Hero onExploreClick={() => scrollToSection('portfolio')} />
@@ -191,7 +206,7 @@ function AppContent() {
             <span>{new Date().getFullYear()}</span>
           </footer>
         </section>
-        <LabView onPageChange={changePage} />
+        <LabView onPageChange={changePage} isActive={activePage === 'lab'} />
       </div>
     </div>
   );

@@ -1,20 +1,30 @@
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 
-type LabViewProps = { onPageChange: (page: 'portfolio', sectionId?: string) => void };
+type LabViewProps = {
+  onPageChange: (page: 'portfolio', sectionId?: string) => void;
+  isActive: boolean;
+};
 
-export function LabView({ onPageChange }: LabViewProps) {
+export function LabView({ onPageChange, isActive }: LabViewProps) {
   const { language } = useLanguage();
   const copy = content[language].lab;
   const homeLabel = content[language].nav.portfolio;
+  const inertProps = !isActive ? ({ inert: '' } as const) : {};
 
   return (
-    <section className="page-panel page-panel--lab lab-page">
+    <section
+      className="page-panel page-panel--lab lab-page"
+      aria-hidden={!isActive}
+      {...inertProps}
+    >
       <section className="lab-hero" aria-labelledby="lab-heading">
         <img
           className="lab-hero-image"
           src="/projects/impermanence-maintenance/00-point-cloud-aho.webp"
           alt={copy.heroAlt}
+          loading="lazy"
+          decoding="async"
         />
         <div className="lab-hero-shade" aria-hidden="true" />
         <div className="lab-hero-copy">

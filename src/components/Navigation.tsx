@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Menu as MenuIcon, Moon, Sun, X } from 'lucide-react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -26,6 +26,9 @@ export function Navigation({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOverLightSection, setIsOverLightSection] = useState(false);
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const pageTransitionTimerRef = useRef<number | null>(null);
   const labels = content[language].nav;
 
   const items = [
@@ -55,9 +58,40 @@ export function Navigation({
     return () => panel.removeEventListener('scroll', updateScrolled);
   }, [page, theme]);
 
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setIsMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [isMenuOpen]);
+
+  useEffect(() => () => {
+    if (pageTransitionTimerRef.current !== null) {
+      window.clearTimeout(pageTransitionTimerRef.current);
+    }
+  }, []);
+
+  const beginPageTransition = () => {
+    if (pageTransitionTimerRef.current !== null) {
+      window.clearTimeout(pageTransitionTimerRef.current);
+    }
+    setIsPageTransitioning(true);
+    pageTransitionTimerRef.current = window.setTimeout(() => {
+      setIsPageTransitioning(false);
+      pageTransitionTimerRef.current = null;
+    }, 820);
+  };
+
   const activate = (item: (typeof items)[number]) => {
     setIsMenuOpen(false);
     if (item.page !== page) {
+      beginPageTransition();
       onPageChange?.(item.page, item.section);
       return;
     }
@@ -67,14 +101,34 @@ export function Navigation({
   const goHome = () => {
     setIsMenuOpen(false);
     if (page === 'portfolio') onNavigate('home');
-    else onPageChange?.('portfolio', 'home');
+    else {
+      beginPageTransition();
+      onPageChange?.('portfolio', 'home');
+    }
+  };
+
+  const toggleLanguageAndClose = () => {
+    toggleLanguage();
+    setIsMenuOpen(false);
+  };
+
+  const toggleThemeAndClose = () => {
+    onThemeToggle();
+    setIsMenuOpen(false);
+  };
+
+  const switchPrimaryPage = () => {
+    setIsMenuOpen(false);
+    beginPageTransition();
+    if (page === 'lab') onPageChange?.('portfolio', 'home');
+    else onPageChange?.('lab');
   };
 
   const isCurrent = (item: (typeof items)[number]) =>
     page === 'lab' ? item.id === 'lab' : item.section === activeSection;
 
   return (
-    <header className={`editorial-nav${page === 'lab' ? ' is-lab-page' : ''}${isScrolled ? ' is-scrolled' : ''}${isOverLightSection ? ' is-on-light-surface' : ''}`}>
+    <header className={`editorial-nav${page === 'lab' ? ' is-lab-page' : ''}${isScrolled ? ' is-scrolled' : ''}${isOverLightSection ? ' is-on-light-surface' : ''}${isPageTransitioning ? ' is-page-transitioning' : ''}`}>
       <button type="button" className="nav-mark" onClick={goHome} aria-label={labels.home}>
         {labels.home}
       </button>
@@ -91,13 +145,13 @@ export function Navigation({
             {item.label}
           </button>
         ))}
-        <button type="button" className="nav-link nav-language" onClick={toggleLanguage}>
+        <button type="button" className="nav-link nav-language" onClick={toggleLanguageAndClose}>
           {language === 'en' ? 'NO' : 'EN'}
         </button>
         <button
           type="button"
           className="nav-link nav-theme"
-          onClick={onThemeToggle}
+          onClick={toggleThemeAndClose}
           aria-label={theme === 'light' ? labels.darkMode : labels.lightMode}
           title={theme === 'light' ? labels.darkMode : labels.lightMode}
         >
@@ -105,14 +159,21 @@ export function Navigation({
         </button>
       </nav>
 
+      <button type="button" className="nav-page-switch" onClick={switchPrimaryPage}>
+        {page === 'lab' ? labels.portfolio : labels.lab}
+      </button>
+
       <button
+        ref={menuButtonRef}
         type="button"
         className="nav-menu-button"
         aria-expanded={isMenuOpen}
         aria-controls="mobile-navigation"
         onClick={() => setIsMenuOpen((open) => !open)}
       >
-        <span className="sr-only">{labels.menu}</span>
+        <span className="sr-only">
+          {isMenuOpen ? (language === 'en' ? 'Close menu' : 'Lukk meny') : labels.menu}
+        </span>
         {isMenuOpen ? (
           <X size={18} strokeWidth={1.8} aria-hidden="true" />
         ) : (
@@ -130,8 +191,8 @@ export function Navigation({
               {item.label}
             </button>
           ))}
-          <button type="button" onClick={toggleLanguage}>{language === 'en' ? 'Norsk' : 'English'}</button>
-          <button type="button" onClick={onThemeToggle}>{theme === 'light' ? labels.darkMode : labels.lightMode}</button>
+          <button type="button" onClick={toggleLanguageAndClose}>{language === 'en' ? 'Norsk' : 'English'}</button>
+          <button type="button" onClick={toggleThemeAndClose}>{theme === 'light' ? labels.darkMode : labels.lightMode}</button>
         </nav>
       )}
     </header>

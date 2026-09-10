@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, Minus, Pause, Play, Plus } from 'lucide-reac
 import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
+import { ViewportVideoPreview } from './ViewportVideoPreview';
 
 const posterSrc = '/projects/transitions-portugal/poster.jpg';
 
@@ -312,15 +313,9 @@ export function Photography() {
           >
             <span className="study-number">01</span>
             <span className="study-thumb">
-              <video
+              <ViewportVideoPreview
                 src="/projects/transitions-portugal/transitions-2fps.mp4"
                 poster={posterSrc}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                aria-hidden="true"
               />
             </span>
             <span className="study-summary-copy">

@@ -1,6 +1,8 @@
 import { ChevronLeft, ChevronRight, Maximize2, Minus, Pause, Play, Plus, X } from 'lucide-react';
 import {
   type WheelEvent as ReactWheelEvent,
+  lazy,
+  Suspense,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -11,8 +13,12 @@ import { createPortal } from 'react-dom';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 import { projects, type Project, type ProjectImage, type ProjectVideo } from '../data/projects';
-import { ProjectModelViewer } from './ProjectModelViewer';
+import { ViewportVideoPreview } from './ViewportVideoPreview';
 import './ProjectVideo.css';
+
+const ProjectModelViewer = lazy(() =>
+  import('./ProjectModelViewer').then((module) => ({ default: module.ProjectModelViewer })),
+);
 
 const labels = {
   en: {
@@ -30,6 +36,7 @@ const labels = {
     nextImages: 'Show next images',
     supporting: 'Supporting material',
     interactiveModel: 'Interactive model',
+    loadingModel: 'Loading interactive model…',
     playVideo: 'Play video',
     pauseVideo: 'Pause video',
     playImages: 'Play image sequence',
@@ -50,6 +57,7 @@ const labels = {
     nextImages: 'Vis neste bilder',
     supporting: 'Støttemateriale',
     interactiveModel: 'Interaktiv modell',
+    loadingModel: 'Laster interaktiv modell…',
     playVideo: 'Spill av video',
     pauseVideo: 'Pause video',
     playImages: 'Spill av bildesekvens',
@@ -557,15 +565,9 @@ export function Portfolio() {
 
                 {project.video ? (
                   <span className="project-thumb project-thumb-video">
-                    <video
+                    <ViewportVideoPreview
                       src={project.video.src}
                       poster={project.video.poster}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="metadata"
-                      aria-hidden="true"
                     />
                   </span>
                 ) : primaryImage ? (
@@ -639,10 +641,12 @@ export function Portfolio() {
                   {project.modelViewers?.map((modelViewer) => (
                     <figure className="project-model-viewer" key={modelViewer.modelSrc}>
                       <div className="project-model-viewer-frame">
-                        <ProjectModelViewer
-                          src={modelViewer.modelSrc}
-                          title={modelViewer.title[language]}
-                        />
+                        <Suspense fallback={<div className="project-model-loading" role="status">{copy.loadingModel}</div>}>
+                          <ProjectModelViewer
+                            src={modelViewer.modelSrc}
+                            title={modelViewer.title[language]}
+                          />
+                        </Suspense>
                       </div>
                       <figcaption>
                         <span className="detail-label">{copy.interactiveModel}</span>
