@@ -191,15 +191,24 @@ export function ProjectModelViewer({ src, title }: { src: string; title: string 
   }, [src, title]);
 
   return (
-    <div ref={containerRef} className="project-model-canvas" role="img" aria-label={title}>
-      <div className="project-sun-controls" aria-label="Solbane">
-        <label>
-          Dato
-          <input ref={dateInputRef} type="date" defaultValue={SUN_DATE} />
+    <div className="project-model-viewer-shell">
+      <div ref={containerRef} className="project-model-canvas" role="img" aria-label={title} />
+      <div className="project-sun-controls" aria-label="Solbane / Sun path">
+        <label className="project-sun-date">
+          <span className="sr-only">Dato</span>
+          <input ref={dateInputRef} type="date" defaultValue={SUN_DATE} aria-label="Dato / Date" />
         </label>
         <label className="project-sun-time">
-          <span>Klokkeslett</span>
-          <input ref={timeInputRef} type="range" min="0" max="23.75" step="0.25" defaultValue="12" />
+          <span className="sr-only">Klokkeslett</span>
+          <input
+            ref={timeInputRef}
+            type="range"
+            min="0"
+            max="23.75"
+            step="0.25"
+            defaultValue="12"
+            aria-label="Klokkeslett / Time"
+          />
           <output ref={timeOutputRef}>12:00</output>
         </label>
       </div>

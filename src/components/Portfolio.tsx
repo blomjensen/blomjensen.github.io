@@ -189,6 +189,46 @@ function getProjectImages(project: Project) {
   ];
 }
 
+function getCarouselSnapPoints(carousel: HTMLDivElement) {
+  const maximum = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
+  const carouselLeft = carousel.getBoundingClientRect().left;
+
+  return Array.from(
+    new Set(
+      Array.from(carousel.children)
+        .filter(
+          (element): element is HTMLElement =>
+            element instanceof HTMLElement && element.tagName === 'FIGURE',
+        )
+        .map((figure) =>
+          Math.round(
+            Math.min(
+              Math.max(
+                figure.getBoundingClientRect().left - carouselLeft + carousel.scrollLeft,
+                0,
+              ),
+              maximum,
+            ),
+          ),
+        ),
+    ),
+  ).sort((left, right) => left - right);
+}
+
+function getClosestSnapIndex(snapPoints: number[], scrollLeft: number) {
+  let closestIndex = 0;
+  let closestDistance = Number.POSITIVE_INFINITY;
+
+  snapPoints.forEach((point, index) => {
+    const distance = Math.abs(point - scrollLeft);
+    if (distance >= closestDistance) return;
+    closestDistance = distance;
+    closestIndex = index;
+  });
+
+  return closestIndex;
+}
+
 export function Portfolio() {
   const { language } = useLanguage();
   const c = content[language];
@@ -209,7 +249,12 @@ export function Portfolio() {
   const galleryRef = useRef<HTMLDivElement>(null);
   const galleryTouchStart = useRef<{ x: number; y: number } | null>(null);
   const suppressGalleryCloseUntil = useRef(0);
-  const carouselTouchStart = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+  const carouselTouchStart = useRef<{
+    x: number;
+    y: number;
+    moved: boolean;
+    snapIndex: number;
+  } | null>(null);
   const suppressCarouselImageOpen = useRef(false);
   const carouselRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [isCompactViewport, setIsCompactViewport] = useState(() =>
@@ -308,16 +353,7 @@ export function Portfolio() {
     if (!carousel) return;
 
     const maximum = Math.max(carousel.scrollWidth - carousel.clientWidth, 0);
-    const carouselLeft = carousel.getBoundingClientRect().left;
-    const snapPoints = Array.from(
-      new Set(
-        Array.from(carousel.children)
-          .filter((element): element is HTMLElement => element instanceof HTMLElement && element.tagName === 'FIGURE')
-          .map((figure) =>
-            Math.round(Math.min(Math.max(figure.getBoundingClientRect().left - carouselLeft + carousel.scrollLeft, 0), maximum))
-          )
-      )
-    ).sort((left, right) => left - right);
+    const snapPoints = getCarouselSnapPoints(carousel);
     const current = carousel.scrollLeft;
     const target =
       direction === 1
@@ -342,7 +378,14 @@ export function Portfolio() {
     const touch = event.touches[0];
     if (!touch) return;
 
-    carouselTouchStart.current = { x: touch.clientX, y: touch.clientY, moved: false };
+    const carousel = event.currentTarget;
+    const snapPoints = getCarouselSnapPoints(carousel);
+    carouselTouchStart.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      moved: false,
+      snapIndex: getClosestSnapIndex(snapPoints, carousel.scrollLeft),
+    };
     suppressCarouselImageOpen.current = false;
   };
 
@@ -368,7 +411,39 @@ export function Portfolio() {
     if (pullingPastStart || pullingPastEnd) event.preventDefault();
   };
 
-  const handleCarouselTouchEnd = () => {
+  const handleCarouselTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const start = carouselTouchStart.current;
+    const touch = event.changedTouches[0];
+
+    if (start && touch) {
+      const horizontalDistance = touch.clientX - start.x;
+      const verticalDistance = touch.clientY - start.y;
+      const isHorizontalSwipe =
+        Math.abs(horizontalDistance) >= 42 &&
+        Math.abs(horizontalDistance) > Math.abs(verticalDistance);
+
+      if (isHorizontalSwipe) {
+        const carousel = event.currentTarget;
+        const snapPoints = getCarouselSnapPoints(carousel);
+        const direction = horizontalDistance < 0 ? 1 : -1;
+        const targetIndex = Math.min(
+          Math.max(start.snapIndex + direction, 0),
+          Math.max(snapPoints.length - 1, 0),
+        );
+        const behavior: ScrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth';
+        carousel.scrollTo({ left: snapPoints[targetIndex] ?? 0, behavior });
+      }
+    }
+
+    carouselTouchStart.current = null;
+    window.setTimeout(() => {
+      suppressCarouselImageOpen.current = false;
+    }, 0);
+  };
+
+  const handleCarouselTouchCancel = () => {
     carouselTouchStart.current = null;
     window.setTimeout(() => {
       suppressCarouselImageOpen.current = false;
@@ -770,7 +845,7 @@ export function Portfolio() {
                         onTouchStart={handleCarouselTouchStart}
                         onTouchMove={handleCarouselTouchMove}
                         onTouchEnd={handleCarouselTouchEnd}
-                        onTouchCancel={handleCarouselTouchEnd}
+                        onTouchCancel={handleCarouselTouchCancel}
                       >
                         {secondaryImages.map((image, imageIndex) => {
                           const caption = image.caption?.[language];
@@ -867,7 +942,7 @@ export function Portfolio() {
                             onTouchStart={handleCarouselTouchStart}
                             onTouchMove={handleCarouselTouchMove}
                             onTouchEnd={handleCarouselTouchEnd}
-                            onTouchCancel={handleCarouselTouchEnd}
+                            onTouchCancel={handleCarouselTouchCancel}
                           >
                             {row.images.map((image, imageIndex) => {
                               const caption = image.caption?.[language];

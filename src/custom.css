@@ -1488,23 +1488,30 @@ dd {
 
 .project-model-viewer-frame {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border-radius: 2px;
+  overflow: visible;
   background: transparent;
+}
+
+.project-model-viewer-shell {
+  display: grid;
+  width: 100%;
 }
 
 .project-model-canvas {
   position: relative;
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 2px;
 }
 
 .project-model-loading {
   display: grid;
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
   place-items: center;
   background: var(--soft);
   color: var(--muted);
@@ -1512,48 +1519,62 @@ dd {
 }
 
 .project-sun-controls {
-  position: absolute;
-  z-index: 2;
-  top: 0.75rem;
-  right: 0.75rem;
   display: grid;
-  gap: 0.45rem;
-  min-width: 11rem;
-  padding: 0.55rem 0.65rem;
-  color: #20231f;
-  background: rgb(255 255 255 / 0.78);
-  border: 1px solid rgb(32 35 31 / 0.18);
-  border-radius: 0.35rem;
-  box-shadow: 0 0.15rem 0.5rem rgb(32 35 31 / 0.1);
+  grid-template-columns: auto minmax(8rem, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.6rem 0 0.15rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
   font-size: 0.65rem;
   line-height: 1.2;
-  backdrop-filter: blur(0.35rem);
 }
 
 .project-sun-controls label {
-  display: grid;
-  gap: 0.2rem;
+  min-width: 0;
 }
 
 .project-sun-controls input[type='date'] {
-  width: 100%;
-  padding: 0.15rem 0.2rem;
+  width: 7.4rem;
+  min-height: 1.7rem;
+  padding: 0 0.2rem;
   color: inherit;
   background: transparent;
-  border: 1px solid rgb(32 35 31 / 0.25);
-  border-radius: 0.2rem;
+  border: 0;
   font: inherit;
 }
 
 .project-sun-time {
-  grid-template-columns: 1fr auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
+  gap: 0.6rem;
 }
 
 .project-sun-time input[type='range'] {
-  grid-column: 1 / -1;
+  appearance: none;
   width: 100%;
-  accent-color: #c27b2e;
+  height: 1px;
+  margin: 0;
+  background: var(--line);
+}
+
+.project-sun-time input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: 0.72rem;
+  height: 0.72rem;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.project-sun-time input[type='range']::-moz-range-thumb {
+  width: 0.72rem;
+  height: 0.72rem;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
 }
 
 .project-sun-time output {
@@ -1813,7 +1834,7 @@ dd {
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: auto;
-  scroll-snap-type: x proximity;
+  scroll-snap-type: x mandatory;
   scrollbar-color: var(--line) transparent;
   scrollbar-width: none;
 }
@@ -1831,7 +1852,7 @@ dd {
   flex: 0 0 calc(var(--carousel-media-height) * 1.6);
   min-width: 0;
   scroll-snap-align: start;
-  scroll-snap-stop: normal;
+  scroll-snap-stop: always;
 }
 
 .supporting-images.is-carousel figure.is-wide {
@@ -3277,6 +3298,55 @@ dd {
   :root {
     --carousel-media-height: 15rem;
     --carousel-compact-height: 9.5rem;
+  }
+
+  .portfolio-section {
+    scroll-margin-top: calc(var(--nav-height) - 1.5rem);
+  }
+
+  .supporting-images.is-carousel {
+    gap: 0.75rem;
+  }
+
+  .supporting-images.is-carousel > figure,
+  .supporting-images.is-carousel > figure.is-wide,
+  .supporting-images.is-carousel.is-secondary-carousel > figure,
+  .supporting-images.is-carousel.uses-natural-aspect > figure,
+  .supporting-images.is-carousel.uses-matched-horizontal-height > figure,
+  .supporting-images.is-carousel.uses-portrait-crop > figure {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .supporting-images.is-carousel::after {
+    display: none;
+  }
+
+  .supporting-images.is-carousel figure.is-wide .project-image-media {
+    height: var(--carousel-media-height);
+  }
+
+  .supporting-images.is-carousel figure.is-wide .project-carousel-image-button {
+    height: 100%;
+  }
+
+  .supporting-images.is-carousel figure.is-wide img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .supporting-images.is-carousel.uses-matched-horizontal-height .project-image-media,
+  .supporting-images.is-carousel.uses-portrait-crop .project-image-media {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .project-sun-controls {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.5rem 0.75rem;
   }
 
   .study-carousel:not(.aquateket-carousel) {
