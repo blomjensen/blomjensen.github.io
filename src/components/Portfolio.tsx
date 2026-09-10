@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { content } from '../content';
 import { useLanguage } from '../contexts/LanguageContext';
 import { projects, type Project, type ProjectImage, type ProjectVideo } from '../data/projects';
@@ -368,7 +369,10 @@ export function Portfolio() {
   useEffect(() => {
     if (!gallery) return;
 
-    const previousOverflow = document.body.style.overflow;
+    // Siden scroller i .page-panel--portfolio, ikke i body - a lase body
+    // gjorde ingenting.
+    const panel = document.querySelector<HTMLElement>('.page-panel--portfolio');
+    const previousOverflow = panel?.style.overflow ?? '';
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setGallery(null);
       if (event.key === 'ArrowLeft') {
@@ -381,10 +385,10 @@ export function Portfolio() {
       }
     };
 
-    document.body.style.overflow = 'hidden';
+    if (panel) panel.style.overflow = 'hidden';
     window.addEventListener('keydown', onKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
+      if (panel) panel.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onKeyDown);
     };
   }, [gallery, galleryImages.length]);
@@ -794,7 +798,13 @@ export function Portfolio() {
         })}
       </div>
 
-      {gallery && galleryProject && galleryImage && (
+      {gallery &&
+        galleryProject &&
+        galleryImage &&
+        // Portal til <body>: .site-canvas har transform + will-change, og en
+        // transformert forelder blir containing block for position: fixed.
+        // Inne i den ble inset:0 lik canvasets bredde - 200 % av viewporten.
+        createPortal(
         <div
           className="project-gallery"
           role="dialog"
@@ -843,8 +853,9 @@ export function Portfolio() {
             {galleryImage.caption?.[language] ?? galleryProject.title[language]}
             {galleryImages.length > 1 && <span>{`${gallery.imageIndex + 1} / ${galleryImages.length}`}</span>}
           </p>
-        </div>
-      )}
+        </div>,
+          document.body,
+        )}
     </section>
   );
 }
