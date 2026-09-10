@@ -24,7 +24,7 @@
     "noFallthroughCasesInSwitch": true,
 
     "types": ["vite/client"],
-    "baseUrl": ".",
+    // TS 7 fjernet dette feltet; paths loeses relativt til denne fila.
     "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src", "vite.config.ts"]
