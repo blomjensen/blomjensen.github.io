@@ -703,8 +703,8 @@ export const projects: Project[] = [
       {
         src: '/projects/edge-landscape/04-community-garden.webp',
         caption: {
-          en: 'Community Garden - Collage',
-          no: 'Felleshagen - Collage',
+          en: 'Community Garden – collage',
+          no: 'Felleshagen – collage',
         },
         fit: 'contain',
       },
