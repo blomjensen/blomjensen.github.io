@@ -693,6 +693,14 @@ export const projects: Project[] = [
         },
       },
       {
+        src: '/projects/edge-landscape/01-rain-path-collage.webp',
+        caption: {
+          en: 'Rain path – collage',
+          no: 'Regnvei – collage',
+        },
+        fit: 'contain',
+      },
+      {
         src: '/projects/edge-landscape/04-community-garden.webp',
         caption: {
           en: 'Community Garden - Collage',
