@@ -59,6 +59,8 @@ fra begge miljøene jeg har tilgang til.
 | S4-08 | S4 | Repo | `.gitignore` | `.agents/` (vendored skill-verktøy, ~hundrevis av filer) er hverken sporet eller ignorert | Én `git add -A` og hele verktøykassen ligger i historikken | Legg `.agents/` i `.gitignore` hvis den ikke skal versjoneres | lav | 2 |
 | S4-09 | S4 | Repo | git-historikk | 62,7 MiB pakket. De største blobene er de samme mediefilene som S3-01 — de blir liggende i historikken selv om du sletter dem nå | Hver `git clone` drar ned 60+ MB. Ikke kritisk, men det vokser | Se HISTORIKK nederst. Gjør det manuelt, ikke automatisk | **høy** | 60 |
 | S4-10 | S4 | Repo | arbeidstre | 16 endrede + 9 nye filer ucommittet, inkludert `projects.ts`, `App.tsx`, `vite.config.ts` | Det som ligger live er ikke det du har lokalt. Vanskelig å si hva som faktisk er testet | Commit eller forkast før noe annet gjøres | lav | — |
+| S4-11 | S4 | CSS | `src/index.css` | Hele fila er et kompilert Tailwind v4.1.3-bygg sjekket inn som kilde. Prosjektet bruker ikke Tailwind — ingen avhengighet, ingen config, ingenting som kan regenerere fila. 0 av 149 utility-klasser brukes | 30,6 av 92,9 kB CSS-kilde er dødvekt, og fila ser ut som noe som vedlikeholdes uten at den kan det | Behold `@layer base` (preflight, som custom.css bygger på), fjern resten | lav | 30 |
+| S4-12 | S4 | CSS | `Navigation.tsx:115` | `.sr-only` ble brukt i JSX uten å være definert i noen stilfil, så teksten rendret synlig | Menyknappen viste «Menu» to ganger på smale bredder. Verken typecheck, build eller lint kunne se det | Definer klassen; sjekk resten av kodebasen for samme mønster | lav | 10 |
 
 ---
 
@@ -90,6 +92,7 @@ Dette ble aktivt sjekket og var i orden:
 - **Workflow-rettigheter er ikke `write-all`**, ingen `pull_request_target`, ingen `${{ github.event.* }}` i `run:`-blokker.
 - **`base`-oppsettet er riktig** for user page — ingen fare for asset-404 i produksjon fra den kanten.
 - **Aquateket-koblingen er i synk i dag:** 8 stier mot 8 tekstobjekter i begge språk.
+- **Klasser brukt i JSX mot klasser definert i CSS:** gjennomsøkt hele kodebasen etter S4-12. Åtte navn ble flagget, alle forklarlige — `is-`/`theme-` er fragmenter fra template-literals hvor de sammensatte navnene finnes, `.contain`/`.wide`/`.portrait` er `image.fit`-verdier i betingelser og ikke klassenavn, og `.site-root`/`.page-panel--lab` er BEM-baser uten egne regler. `.sr-only` var det eneste reelle tilfellet.
 
 ---
 
