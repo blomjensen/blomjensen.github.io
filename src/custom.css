@@ -157,8 +157,6 @@ figcaption,
 .theme-dark .nav-menu-button:hover,
 .theme-dark .nav-menu-button:focus-visible,
 .theme-dark .nav-menu-button[aria-expanded="true"] {
-  border-color: var(--ink);
-  background: var(--soft);
   color: var(--ink);
 }
 
@@ -435,7 +433,6 @@ main {
 }
 
 .editorial-nav.is-lab-page .nav-menu-button {
-  border-color: rgba(231, 232, 227, 0.35);
   color: #e7e8e3;
   text-shadow: 0 1px 0.7rem rgb(0 0 0 / 0.45);
 }
@@ -459,7 +456,6 @@ main {
 }
 
 .editorial-nav.is-lab-page.is-on-light-surface .nav-menu-button {
-  border-color: #949b95;
   color: #111412;
   text-shadow: none;
 }
@@ -490,16 +486,15 @@ main {
   place-items: center;
   width: 2.5rem;
   height: 2.5rem;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+  border: 0;
+  background: transparent;
+  /* Storrelsen beholdes som trykkflate selv om rammen er borte. */
+  transition: color 160ms ease;
 }
 
 .nav-menu-button:hover,
 .nav-menu-button:focus-visible,
 .nav-menu-button[aria-expanded="true"] {
-  border-color: var(--ink);
-  background: var(--surface);
   color: var(--ink);
 }
 
